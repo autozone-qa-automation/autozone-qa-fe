@@ -8,13 +8,13 @@ import importPlugin from 'eslint-plugin-import'
 import prettier from 'eslint-config-prettier'
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules'] },
+  { ignores: ['dist', 'node_modules', 'eslint.config.js'] },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {
       parserOptions: {
-        project: ['./tsconfig.app.json'],
+        project: ['./tsconfig.app.json', './tsconfig.node.json'],
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -35,6 +35,14 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
 
+      eqeqeq: ['error', 'always'],
+      'prefer-const': 'error',
+      'no-console': 'warn',
+      'no-debugger': 'error',
+      'no-var': 'error',
+      'no-implicit-coercion': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/consistent-type-imports': 'error',
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       'simple-import-sort/imports': 'error',
