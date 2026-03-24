@@ -7,6 +7,9 @@
 
 import './styles/main.css'
 
+/**
+ * Main App entry point
+ */
 function App() {
   return <h1>Autozone QA System - Frontend</h1>
 }
