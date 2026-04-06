@@ -3,6 +3,13 @@ name: Snapshot
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: 'Ambiente a buildear'
+        required: true
+        type: choice
+        options:
+          - dev
+          - uat
       version:
         description: 'Version tag (ej: 1.0.0)'
         required: true
@@ -44,6 +51,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
+            --build-arg VITE_ENV=${{ github.event.inputs.environment }} \
             -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/autozone-qa-repo/autozone-qa-fe:${{ github.event.inputs.version }} \
             -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/autozone-qa-repo/autozone-qa-fe:latest \
             .

@@ -5,14 +5,12 @@
  * Autozone QA Automation
  */
 
-import { UsersTable } from './components/UsersTable'
-
-function App() {
-  return (
-    <>
-      <UsersTable />
-    </>
-  )
+/**
+ * Interfaz para un request
+ * response error generico
+ */
+export interface ErrorResponse {
+  status: number
+  message: string
+  timeStamp: string
 }
-
-export default App

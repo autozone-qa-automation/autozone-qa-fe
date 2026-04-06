@@ -42,8 +42,14 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
       eqeqeq: ['error', 'always'],
+      'react-hooks/set-state-in-effect': 'off',
       'prefer-const': 'error',
-      'no-console': 'error',
+      'no-console': [
+        'error',
+        {
+          allow: ['error'],
+        },
+      ],
       'no-debugger': 'error',
       'no-var': 'error',
       'no-implicit-coercion': 'error',
@@ -51,7 +57,12 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-imports': 'error',
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
-      'simple-import-sort/imports': 'error',
+      'simple-import-sort/imports': [
+        'error',
+        {
+          groups: [['^\\u0000', '^node:', '^@?\\w', '^', '^\\.']],
+        },
+      ],
       'simple-import-sort/exports': 'error',
       'import/first': 'error',
       'import/newline-after-import': 'error',
