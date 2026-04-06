@@ -52,6 +52,9 @@ jobs:
         run: |
           docker build \
             --build-arg VITE_ENV=${{ github.event.inputs.environment }} \
+            --build-arg VITE_API_URL_LOCAL=http://localhost:8080/api \
+            --build-arg VITE_API_URL_DEV=https://autozone-qa-be-dev-460642913845.us-central1.run.app/api \
+            --build-arg VITE_API_URL_UAT=https://autozone-qa-be-uat-460642913845.us-central1.run.app/api \
             -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/autozone-qa-repo/autozone-qa-fe:${{ github.event.inputs.version }} \
             -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/autozone-qa-repo/autozone-qa-fe:latest \
             .

@@ -24,7 +24,14 @@ const ENV_URLS: Record<string, string> = {
  */
 const getBaseUrl = (): string => {
   const env = import.meta.env['VITE_ENV'] ?? 'local'
-  return ENV_URLS[env] ?? ENV_URLS['local'] ?? ''
+  const url = ENV_URLS[env]
+
+  if (!url) {
+    console.error('Missing API URL for env:', env)
+    return ''
+  }
+
+  return url
 }
 
 /**
