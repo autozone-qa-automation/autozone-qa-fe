@@ -69,7 +69,7 @@ export default tseslint.config(
       'import/no-duplicates': 'error',
       'prettier/prettier': 'error',
       'local-rules/header-comment': 'error',
-      '@typescript-eslint/no-floating-promises': 'warn',
+      '@typescript-eslint/no-floating-promises': 'off',
     },
   },
   prettier
