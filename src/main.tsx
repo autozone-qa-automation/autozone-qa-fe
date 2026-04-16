@@ -1,23 +1,23 @@
 /*
  * Tecnológico de Monterrey — Campus Chihuahua
  * Desarrollo e Implantación de Sistemas de Software
- * TC3005B GPO500 - 2026
+ * TC3005B GP0500 - 2026
  * Autozone QA Automation
  */
 
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from 'react-router'
-import App from './App.tsx'
-import Releases from './releases/Releases.tsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router';
+import { MantineProvider } from '@mantine/core';
+
+import '@mantine/core/styles.css'; 
+
+import { router } from './router'; // Import the router configuration
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route Component={App} path="/" />
-        <Route Component={Releases} path="/releases" />
-      </Routes>
-    </BrowserRouter>
+    <MantineProvider>
+      <RouterProvider router={router} />
+    </MantineProvider>
   </StrictMode>
-)
+);

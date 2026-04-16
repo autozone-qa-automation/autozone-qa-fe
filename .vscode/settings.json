@@ -8,5 +8,8 @@
   "eslint.probe": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
   "eslint.nodePath": "./node_modules/.bin",
   "eslint.useFlatConfig": true,
-  "eslint.enable": true
+  "eslint.enable": true,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }

@@ -7,7 +7,7 @@
 
 import type { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
-import type { ErrorResponse } from '@/VOs/error.types'
+import type { ErrorResponse } from '@/types/Error.types'
 
 /**
  * URLs de la API por entorno

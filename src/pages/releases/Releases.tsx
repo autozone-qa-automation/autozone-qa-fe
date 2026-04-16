@@ -6,8 +6,9 @@
  */
 
 import { useNavigate } from 'react-router'
+import classes from './Releases.module.css';
 
-const Releases = () => {
+export function Releases() {
   const navigate = useNavigate()
 
   const gohome = () => {
@@ -15,10 +16,9 @@ const Releases = () => {
   }
 
   return (
-    <div>
+    <div className={classes.container}>
+      <h1>Releases</h1>
       <button onClick={() => gohome()}>go to home</button>
     </div>
   )
 }
-
-export default Releases

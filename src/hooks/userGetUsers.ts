@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { userService } from '../services/userService'
-import type { User } from '../VOs/user.types'
+import type { User } from '../types/User.types'
 
 /**
  * Interfaz describiendo el objeto

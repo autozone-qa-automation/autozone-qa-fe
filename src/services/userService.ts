@@ -5,7 +5,7 @@
  * Autozone QA Automation
  */
 
-import type { User, UserRequest, UserUpdateRequest } from '../VOs/user.types'
+import type { User, UserRequest, UserUpdateRequest } from '../types/User.types'
 import { apiService } from './apiService'
 
 /**

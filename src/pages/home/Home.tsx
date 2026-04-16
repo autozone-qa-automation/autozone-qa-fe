@@ -5,9 +5,7 @@
  * Autozone QA Automation
  */
 
-import { UsersTable } from './components/UsersTable'
-
-function App() {
+export function Home() {
   return (
     <>
       <div
@@ -22,9 +20,8 @@ function App() {
       >
         Hello — testing purposes only
       </div>
-      <UsersTable />
+      {/* <UsersTable /> */}
     </>
   )
 }
 
-export default App

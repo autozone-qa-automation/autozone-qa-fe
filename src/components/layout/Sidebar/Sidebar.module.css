@@ -1,0 +1,11 @@
+
+.link {
+  border-left: 3px solid transparent;
+  
+}
+
+.link:hover,
+.link[data-active="true"] {
+  border-left-color: var(--mantine-color-orange-filled);
+  color: var(--mantine-color-orange-filled);
+}
