@@ -5,6 +5,13 @@
  * Autozone QA Automation
  */
 
+/*
+ * Tecnológico de Monterrey — Campus Chihuahua
+ * Desarrollo e Implantación de Sistemas de Software
+ * TC3005B GPO500 - 2026
+ * Autozone QA Automation
+ */
+
 import type { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
 import type { ErrorResponse } from '@/VOs/error.types'

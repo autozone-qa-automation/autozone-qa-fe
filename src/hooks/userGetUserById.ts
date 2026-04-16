@@ -5,6 +5,13 @@
  * Autozone QA Automation
  */
 
+/*
+ * Tecnológico de Monterrey — Campus Chihuahua
+ * Desarrollo e Implantación de Sistemas de Software
+ * TC3005B GPO500 - 2026
+ * Autozone QA Automation
+ */
+
 import { useCallback, useEffect, useState } from 'react'
 import { userService } from '../services/userService'
 import type { User } from '../VOs/user.types'
