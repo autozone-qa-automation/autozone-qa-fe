@@ -18,22 +18,20 @@ import { Sidebar } from '../Sidebar/Sidebar'
 export function MainLayout() {
   return (
     <AppShell
-      // Configuración de la barra lateral: ancho de 250px y colapso en pantallas pequeñas (sm)
       navbar={{
         width: 250,
         breakpoint: 'sm',
       }}
-      // Espaciado global entre los bordes y el contenido
       padding="md"
     >
-      {/* Sección lateral: Aquí se renderiza el menú de navegación */}
       <AppShell.Navbar>
         <Sidebar />
       </AppShell.Navbar>
 
-      {/* Sección principal: El componente Outlet renderiza la ruta activa de React Router */}
-      <AppShell.Main>
-        <Outlet />
+      <AppShell.Main bg="#FCF9F4" >
+        <div style={{ padding: '15px' }}>
+          <Outlet />
+        </div>
       </AppShell.Main>
     </AppShell>
   )
