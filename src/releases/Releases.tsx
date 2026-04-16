@@ -5,18 +5,14 @@
  * Autozone QA Automation
  */
 
-import { useNavigate } from 'react-router'
-
 const Releases = () => {
-  const navigate = useNavigate()
-
-  const gohome = () => {
-    navigate('/')
-  }
-
   return (
-    <div>
-      <button onClick={() => gohome()}>go to home</button>
+    <div
+      style={{
+        background: '#FCF9F4',
+      }}
+    >
+      Releases — testing purposes only
     </div>
   )
 }
