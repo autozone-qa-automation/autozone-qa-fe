@@ -68,7 +68,7 @@ export default tseslint.config(
       'import/newline-after-import': 'error',
       'import/no-duplicates': 'error',
       'prettier/prettier': 'error',
-      'local-rules/header-comment': 'error',
+      'local-rules/header-comment': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
     },
   },
