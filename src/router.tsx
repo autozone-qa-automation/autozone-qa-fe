@@ -13,6 +13,7 @@ import { Generate } from './pages/generate/Generate'
 import { Home } from './pages/home/Home'
 import { Releases } from './pages/releases/Releases'
 import { Reports } from './pages/reports/Reports'
+import { ServiceId } from './pages/services/ServiceId/ServiceId'
 import { Services } from './pages/services/Services'
 import { TestCases } from './pages/tests-cases/TestCases'
 
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
       {
         path: 'services',
         element: <Services />,
+      },
+      {
+        path: 'services/:serviceId',
+        element: <ServiceId />,
       },
       {
         path: 'test-cases',
