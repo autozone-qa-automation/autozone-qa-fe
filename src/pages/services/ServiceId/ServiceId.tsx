@@ -1,0 +1,38 @@
+/*
+ * Tecnológico de Monterrey — Campus Chihuahua
+ * Desarrollo e Implantación de Sistemas de Software
+ * TC3005B GPO500 - 2026
+ * Autozone QA Automation
+ */
+import { Button } from '@mantine/core'
+import { IconPlus } from '@tabler/icons-react'
+import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
+
+export function ServiceId() {
+  return (
+    <div>
+      <TitleHeader
+        title="Order Management"
+        metaDetails={['5 features', '42 test cases', '94% coverage']}
+        breadcrumbs={[
+          { title: 'Releases', href: '/releases' },
+          { title: 'Q2 2026 Regression', href: '#' },
+          { title: 'Order Management', href: '#' },
+          { title: 'Features', href: '#' },
+        ]}
+        actionComponent={
+          <Button
+            leftSection={<IconPlus size={16} stroke={2.5} />}
+            color="orange.6"
+            radius="md"
+            size="md"
+            fw={600}
+            onClick={() => console.log('Open modal')}
+          >
+            Add Feature
+          </Button>
+        }
+      />
+    </div>
+  )
+}
