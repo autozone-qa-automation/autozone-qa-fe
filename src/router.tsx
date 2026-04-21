@@ -8,6 +8,7 @@
 import { createBrowserRouter } from 'react-router'
 // Importación del Layout principal y las páginas (Vistas)
 import { MainLayout } from './components/layout/MainLayout/MainLayout'
+import { FeatureDetail } from './pages/features/FeatureDetail/FeatureDetail'
 import { Features } from './pages/features/Features'
 import { Generate } from './pages/generate/Generate'
 import { Home } from './pages/home/Home'
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
       {
         path: 'features',
         element: <Features />,
+      },
+      {
+        path: 'features/:featureId',
+        element: <FeatureDetail />,
       },
       {
         path: 'generate',
