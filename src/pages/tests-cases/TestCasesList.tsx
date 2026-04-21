@@ -28,7 +28,7 @@ export interface TestCaseItem {
 
 interface TestCasesListProps {
   data: TestCaseItem[]
-  onViewClick?: (id: string) => void
+  onViewClick?: (testCase: TestCaseItem) => void
   onEditClick?: (id: string) => void
 }
 
@@ -68,35 +68,13 @@ export function TestCasesList({ data, onViewClick, onEditClick }: TestCasesListP
           {testCase.type}
         </Badge>
       </Table.Td>
-      <Table.Td>
-        <Group gap={6} wrap="nowrap">
-          <Indicator
-            size={10}
-            color={getPriorityColor(testCase.priority)}
-            position="middle-center"
-          />
-          <Text c={getPriorityColor(testCase.priority)} fw={500} size="sm">
-            {testCase.priority}
-          </Text>
-        </Group>
-      </Table.Td>
-      <Table.Td>
-        <Badge
-          color={statusStyles[testCase.status].color}
-          c={statusStyles[testCase.status].c}
-          radius="sm"
-          style={{ textTransform: 'capitalize' }}
-        >
-          {testCase.status}
-        </Badge>
-      </Table.Td>
       <Table.Td style={{ textAlign: 'right' }}>
         <Button
           variant="subtle"
           size="sm"
           color="orange.7"
           fw={600}
-          onClick={() => onViewClick?.(testCase.id)}
+          onClick={() => onViewClick?.(testCase)}
         >
           View
         </Button>
@@ -120,8 +98,6 @@ export function TestCasesList({ data, onViewClick, onEditClick }: TestCasesListP
           <Table.Th>ID</Table.Th>
           <Table.Th>Test Case Name</Table.Th>
           <Table.Th>Type</Table.Th>
-          <Table.Th>Priority</Table.Th>
-          <Table.Th>Status</Table.Th>
           <Table.Th style={{ textAlign: 'center' }}>Actions</Table.Th>
         </Table.Tr>
       </Table.Thead>

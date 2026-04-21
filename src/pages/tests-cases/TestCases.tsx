@@ -5,13 +5,13 @@
  * Autozone QA Automation
  */
 
-import { Button } from '@mantine/core'
+import { Badge, Box, Button, Modal, Stack, Text } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { IconPlus } from '@tabler/icons-react'
 import { useState } from 'react'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import type { TestCaseItem } from './TestCasesList'
 import { TestCasesList } from './TestCasesList'
-import { TestCaseView } from './TestCaseView'
 
 export function TestCases() {
   const myTestCases: TestCaseItem[] = [
@@ -129,11 +129,97 @@ export function TestCases() {
     },
   ]
 
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const selectedTest = myTestCases.find(tc => tc.id === selectedId)
+  const [opened, { open, close }] = useDisclosure(false)
+
+  const [selectedTestCase, setSelectedTestCase] = useState<TestCaseItem | null>(null)
+
+  const handleViewClick = (testCase: TestCaseItem) => {
+    setSelectedTestCase(testCase)
+    open()
+  }
+
+  const handleClose = () => {
+    setSelectedTestCase(null)
+    close()
+  }
 
   return (
     <div>
+      <Modal.Root opened={opened} onClose={handleClose}>
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title fw={700} mb="lg" c="#1A1A1F">
+              {selectedTestCase?.name}
+            </Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Body>
+            <Stack gap={0}>
+              <Text size="md" c="#8C8C94">
+                ID
+              </Text>
+              <Text size="sm" c="#F26621" mb="xs">
+                {selectedTestCase?.id}
+              </Text>
+              <Text size="md" c="#8C8C94">
+                FEATURE RELACIONADO
+              </Text>
+              <Text size="sm" c="#1A1A1F" mb="xs">
+                {selectedTestCase?.feature}
+              </Text>
+              <Text size="md" c="#8C8C94">
+                DESCRIPCIÓN
+              </Text>
+              <Text size="sm" c="#1A1A1F" mb="xs">
+                {selectedTestCase?.description}
+              </Text>
+              <Text size="md" c="#8C8C94">
+                TIPO
+              </Text>
+              <Badge
+                color="#F26621"
+                size="xl"
+                radius="md"
+                fz="sm"
+                style={{ textTransform: 'capitalize' }}
+                mb="xs"
+              >
+                {selectedTestCase?.type}
+              </Badge>
+              <Text size="md" c="#8C8C94">
+                PRECONDICIONES
+              </Text>
+              <Text size="sm" c="#1A1A1F" mb="xs">
+                {selectedTestCase?.preconditions}
+              </Text>
+              <Text size="md" c="#8C8C94">
+                POSTCONDICIONES
+              </Text>
+              <Text size="sm" c="#1A1A1F" mb="xs">
+                {selectedTestCase?.postconditions}
+              </Text>
+              <Text size="md" c="#8C8C94">
+                ENTRADAS
+              </Text>
+              <Text size="sm" c="#1A1A1F" mb="xs">
+                {selectedTestCase?.inputs}
+              </Text>
+              <Text size="md" c="#8C8C94">
+                PASOS
+              </Text>
+              <Text size="sm" c="#1A1A1F">
+                {selectedTestCase?.steps}
+              </Text>
+              <Box h={50} />
+              <Button ml="auto" variant="filled" color="#F26621" w={125} onClick={handleClose}>
+                Volver
+              </Button>
+            </Stack>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+
       <TitleHeader
         title="Checkout Flow — Test Cases"
         metaDetails={['12 test cases', 'Regression + On Demand']}
@@ -152,19 +238,14 @@ export function TestCases() {
             radius="md"
             size="md"
             fw={600}
-            onClick={() => {}}
+            onClick={open}
           >
             New Test Case
           </Button>
         }
       />
 
-      <TestCaseView testCase={selectedTest} />
-      <TestCasesList
-        data={myTestCases}
-        onViewClick={(id: string) => setSelectedId(id)}
-        onEditClick={() => {}}
-      />
+      <TestCasesList data={myTestCases} onViewClick={handleViewClick} onEditClick={() => { }} />
     </div>
   )
 }
