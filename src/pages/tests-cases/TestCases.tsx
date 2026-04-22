@@ -8,27 +8,14 @@
 import { Badge, Box, Button, Modal, Stack, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconPlus } from '@tabler/icons-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
+import { useTestCases } from '@/hooks/useTestCases'
 import type { TestCaseItem } from './TestCasesList'
 import { TestCasesList } from './TestCasesList'
 
 export function TestCases() {
-  const [myTestCases, setMyTestCases] = useState<TestCaseItem[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('http://localhost:8080/api/v1/test-cases')
-      .then(res => res.json())
-      .then((data: TestCaseItem[]) => {
-        setMyTestCases(data)
-        setLoading(false)
-      })
-      .catch(err => {
-        console.error('Error fetching test cases:', err)
-        setLoading(false)
-      })
-  }, [])
+  const { testCases: myTestCases, loading, error } = useTestCases()
 
   const [opened, { open, close }] = useDisclosure(false)
 
@@ -42,6 +29,14 @@ export function TestCases() {
   const handleClose = () => {
     setSelectedTestCase(null)
     close()
+  }
+
+  if (error) {
+    return (
+      <Text ta="center" mt="xl" c="red">
+        Error loading test cases
+      </Text>
+    )
   }
 
   return (
@@ -64,19 +59,19 @@ export function TestCases() {
                 {selectedTestCase?.id}
               </Text>
               <Text size="md" c="#8C8C94">
-                FEATURE RELACIONADO
+                RELATED FEATURE
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.relatedFeature}
               </Text>
               <Text size="md" c="#8C8C94">
-                DESCRIPCIÓN
+                DESCRIPTION
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.description}
               </Text>
               <Text size="md" c="#8C8C94">
-                TIPO
+                TYPE
               </Text>
               <Badge
                 color="#F26621"
@@ -89,32 +84,32 @@ export function TestCases() {
                 {selectedTestCase?.type}
               </Badge>
               <Text size="md" c="#8C8C94">
-                PRECONDICIONES
+                PRECONDITIONS
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.preconditions}
               </Text>
               <Text size="md" c="#8C8C94">
-                POSTCONDICIONES
+                POSTCONDITIONS
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.postconditions}
               </Text>
               <Text size="md" c="#8C8C94">
-                ENTRADAS
+                INPUT
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.inputs}
               </Text>
               <Text size="md" c="#8C8C94">
-                PASOS
+                STEPS
               </Text>
               <Text size="sm" c="#1A1A1F">
                 {selectedTestCase?.steps}
               </Text>
               <Box h={50} />
-              <Button ml="auto" variant="filled" color="#F26621" w={125} onClick={handleClose}>
-                Volver
+              <Button ml="auto" variant="filled" color="#FF0000" w={125} onClick={() => {}}>
+                Delete
               </Button>
             </Stack>
           </Modal.Body>
