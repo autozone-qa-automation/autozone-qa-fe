@@ -5,8 +5,8 @@
  * Autozone QA Automation
  */
 
-import { apiService } from '@/services/apiService'
-import { type CreateTestCaseRequest } from '@/types/TestCases.types'
+import type { CreateTestCaseRequest } from '@/types/TestCases.types'
+import { apiService } from './api.service'
 
 class TestCaseService {
   private readonly BASE_PATH = '/test-cases'
@@ -17,7 +17,6 @@ class TestCaseService {
 }
 
 export const testCaseService = new TestCaseService()
-
 export async function createTestCase(data: CreateTestCaseRequest): Promise<void> {
   await testCaseService.create(data)
 }

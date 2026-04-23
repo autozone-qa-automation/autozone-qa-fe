@@ -81,12 +81,14 @@ export function TestCasesModalCreate() {
           title: 'Test case creado',
           message: 'El test case se creó correctamente.',
           color: 'green',
+          position: 'top-right',
         })
       } else {
         showNotification({
           title: 'No se pudo crear',
           message: error ?? 'Ocurrió un error al crear el test case.',
           color: 'red',
+          position: 'top-right',
         })
       }
     } catch (submitError) {
@@ -97,6 +99,7 @@ export function TestCasesModalCreate() {
         title: 'Error inesperado',
         message,
         color: 'red',
+        position: 'top-right',
       })
     }
   }
@@ -111,6 +114,7 @@ export function TestCasesModalCreate() {
           title: 'Formulario invalido',
           message,
           color: 'yellow',
+          position: 'top-right',
         })
         return
       }
@@ -126,6 +130,7 @@ export function TestCasesModalCreate() {
         title: 'Error de validacion',
         message,
         color: 'red',
+        position: 'top-right',
       })
     }
   }
