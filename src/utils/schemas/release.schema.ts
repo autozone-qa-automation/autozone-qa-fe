@@ -6,8 +6,8 @@
  */
 
 import { z } from 'zod'
-
-export const schema = z.object({
+//Este schema es para la validacion del formulario de Create Release
+export const releaseSchema = z.object({
   releaseName: z
     .string()
     .min(3, { message: 'Minimum 3 characters required' })
@@ -19,3 +19,5 @@ export const schema = z.object({
   features: z.array(z.string()).min(1, { message: 'Select at least one feature' }),
   tags: z.array(z.string()).min(1, { message: 'Select at least one tag' }),
 })
+
+export type FormValues = z.infer<typeof releaseSchema>

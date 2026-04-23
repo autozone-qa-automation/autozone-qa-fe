@@ -31,7 +31,7 @@ export function ModalTemplate({ textButton, title, children }: ModalProps) {
             fontWeight: 700,
             fontSize: 26,
             color: '#1A1A1F',
-            backgroundColor: '#FFFFFF'
+            backgroundColor: '#FFFFFF',
           },
         }}
         centered

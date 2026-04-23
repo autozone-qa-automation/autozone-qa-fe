@@ -5,8 +5,8 @@
  * Autozone QA Automation
  */
 
+import './ReleasesModal.css'
 import {
-  Alert,
   Button,
   Group,
   Input,
@@ -18,12 +18,9 @@ import {
   TextInput,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { zodResolver } from 'mantine-form-zod-resolver'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
-import './ReleasesModal.css';
-import { schema } from '@/utils/schemas/release.schema';
-
-type FormValues = z.infer<typeof schema>
+import type { FormValues } from '@/utils/schemas/release.schema'
+import { releaseSchema } from '@/utils/schemas/release.schema'
 
 export function ReleasesModalCreate() {
   const form = useForm<FormValues>({
@@ -37,7 +34,7 @@ export function ReleasesModalCreate() {
       tags: [],
     },
     validate: values => {
-      const result = schema.safeParse(values)
+      const result = releaseSchema.safeParse(values)
 
       if (result.success) return {}
 
@@ -53,15 +50,19 @@ export function ReleasesModalCreate() {
     validateInputOnChange: true,
   })
 
-  const handleSubmit = (values: FormValues) => {
-    alert('¡Validación exitosa! Release: ' + values.releaseName)
+  const handleSubmit = () => {
     form.reset()
   }
   const inputStyles = {
-          input: { backgroundColor: '#FAF9F7', borderColor: '#EDEBE5', borderRadius: '8px', color: '#B2B2B8', },
-          label: { color: '#8C8C94', fontWeight: 500, fontSize: '12px', },
-          required: { color: '#8C8C94' }
-          };
+    input: {
+      backgroundColor: '#FAF9F7',
+      borderColor: '#EDEBE5',
+      borderRadius: '8px',
+      color: '#B2B2B8',
+    },
+    label: { color: '#8C8C94', fontWeight: 500, fontSize: '12px' },
+    required: { color: '#8C8C94' },
+  }
 
   return (
     <ModalTemplate textButton="+ New Release" title="Create Release">
@@ -95,8 +96,7 @@ export function ReleasesModalCreate() {
               styles={inputStyles}
             />
 
-            <Input.Wrapper label="STATUS" required error={form.errors.status}
-            styles={inputStyles}>
+            <Input.Wrapper label="STATUS" required error={form.errors.status} styles={inputStyles}>
               <SegmentedControl
                 w="100%"
                 data={['Draft', 'Progress', 'Active']}
@@ -121,11 +121,13 @@ export function ReleasesModalCreate() {
 
           <MultiSelect
             label="FEATURES"
-            placeholder={form.values.service ? "Select features..." : "Requires prior service selection..."} 
+            placeholder={
+              form.values.service ? 'Select features...' : 'Requires prior service selection...'
+            }
             data={['Feature A', 'Feature B', 'Feature C']}
             searchable
             hidePickedOptions
-            disabled={!form.values.service} 
+            disabled={!form.getInputProps('service').value}
             {...form.getInputProps('features')}
             error={form.errors.features}
             styles={inputStyles}
@@ -143,7 +145,13 @@ export function ReleasesModalCreate() {
           />
 
           <Group justify="flex-end" mt="xl">
-            <Button variant="outline" bg="#FFFFFF" bc="#EDEBE5" color="#8C8C94" onClick={() => form.reset()}>
+            <Button
+              variant="outline"
+              bg="#FFFFFF"
+              bc="#EDEBE5"
+              color="#8C8C94"
+              onClick={() => form.reset()}
+            >
               Cancel
             </Button>
             <Button type="submit" bg="#F26621" color="#FFFFFF">
