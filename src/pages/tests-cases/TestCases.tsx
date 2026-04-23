@@ -5,6 +5,23 @@
  * Autozone QA Automation
  */
 
+import { Center, Stack } from '@mantine/core'
+import { useNavigate } from 'react-router'
+import { TestCasesModalCreate } from './TestCasesModalCreate'
+
 export function TestCases() {
-  return <div>Test Cases</div>
+  const navigate = useNavigate()
+
+  const gohome = () => {
+    navigate('/')
+  }
+  return (
+    <Center h="100vh">
+      <Stack align="center">
+        <h1>TestCases</h1>
+        <button onClick={gohome}>go to home</button>
+        <TestCasesModalCreate />
+      </Stack>
+    </Center>
+  )
 }
