@@ -148,7 +148,7 @@ export function ReleasesModalCreate() {
             <Button
               variant="outline"
               bg="#FFFFFF"
-              borderColor= '#EDEBE5'
+              borderColor= "#EDEBE5"
               color="#8C8C94"
               onClick={() => form.reset()}
             >
