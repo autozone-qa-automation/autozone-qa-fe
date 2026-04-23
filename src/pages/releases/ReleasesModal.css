@@ -1,0 +1,15 @@
+/*
+ * Tecnológico de Monterrey — Campus Chihuahua
+ * Desarrollo e Implantación de Sistemas de Software
+ * TC3005B GPO500 - 2026
+ * Autozone QA Automation
+ */
+ 
+.mantine-SegmentedControl-label {
+  color: #8C8C94 !important;
+  font-weight: 500;
+}
+
+.mantine-SegmentedControl-label[data-active] {
+  color: #FFFFFF !important;
+}

@@ -10,7 +10,7 @@ import { useGetServices } from '@/hooks/useGetServices'
 import type { Service } from '@/types/service.types'
 
 interface ServiceCardProps {
-  idService: number
+  id: number
   nombre: string
 }
 
@@ -29,7 +29,7 @@ const getServiceIcon = (nombre: string) => {
 
 export function ServiceCard({ idService, nombre }: ServiceCardProps) {
   const handleCardClick = () => {
-    window.location.href = `/services/${idService}`
+    window.location.href = `/services/${id}`
   }
 
   return (

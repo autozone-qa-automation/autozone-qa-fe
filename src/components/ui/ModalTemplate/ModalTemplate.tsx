@@ -25,11 +25,13 @@ export function ModalTemplate({ textButton, title, children }: ModalProps) {
         title={title}
         radius={16}
         size={'40%'}
+        padding="xl"
         styles={{
           title: {
             fontWeight: 700,
             fontSize: 26,
             color: '#1A1A1F',
+            backgroundColor: '#FFFFFF',
           },
         }}
         centered

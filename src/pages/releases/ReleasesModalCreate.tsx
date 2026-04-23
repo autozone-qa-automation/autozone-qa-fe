@@ -5,37 +5,24 @@
  * Autozone QA Automation
  */
 
+import './ReleasesModal.css'
 import {
   Button,
   Group,
+  Input,
   MultiSelect,
   SegmentedControl,
   Select,
   Stack,
-  Text,
   Textarea,
   TextInput,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { zodResolver } from 'mantine-form-zod-resolver'
-import { z } from 'zod'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
-
-// 1. Definición del Schema con Zod
-const schema = z.object({
-  releaseName: z.string().min(1, { message: 'El nombre es obligatorio' }),
-  objective: z.string().optional().default(''),
-  version: z.string().min(1, { message: 'La versión es obligatoria' }),
-  status: z.enum(['Draft', 'Active']),
-  service: z.string().min(1, { message: 'Selecciona un servicio' }),
-  tags: z.array(z.string()).default([]),
-})
-
-// 2. Extracción del tipo del Schema para TypeScript
-type FormValues = z.infer<typeof schema>
+import type { FormValues } from '@/utils/schemas/release.schema'
+import { releaseSchema } from '@/utils/schemas/release.schema'
 
 export function ReleasesModalCreate() {
-  // 3. Inicialización del formulario con el tipo inferido
   const form = useForm<FormValues>({
     initialValues: {
       releaseName: '',
@@ -43,92 +30,130 @@ export function ReleasesModalCreate() {
       version: '',
       status: 'Draft',
       service: '',
+      features: [],
       tags: [],
     },
-    validate: zodResolver(schema),
+    validate: values => {
+      const result = releaseSchema.safeParse(values)
+
+      if (result.success) return {}
+
+      const formErrors: Record<string, string> = {}
+      result.error.issues.forEach(issue => {
+        const path = issue.path.join('.')
+        if (!formErrors[path]) {
+          formErrors[path] = issue.message
+        }
+      })
+      return formErrors
+    },
+    validateInputOnChange: true,
   })
 
-  const handleSubmit = (values: FormValues) => {
-    console.error(values)
+  const handleSubmit = () => {
+    form.reset()
+  }
+  const inputStyles = {
+    input: {
+      backgroundColor: '#FAF9F7',
+      borderColor: '#EDEBE5',
+      borderRadius: '8px',
+      color: '#B2B2B8',
+    },
+    label: { color: '#8C8C94', fontWeight: 500, fontSize: '12px' },
+    required: { color: '#8C8C94' },
   }
 
   return (
-    <div>
-      <ModalTemplate textButton="+ New Release" title="Create Release">
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Stack gap="md">
+    <ModalTemplate textButton="+ New Release" title="Create Release">
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Stack gap="md">
+          <TextInput
+            label="RELEASE NAME"
+            withAsterisk
+            styles={inputStyles}
+            placeholder="e.g. Q4 Performance Patch"
+            {...form.getInputProps('releaseName')}
+            error={form.errors.releaseName}
+          />
+
+          <Textarea
+            label="OBJECTIVE"
+            placeholder="Describe the purpose of this release..."
+            minRows={3}
+            {...form.getInputProps('objective')}
+            error={form.errors.objective}
+            styles={inputStyles}
+          />
+
+          <Group grow align="flex-start">
             <TextInput
-              label="RELEASE NAME"
-              placeholder="e.g. Q4 Performance Patch"
+              label="VERSION"
               withAsterisk
-              {...form.getInputProps('releaseName')}
+              placeholder="2.1.0"
+              {...form.getInputProps('version')}
+              error={form.errors.version}
+              styles={inputStyles}
             />
 
-            <Textarea
-              label="OBJECTIVE"
-              placeholder="Describe the purpose of this release..."
-              minRows={3}
-              {...form.getInputProps('objective')}
-            />
-
-            <Group grow>
-              <TextInput
-                label="VERSION"
-                placeholder="2.1.0"
-                withAsterisk
-                {...form.getInputProps('version')}
-              />
-              {/* Placeholder visual según diseño original */}
-              <TextInput label="STATUS" placeholder="" disabled />
-            </Group>
-
-            <Stack gap={4}>
-              <Text size="sm" fw={500} c="dimmed">
-                STATUS*
-              </Text>
+            <Input.Wrapper label="STATUS" required error={form.errors.status} styles={inputStyles}>
               <SegmentedControl
-                fullWidth
-                color="orange"
-                data={[
-                  { label: 'Draft', value: 'Draft' },
-                  { label: 'Active', value: 'Active' },
-                ]}
+                w="100%"
+                data={['Draft', 'Progress', 'Active']}
                 {...form.getInputProps('status')}
                 styles={{
-                  root: { backgroundColor: '#f8f9fa' },
-                  indicator: { backgroundColor: '#f46624' },
+                  root: { backgroundColor: '#FAF9F7' },
+                  indicator: { backgroundColor: '#F26621' },
                 }}
               />
-            </Stack>
+            </Input.Wrapper>
+          </Group>
 
-            <Select
-              label="SERVICE"
-              placeholder="Select a service..."
-              data={['Inventory Service', 'Auth Service', 'Payment Gateway']}
-              withAsterisk
-              {...form.getInputProps('service')}
-            />
+          <Select
+            label="SERVICE"
+            placeholder="Select a service..."
+            data={['Inventory Service', 'Auth Service', 'Payment Gateway']}
+            withAsterisk
+            {...form.getInputProps('service')}
+            error={form.errors.service}
+            styles={inputStyles}
+          />
 
-            <MultiSelect
-              label="TAGS"
-              placeholder="hotfix, retail..."
-              data={['hotfix', 'retail', 'critical', 'ui-update']}
-              searchable
-              hidePickedOptions
-              {...form.getInputProps('tags')}
-            />
+          <MultiSelect
+            label="FEATURES"
+            placeholder={
+              form.values.service ? 'Select features...' : 'Requires prior service selection...'
+            }
+            data={['Feature A', 'Feature B', 'Feature C']}
+            searchable
+            hidePickedOptions
+            disabled={!form.getInputProps('service').value}
+            {...form.getInputProps('features')}
+            error={form.errors.features}
+            styles={inputStyles}
+          />
 
-            <Group justify="flex-end" mt="xl">
-              <Button variant="outline" color="gray" radius="md" onClick={() => form.reset()}>
-                Cancel
-              </Button>
-              <Button type="submit" bg="#f46624" radius="md">
-                Create Release
-              </Button>
-            </Group>
-          </Stack>
-        </form>
-      </ModalTemplate>
-    </div>
+          <MultiSelect
+            label="TAGS"
+            placeholder="hotfix, retail..."
+            data={['hotfix', 'retail', 'critical', 'ui-update']}
+            searchable
+            hidePickedOptions
+            {...form.getInputProps('tags')}
+            error={form.errors.tags}
+            styles={inputStyles}
+          />
+
+          <Group justify="flex-end" mt="xl">
+            <Button variant="outline" bg="#FFFFFF" color="#8C8C94" onClick={() => form.reset()}>
+              Cancel
+            </Button>
+            <Button type="submit" bg="#F26621" color="#FFFFFF">
+              Create Release
+            </Button>
+          </Group>
+        </Stack>
+      </form>
+    </ModalTemplate>
   )
 }

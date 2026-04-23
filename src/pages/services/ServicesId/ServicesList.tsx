@@ -66,13 +66,13 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
             </Accordion.Control>
 
             <Accordion.Panel>
-              <Stack gap={0} pt="xs">
+              <Stack gap={0}>
                 {data.map((feature, index) => (
                   <Group
                     key={feature.idFeature}
-                    px="md"
-                    py="sm"
+                    wrap="nowrap"
                     justify="space-between"
+                    gap={0}
                     style={{
                       borderBottom: index !== data.length - 1 ? '1px solid #eee' : 'none',
                       cursor: 'pointer',
@@ -82,14 +82,28 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
                     onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#f8f9fa')}
                     onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                   >
-                    <Group gap="sm">
-                      <Text size="xs" c="orange.6" fw={700}>
-                        F{feature.idFeature}
-                      </Text>
-                      <Text size="sm" fw={400}>
-                        {feature.nombre}
-                      </Text>
-                    </Group>
+                    <UnstyledButton
+                      component="a"
+                      href={`/features/${feature.idFeature}`}
+                      p="sm"
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        transition: 'background 0.2s ease',
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#f8f9fa')}
+                      onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    >
+                      <Group gap="sm">
+                        <Text size="xs" c="orange.6" fw={700}>
+                          F{feature.idFeature}
+                        </Text>
+                        <Text size="sm" fw={400} c="dark">
+                          {feature.nombre}
+                        </Text>
+                      </Group>
+                    </UnstyledButton>
 
                     <Button
                       size="xs"
