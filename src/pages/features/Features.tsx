@@ -5,8 +5,6 @@
  * Autozone QA Automation
  */
 
-import { Button } from '@mantine/core'
-import { IconPlus } from '@tabler/icons-react'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useFeatures } from '@/hooks/useFeatures'
 import { FeaturesList } from './FeaturesList'
