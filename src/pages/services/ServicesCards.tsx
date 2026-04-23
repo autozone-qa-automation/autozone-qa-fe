@@ -6,13 +6,13 @@
  */
 import { Box, Card, Stack, Text } from '@mantine/core'
 import { IconCode, IconDatabase, IconDeviceDesktop, IconServer } from '@tabler/icons-react'
-import { useGetServices } from '@/hooks/servicesGetServices'
-import type { Service } from '@/types/Service.types'
+import { useGetServices } from '@/hooks/useGetServices'
+import type { ServiceVO } from '@/models/ServiceVO'
 
 interface ServiceCardProps {
-  idService: number
+  id: number
   nombre: string
-  descripcion?: string
+  descripcion?: string | null
 }
 
 const getServiceIcon = (nombre: string) => {
@@ -28,9 +28,9 @@ const getServiceIcon = (nombre: string) => {
   }
 }
 
-export function ServiceCard({ idService, nombre, descripcion }: ServiceCardProps) {
+export function ServiceCard({ id, nombre }: ServiceCardProps) {
   const handleCardClick = () => {
-    window.location.href = `/services/${idService}`
+    window.location.href = `/services/${id}`
   }
 
   return (
@@ -70,12 +70,6 @@ export function ServiceCard({ idService, nombre, descripcion }: ServiceCardProps
         <Text fw={600} ta="center">
           {nombre}
         </Text>
-
-        {descripcion && (
-          <Text size="xs" c="dimmed" ta="center" lineClamp={2}>
-            {descripcion}
-          </Text>
-        )}
       </Stack>
     </Card>
   )
@@ -91,8 +85,8 @@ export function ServicesList({ searchQuery = '' }: ServicesListProps) {
   if (loading) return <Text>Cargando servicios...</Text>
   if (error) return <Text c="red">Error: {error}</Text>
 
-  const mappedServices: ServiceCardProps[] = services.map((s: Service) => ({
-    idService: s.id,
+  const mappedServices: ServiceCardProps[] = services.map((s: ServiceVO) => ({
+    id: s.id,
     nombre: s.name,
     descripcion: s.description,
   }))
@@ -119,7 +113,7 @@ export function ServicesList({ searchQuery = '' }: ServicesListProps) {
   return (
     <>
       {filteredServices.map(service => (
-        <ServiceCard key={service.idService} {...service} />
+        <ServiceCard key={service.id} {...service} />
       ))}
     </>
   )

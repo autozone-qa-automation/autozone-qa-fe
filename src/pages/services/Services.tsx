@@ -9,8 +9,8 @@ import { Autocomplete, Button, Container, Group, SimpleGrid, Stack } from '@mant
 import { IconPlus, IconSearch } from '@tabler/icons-react'
 import { useState } from 'react'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
-import { useGetServices } from '@/hooks/servicesGetServices'
-import type { Service } from '@/types/Service.types'
+import { useGetServices } from '@/hooks/useGetServices'
+import type { Service } from '@/types/service.types'
 import { BaseCard } from './ServicesAdd'
 import { ServicesList } from './ServicesCards'
 
