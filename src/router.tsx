@@ -16,6 +16,7 @@ import { Reports } from './pages/reports/Reports'
 import { Services } from './pages/services/Services'
 import { ServicesId } from './pages/services/ServicesId/ServicesId'
 import { TestCases } from './pages/tests-cases/TestCases'
+import { FeatureDetail } from './pages/features/FeatureDetail/FeatureDetail'
 
 /**
  * Configuración del enrutador principal de la aplicación.
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
       {
         path: 'features',
         element: <Features />,
+      },
+      {
+        path: 'features/:featureId',
+        element: <FeatureDetail />,
       },
       {
         path: 'generate',

@@ -9,22 +9,18 @@ import { Button } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useFeatures } from '@/hooks/useFeatures'
+import { DropdownServices } from './DropdownServices'
 import { FeaturesList } from './FeaturesList'
 
 export function Features() {
-  const { features } = useFeatures()
+  const { features, refetch, fetchFeaturesFiltered } = useFeatures()
 
   return (
     <div>
       <TitleHeader
-        title="Order Management"
+        title="Features"
         metaDetails={['']}
-        breadcrumbs={[
-          { title: 'Releases', href: '/releases' },
-          { title: 'Q2 2026 Regression', href: '#' },
-          { title: 'Order Management', href: '#' },
-          { title: 'Features', href: '#' },
-        ]}
+        breadcrumbs={[{ title: 'Features', href: '#' }]}
         actionComponent={
           <Button
             leftSection={<IconPlus size={16} stroke={2.5} />}
@@ -36,6 +32,17 @@ export function Features() {
             Add Feature
           </Button>
         }
+      />
+
+      <DropdownServices
+        onChange={(id: string | null) => {
+          if (!id) {
+            refetch()
+            return
+          }
+
+          void fetchFeaturesFiltered(id)
+        }}
       />
 
       <FeaturesList data={features} />

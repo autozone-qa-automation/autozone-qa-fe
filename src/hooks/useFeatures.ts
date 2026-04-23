@@ -17,6 +17,7 @@ interface UseFeaturesState {
 
 interface UseFeaturesReturn extends UseFeaturesState {
   refetch: () => Promise<void>
+  fetchFeaturesFiltered: (id: string) => Promise<void>
 }
 
 export const useFeatures = (): UseFeaturesReturn => {
@@ -45,9 +46,28 @@ export const useFeatures = (): UseFeaturesReturn => {
     }
   }, [])
 
+  const fetchFeaturesFiltered = useCallback(async (id: string) => {
+    setState(prev => ({ ...prev, isLoading: true, error: null }))
+
+    try {
+      const raw = await featureService.getAllFiltered(id)
+      setState({
+        features: raw.map(f => new FeatureVO(f)),
+        isLoading: false,
+        error: null,
+      })
+    } catch (err) {
+      setState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: err instanceof Error ? err.message : 'Failed to fetch features',
+      }))
+    }
+  }, [])
+
   useEffect(() => {
     fetchFeatures()
   }, [fetchFeatures])
 
-  return { ...state, refetch: fetchFeatures }
+  return { ...state, refetch: fetchFeatures, fetchFeaturesFiltered }
 }
