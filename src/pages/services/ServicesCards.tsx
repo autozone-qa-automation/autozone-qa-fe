@@ -27,7 +27,7 @@ const getServiceIcon = (nombre: string) => {
   }
 }
 
-export function ServiceCard({ idService, nombre }: ServiceCardProps) {
+export function ServiceCard({ id, nombre }: ServiceCardProps) {
   const handleCardClick = () => {
     window.location.href = `/services/${id}`
   }
@@ -105,7 +105,7 @@ export function ServicesList({ searchQuery = '' }: ServicesListProps) {
   return (
     <>
       {filteredServices.map((service: Service) => (
-        <ServiceCard key={service.id} idService={service.id} nombre={service.name} />
+        <ServiceCard key={service.id} id={service.id} nombre={service.name} />
       ))}
     </>
   )

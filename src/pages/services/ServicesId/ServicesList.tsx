@@ -5,7 +5,8 @@
  * Autozone QA Automation
  */
 
-import { Accordion, Button, Card, Group, Stack, Text } from '@mantine/core'
+// 1. Se agregó UnstyledButton a la importación
+import { Accordion, Button, Card, Group, Stack, Text, UnstyledButton } from '@mantine/core'
 import { useNavigate } from 'react-router'
 
 export interface FeatureItem {
@@ -79,12 +80,14 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
                       transition: 'background-color 0.2s ease',
                     }}
                     onClick={() => handleFeatureClick(feature.idFeature)}
-                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#f8f9fa')}
-                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) =>
+                      (e.currentTarget.style.backgroundColor = '#f8f9fa')
+                    }
+                    onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) =>
+                      (e.currentTarget.style.backgroundColor = 'transparent')
+                    }
                   >
                     <UnstyledButton
-                      component="a"
-                      href={`/features/${feature.idFeature}`}
                       p="sm"
                       style={{
                         flex: 1,
@@ -92,8 +95,6 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
                         alignItems: 'center',
                         transition: 'background 0.2s ease',
                       }}
-                      onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#f8f9fa')}
-                      onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
                       <Group gap="sm">
                         <Text size="xs" c="orange.6" fw={700}>
