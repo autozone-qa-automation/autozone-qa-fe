@@ -8,10 +8,10 @@
 import { Button, Group, Select, Stack, Textarea, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
-import { useCallback, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { useCreateFeature } from '@/hooks/useCreateFeature'
+import { useGetServices } from '@/hooks/servicesGetServices'
 
 export const schema = z.object({
   name: z.string().min(1, 'El nombre es obligatorio'),
@@ -27,41 +27,11 @@ const labelStyles = {
   },
 }
 
-interface ServiceResponse {
-  id: number | string
-  serviceName?: string
-  name?: string
-}
-
 type FormValues = z.infer<typeof schema>
 
 export function FeatureModalCreate() {
   const { createFeature, loading } = useCreateFeature()
-  const [services, setServices] = useState<{ value: string; label: string }[]>([])
-
-  const API_URL = import.meta.env.VITE_API_URL_LOCAL
-  const endpointService = `${API_URL}/v1/services`
-
-  const fetchServices = useCallback(async () => {
-    try {
-      const response = await fetch(endpointService)
-      const data = (await response.json()) as ServiceResponse[]
-
-      if (Array.isArray(data)) {
-        const formatted = data.map(item => ({
-          value: item.id.toString(),
-          label: item.serviceName || item.name || 'Unknown Service',
-        }))
-        setServices(formatted)
-      }
-    } catch (error) {
-      console.error('Error cargando servicios:', error)
-    }
-  }, [endpointService])
-
-  useEffect(() => {
-    void fetchServices()
-  }, [fetchServices])
+  const { services, loading: loadingServices } = useGetServices()
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -109,8 +79,13 @@ export function FeatureModalCreate() {
 
             <Select
               label="SERVICE NAME"
-              placeholder="Select a service..."
-              data={services}
+              placeholder="Select a service..." 
+              data={services.map((s: any) => ({
+                value: s.id.toString(),
+                label: s.serviceName || s.name || 'Unknown',
+              }))}
+              loading={loadingServices}
+              disabled={loadingServices}
               withAsterisk
               {...form.getInputProps('idServices')}
               styles={{ label: labelStyles.label }}

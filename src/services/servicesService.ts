@@ -8,11 +8,11 @@ import axiosInstance from '@/lib/axios'
 import type { Service } from '@/types/Service.types'
 
 export const getServices = async (): Promise<Service[]> => {
-  const { data } = await axiosInstance.get<Service[]>('/v1/services')
+  const { data } = await axiosInstance.get<Service[]>('/services')
   return data
 }
 
 export const getServiceById = async (id: number): Promise<Service> => {
-  const { data } = await axiosInstance.get<Service>(`/v1/services/${id}`)
+  const { data } = await axiosInstance.get<Service>(`/services/${id}`)
   return data
 }

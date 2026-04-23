@@ -6,14 +6,14 @@
  */
 
 import { useCallback, useState } from 'react'
-import { featureService } from '../services/FeatureService'
-import type { Feature, FeatureCreateRequest } from '../types/Feature.types'
+import { featureService } from '@/services/features.service'
+import type { Feature, CreateFeatureRequest } from '../types/feature.types'
 
 /**
  * Interfaz para la respuesta del hook de creación
  */
 interface IUseCreateFeatureResponse {
-  createFeature: (data: FeatureCreateRequest) => Promise<Feature | null>
+  createFeature: (data: CreateFeatureRequest) => Promise<Feature | null>
   loading: boolean
   error: string | null
   success: boolean
@@ -21,7 +21,6 @@ interface IUseCreateFeatureResponse {
 
 /**
  * Hook para manejar la creación de un nuevo Feature.
- * A diferencia de un GET, este no usa useEffect porque se dispara manualmente.
  */
 export const useCreateFeature = (): IUseCreateFeatureResponse => {
   const [loading, setLoading] = useState<boolean>(false)
@@ -31,7 +30,7 @@ export const useCreateFeature = (): IUseCreateFeatureResponse => {
   /**
    * Función para ejecutar la petición POST
    */
-  const createFeature = useCallback(async (data: FeatureCreateRequest): Promise<Feature | null> => {
+  const createFeature = useCallback(async (data: CreateFeatureRequest): Promise<Feature | null> => {
     setLoading(true)
     setError(null)
     setSuccess(false)
