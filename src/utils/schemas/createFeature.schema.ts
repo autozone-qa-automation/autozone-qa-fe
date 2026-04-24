@@ -14,9 +14,8 @@ export const featureSchema = z.object({
     .max(50, { message: 'Maximum 50 characters allowed' }),
   description: z
     .string()
-    .max(200, { message: 'Maximum 200 characters allowed' })
-    .nullable()
-    .or(z.literal('')),
+    .min(3, { message: 'Minimum 3 characters required' })
+    .max(200, { message: 'Maximum 200 characters allowed' }),
   idServices: z.string().min(1, 'Select a service'),
 })
 

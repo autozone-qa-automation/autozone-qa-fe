@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-
 /*
  * Tecnológico de Monterrey — Campus Chihuahua
- * Autozone QA Automation - THE FINAL STABLE VERSION
+ * Desarrollo e Implantación de Sistemas de Software
+ * TC3005B GPO500 - 2026
+ * Autozone QA Automation
  */
 
 import '@testing-library/jest-dom'
@@ -23,6 +23,7 @@ interface MockSelectProps {
 
 jest.mock('@mantine/core', () => {
   const original = jest.requireActual('@mantine/core')
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return {
     ...original,
     Select: ({ placeholder, value, onChange }: MockSelectProps) => (
@@ -60,24 +61,25 @@ describe('FeatureModalCreate Component', () => {
     )
   }
 
-  // NOTA: Quitamos el 'async'. El Linter ya no puede molestarnos.
-  test('debe llamar a createFeature con los datos correctos al enviar', () => {
+  test('debe llamar a createFeature con los datos correctos al enviar', async () => {
     mockCreateFeature.mockResolvedValue(true)
     setup()
 
     fireEvent.click(screen.getByText('+ New Feature'))
 
-    // Usamos 'return waitFor' para manejar la asincronía sin usar la palabra 'async'
-    return waitFor(() => {
-      const nameInput = screen.getByPlaceholderText('e.g. Refund Processing')
-      fireEvent.change(nameInput, { target: { value: 'Funcionalidad Test' } })
+    const nameInput = await screen.findByPlaceholderText('e.g. Refund Processing')
+    fireEvent.change(nameInput, { target: { value: 'Funcionalidad Test' } })
 
-      const select = screen.getByTestId('mock-select')
-      fireEvent.change(select, { target: { value: '1' } })
+    const descInput = screen.getByPlaceholderText('Describe the feature scope and purpose...')
+    fireEvent.change(descInput, { target: { value: 'Descripción válida' } })
 
-      const submitBtn = screen.getByText('Create Feature')
-      fireEvent.click(submitBtn)
+    const select = screen.getByTestId('mock-select')
+    fireEvent.change(select, { target: { value: '1' } })
 
+    const submitBtn = screen.getByText('Create Feature')
+    fireEvent.click(submitBtn)
+
+    await waitFor(() => {
       expect(mockCreateFeature).toHaveBeenCalledWith(
         expect.objectContaining({
           featureName: 'Funcionalidad Test',
