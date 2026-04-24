@@ -5,16 +5,23 @@
  * Autozone QA Automation
  */
 
-import { z } from 'zod'
+/**
+ * Interfaz que describe un Feature
+ * tal cual viene del Backend (GET)
+ */
+export interface Feature {
+  idFeature: number
+  featureDescription: string
+  FeatureName: string
+  idService: number
+}
 
-export const featureSchema = z.object({
-  id: z.number(),
-  featureName: z.string(),
-  featureDescription: z.string(),
-  idService: z.number(),
-})
-
-export type Feature = z.infer<typeof featureSchema>
-
-export const createFeatureSchema = featureSchema.omit({ id: true })
-export type CreateFeatureRequest = z.infer<typeof createFeatureSchema>
+/**
+ * Interfaz para crear un Feature (POST)
+ * Basado en el payload que nos funcionó
+ */
+export interface FeatureCreateRequest {
+  featureName: string
+  featureDescription: string
+  idService: number
+}
