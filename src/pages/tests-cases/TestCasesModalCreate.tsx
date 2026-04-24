@@ -157,21 +157,21 @@ export function TestCasesModalCreate() {
         >
           <Stack gap="md">
             <TextInput
-              label="NOMBRE"
+              label="NAME"
               placeholder="e.g. User Login Validation"
               withAsterisk
               error={form.errors.title}
               {...form.getInputProps('title')}
             />
 
-            <TextInput label="ID" value="Se generará automáticamente" placeholder="" disabled />
+            <TextInput label="ID" value="Automatically generated" placeholder="" disabled />
 
             <Select
-              label="FEATURE RELACIONADO"
+              label="RELATED FEATURE"
               placeholder="Buscar o seleccionar feature"
               data={featureOptions}
               searchable
-              nothingFoundMessage="No se encontraron features"
+              nothingFoundMessage="Features not found"
               withAsterisk
               value={form.values.relatedFeature ? String(form.values.relatedFeature) : null}
               onChange={val => form.setFieldValue('relatedFeature', val ? Number(val) : 0)}
@@ -180,13 +180,13 @@ export function TestCasesModalCreate() {
 
             <Stack gap={4}>
               <Text size="sm" fw={600} c="black">
-                TIPO
+                TYPE
               </Text>
               <SegmentedControl
                 fullWidth
                 color="orange"
                 data={[
-                  { label: 'Regresión', value: 'REGRESSION' },
+                  { label: 'Regression', value: 'REGRESSION' },
                   { label: 'On demand', value: 'ON_DEMAND' },
                 ]}
                 {...form.getInputProps('type')}
@@ -198,44 +198,44 @@ export function TestCasesModalCreate() {
             </Stack>
 
             <Textarea
-              label="DESCRIPCIÓN"
-              placeholder="Descripción del test case..."
+              label="DESCRIPTION"
+              placeholder="Describe the test case in detail..."
               error={form.errors.description}
               {...form.getInputProps('description')}
             />
 
             <Textarea
-              label="PRECONDICIONES"
-              placeholder="Define el estado antes del test..."
+              label="PRECONDITIONS"
+              placeholder="Define the state required before executing the test..."
               error={form.errors.preconditions}
               {...form.getInputProps('preconditions')}
             />
 
             <Textarea
-              label="ENTRADAS"
-              placeholder="Datos de entrada necesarios para ejecutar el test..."
+              label="INPUTS"
+              placeholder="Inputs required for the test case..."
               error={form.errors.inputs}
               {...form.getInputProps('inputs')}
             />
 
             <Textarea
-              label="PASOS"
-              placeholder="Describe cada uno de los pasos..."
+              label="STEPS"
+              placeholder="Describe each step to execute the test case..."
               withAsterisk
               error={form.errors.steps}
               {...form.getInputProps('steps')}
             />
 
             <Textarea
-              label="POSTCONDICIONES"
-              placeholder="Define el estado esperado después del test..."
+              label="POSTCONDITIONS"
+              placeholder="Define the state expected after executing the test..."
               error={form.errors.postconditions}
               {...form.getInputProps('postconditions')}
             />
 
             <Textarea
-              label="SALIDA ESPERADA"
-              placeholder="Datos de salida esperados..."
+              label="EXPECTED OUTPUT"
+              placeholder="Output expected after executing the test case..."
               withAsterisk
               error={form.errors.expectedOutput}
               {...form.getInputProps('expectedOutput')}
