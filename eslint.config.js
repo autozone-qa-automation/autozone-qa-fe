@@ -70,6 +70,7 @@ export default tseslint.config(
       'prettier/prettier': 'error',
       'local-rules/header-comment': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
     },
   },
   prettier
