@@ -21,25 +21,37 @@ import {
   type NotificationData,
   showNotification as mantineShowNotification,
 } from '@mantine/notifications'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { useTestCases } from '@/hooks/useCreateTestCase'
 import { type CreateTestCaseRequest, createTestCaseSchema } from '@/types/TestCases.types'
+import type { Feature } from '@/types/feature.types'
+import { featureService } from '@/services/features.service'
+
 
 type FormValues = CreateTestCaseRequest
 const showNotification = (notification: NotificationData): string =>
   (mantineShowNotification as (payload: NotificationData) => string)(notification)
 
 export function TestCasesModalCreate() {
-  const featureOptions = [
-    { value: '1', label: 'Checkout Flow' },
-    { value: '2', label: 'Order Confirmation' },
-    { value: '3', label: 'Payment Gateway' },
-    { value: '4', label: 'Order History' },
-    { value: '5', label: 'Cart Management' },
-  ]
+  const [featureOptions, setFeatureOptions] = useState<{ value: string; label: string }[]>([])
   const { create, loading, error } = useTestCases()
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadFeatures = async () => {
+      try {
+        const features = await featureService.getAll()
+        setFeatureOptions(features.map((f: Feature) => ({
+          value: String(f.id),
+          label: f.featureName,
+        })))
+      } catch (err) {
+        console.error('Error cargando features', err)
+      }
+    }
+    void loadFeatures()
+  }, [])
 
   const form = useForm<FormValues>({
     initialValues: {

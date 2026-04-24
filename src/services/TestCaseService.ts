@@ -9,7 +9,7 @@ import type { CreateTestCaseRequest } from '@/types/TestCases.types'
 import { apiService } from './api.service'
 
 class TestCaseService {
-  private readonly BASE_PATH = '/v1/test-cases'
+  private readonly BASE_PATH = '/test-cases'
 
   async create(data: CreateTestCaseRequest): Promise<void> {
     await apiService.post<void>(this.BASE_PATH, data)
