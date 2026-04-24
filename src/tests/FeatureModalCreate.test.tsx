@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 /*
  * Tecnológico de Monterrey — Campus Chihuahua
  * Autozone QA Automation - THE FINAL STABLE VERSION
