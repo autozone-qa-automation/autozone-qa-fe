@@ -6,7 +6,7 @@
  */
 
 import '@mantine/core/styles.css'
-import '@mantine/notifications/styles.css'
+import '@mantine/notifications/styles.css' // Import the notifications styles
 import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import { StrictMode } from 'react'
