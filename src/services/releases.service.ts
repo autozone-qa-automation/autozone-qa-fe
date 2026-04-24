@@ -1,10 +1,12 @@
-/**
- * @file releases.service.ts
- * @description Lógica de comunicación con el API para la entidad Release.
+/*
+ * Tecnológico de Monterrey — Campus Chihuahua
+ * Desarrollo e Implantación de Sistemas de Software
+ * TC3005B GPO500 - 2026
+ * Autozone QA Automation
  */
 
-import { apiService } from '@/services/apiService'
 import type { Release } from '@/types/Release.types'
+import { apiService } from './api.service'
 
 /**
  * Clase que encapsula las llamadas a la API para Releases.

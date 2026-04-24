@@ -3,11 +3,11 @@
  * Autozone QA Automation - 2026
  */
 
-import { apiService } from '@/services/apiService'
+import { apiService } from '@/services/api.service'
 import { releaseService } from '@/services/releases.service'
 
 // Mockeamos el apiService para simular las llamadas de Axios
-jest.mock('@/services/apiService')
+jest.mock('@/services/api.service')
 
 describe('ReleaseService', () => {
   const mockReleases = [

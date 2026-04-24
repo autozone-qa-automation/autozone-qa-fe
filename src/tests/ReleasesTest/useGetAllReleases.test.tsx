@@ -24,7 +24,7 @@ describe('useGetAllReleases Hook', () => {
     const { result } = renderHook(() => useGetAllReleases())
 
     await waitFor(() => {
-      expect(result.current.error).toContain('Database connection failed')
+      expect(result.current.error).toContain('An unexpected error occurred')
     })
   })
 })

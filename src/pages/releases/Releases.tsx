@@ -1,3 +1,10 @@
+/*
+ * Tecnológico de Monterrey — Campus Chihuahua
+ * Desarrollo e Implantación de Sistemas de Software
+ * TC3005B GPO500 - 2026
+ * Autozone QA Automation
+ */
+
 import {
   Alert,
   Autocomplete,
@@ -93,9 +100,77 @@ export function Releases() {
   }
 
   return (
-    <div className={classes.container}>
-      <h1>Releases</h1>
-      <button onClick={() => gohome()}>go to home</button>
+    <div>
+      <TitleHeader
+        title="Releases"
+        metaDetails={['Manage your automated deployment pipelines']}
+        breadcrumbs={[]}
+        actionComponent={
+          <Button leftSection={<IconPlus size={16} stroke={2.5} />} color="orange.6" radius="md">
+            New Release
+          </Button>
+        }
+      />
+
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', width: '100%' }}>
+        {(['All', 'Active', 'Draft', 'Progress'] as const).map(s => (
+          <Button
+            key={s}
+            variant={statusFilter === s ? 'filled' : 'outline'}
+            color={statusFilter === s ? 'orange.6' : 'gray'}
+            bg={statusFilter === s ? '' : 'white'}
+            radius="md"
+            size={s === 'All' ? 'sm' : 'xs'}
+            fw={600}
+            onClick={() => setStatusFilter(s)}
+          >
+            {s === 'All' ? 'All Releases' : s}
+          </Button>
+        ))}
+
+        <Autocomplete
+          placeholder="Search releases..."
+          data={filteredAndSortedReleases.map(r => r.title)}
+          value={searchQuery}
+          onChange={setSearchQuery}
+          ml="auto"
+          size="xs"
+          w="220px"
+          leftSection={<IconSearch size={16} stroke={2.5} />}
+        />
+
+        <Select
+          placeholder="Sort by"
+          data={['Newest', 'Oldest']}
+          value={sortBy}
+          onChange={setSortBy}
+          size="xs"
+          leftSection={
+            <Text size="xs" fw={500} c="dimmed" ml={5}>
+              Sort:
+            </Text>
+          }
+          leftSectionWidth={45}
+        />
+      </div>
+
+      <div style={{ marginTop: '20px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+        {filteredAndSortedReleases.map((item, index) => (
+          <ButtonContentModal
+            key={`${item.title}-${index}`}
+            data={item}
+            onStatusChange={() => {}}
+          />
+        ))}
+
+        {filteredAndSortedReleases.length === 0 && (
+          <Box style={{ width: '100%', textAlign: 'center' }} mt={50}>
+            <Text c="dimmed" fz="lg" fw={500}>
+              No releases found
+            </Text>
+          </Box>
+        )}
+      </div>
     </div>
   )
 }
