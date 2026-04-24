@@ -8,7 +8,7 @@
 import { Modal } from '@mantine/core'
 
 interface ModalProps {
-  title: string
+  title?: string
   opened: boolean
   onClose: () => void
   children?: React.ReactNode
