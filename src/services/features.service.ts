@@ -5,6 +5,7 @@
  * Autozone QA Automation
  */
 
+import { handleServiceError } from '@/utils/handleServiceError'
 import type { CreateFeatureRequest, Feature } from '../types/feature.types'
 import { featureSchema } from '../types/feature.types'
 import { apiService } from './api.service'
@@ -21,8 +22,12 @@ export const featureService = {
    * @throws {ZodError} Si la respuesta de la API no cumple con el esquema esperado (featureSchema).
    */
   getAll: async (): Promise<Feature[]> => {
-    const data = await apiService.get<unknown>(BASE_URL)
-    return featureSchema.array().parse(data)
+    try {
+      const data = await apiService.get<unknown>(BASE_URL)
+      return featureSchema.array().parse(data)
+    } catch (error: unknown) {
+      return handleServiceError(error)
+    }
   },
 
   /**
@@ -32,8 +37,12 @@ export const featureService = {
    * @throws {ZodError} Si la respuesta de la API no cumple con el esquema esperado.
    */
   getAllFiltered: async (id: string): Promise<Feature[]> => {
-    const data = await apiService.get<unknown>(`${BASE_URL}/filtered/${id}`)
-    return featureSchema.array().parse(data)
+    try {
+      const data = await apiService.get<unknown>(`${BASE_URL}/filtered/${id}`)
+      return featureSchema.array().parse(data)
+    } catch (error: unknown) {
+      return handleServiceError(error)
+    }
   },
 
   /**
@@ -43,8 +52,12 @@ export const featureService = {
    * @throws {ZodError} Si la respuesta de la API no cumple con el esquema esperado.
    */
   getById: async (id: string): Promise<Feature> => {
-    const data = await apiService.get<unknown>(`${BASE_URL}/${id}`)
-    return featureSchema.parse(data)
+    try {
+      const data = await apiService.get<unknown>(`${BASE_URL}/${id}`)
+      return featureSchema.parse(data)
+    } catch (error: unknown) {
+      return handleServiceError(error)
+    }
   },
 
   /**
@@ -54,8 +67,12 @@ export const featureService = {
    * @throws {ZodError} Si la respuesta de la API no cumple con el esquema esperado.
    */
   create: async (payload: CreateFeatureRequest): Promise<Feature> => {
-    const data = await apiService.post<unknown>(BASE_URL, payload)
-    return featureSchema.parse(data)
+    try {
+      const data = await apiService.post<unknown>(BASE_URL, payload)
+      return featureSchema.parse(data)
+    } catch (error: unknown) {
+      return handleServiceError(error)
+    }
   },
 
   /**
@@ -66,8 +83,12 @@ export const featureService = {
    * @throws {ZodError} Si la respuesta de la API no cumple con el esquema esperado.
    */
   update: async (id: string, payload: Partial<CreateFeatureRequest>): Promise<Feature> => {
-    const data = await apiService.put<unknown>(`${BASE_URL}/${id}`, payload)
-    return featureSchema.parse(data)
+    try {
+      const data = await apiService.put<unknown>(`${BASE_URL}/${id}`, payload)
+      return featureSchema.parse(data)
+    } catch (error: unknown) {
+      return handleServiceError(error)
+    }
   },
 
   /**
@@ -76,6 +97,10 @@ export const featureService = {
    * @returns {Promise<void>} Una promesa que se resuelve cuando la operación de eliminación se completa con éxito.
    */
   remove: async (id: string): Promise<void> => {
-    await apiService.delete(`${BASE_URL}/${id}`)
+    try {
+      await apiService.delete(`${BASE_URL}/${id}`)
+    } catch (error: unknown) {
+      return handleServiceError(error)
+    }
   },
 }

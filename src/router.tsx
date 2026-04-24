@@ -8,6 +8,7 @@
 import { createBrowserRouter } from 'react-router'
 // Importación del Layout principal y las páginas (Vistas)
 import { MainLayout } from './components/layout/MainLayout/MainLayout'
+import { FeatureDetail } from './pages/features/FeatureDetail/FeatureDetail'
 import { Features } from './pages/features/Features'
 import { Generate } from './pages/generate/Generate'
 import { Home } from './pages/home/Home'
@@ -16,7 +17,6 @@ import { Reports } from './pages/reports/Reports'
 import { Services } from './pages/services/Services'
 import { ServicesId } from './pages/services/ServicesId/ServicesId'
 import { TestCases } from './pages/tests-cases/TestCases'
-import { FeatureDetail } from './pages/features/FeatureDetail/FeatureDetail'
 
 /**
  * Configuración del enrutador principal de la aplicación.

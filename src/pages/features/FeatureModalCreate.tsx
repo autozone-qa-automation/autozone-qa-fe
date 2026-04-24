@@ -7,6 +7,7 @@
 
 import { Button, Group, Select, Stack, Textarea, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { useDisclosure } from '@mantine/hooks' // <-- Agregado
 import { notifications } from '@mantine/notifications'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { useCreateFeature } from '@/hooks/useCreateFeature'
@@ -22,7 +23,10 @@ const labelStyles = {
   },
 }
 
-export function FeatureModalCreate() {
+export function FeatureModalCreate({ onSuccess }: { onSuccess?: () => Promise<void> }) {
+  // <-- Movimos el estado del modal aquí
+  const [opened, { open, close }] = useDisclosure(false)
+
   const { createFeature, loading: creating } = useCreateFeature()
   const { servicesOptions, loading: loadingServices } = useFeatureFormResources()
 
@@ -72,12 +76,20 @@ export function FeatureModalCreate() {
         color: 'teal',
       })
       form.reset()
+      close() // <-- Cerramos el modal tras el éxito
+      onSuccess?.()
     }
   }
 
   return (
     <div>
-      <ModalTemplate textButton="+ New Feature" title="New Feature">
+      {/* El botón para abrir el modal ahora vive aquí */}
+      <Button color="orange.6" radius="md" onClick={open}>
+        + New Feature
+      </Button>
+
+      {/* Pasamos opened y onClose al Template */}
+      <ModalTemplate opened={opened} onClose={close} title="New Feature">
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="md">
             <TextInput
@@ -114,7 +126,11 @@ export function FeatureModalCreate() {
                 variant="outline"
                 color="gray"
                 radius="md"
-                onClick={() => form.reset()}
+                // <-- Agregamos close() al botón de cancelar también
+                onClick={() => {
+                  form.reset()
+                  close()
+                }}
                 disabled={creating || loadingServices}
               >
                 Cancel
