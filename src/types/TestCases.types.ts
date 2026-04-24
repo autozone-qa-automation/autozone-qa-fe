@@ -28,7 +28,7 @@ export const testCaseSchema = z.object({
     .string()
     .min(1, { message: 'La salida esperada es obligatoria' })
     .max(300, { message: 'Máximo 300 caracteres' }),
-  type: z.enum(['Regression', 'On demand']),
+  type: z.enum(['REGRESSION', 'ON_DEMAND']),
   active: z.boolean().optional(),
 })
 

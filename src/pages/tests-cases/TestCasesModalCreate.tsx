@@ -51,7 +51,7 @@ export function TestCasesModalCreate() {
       steps: '',
       postconditions: '',
       expectedOutput: '',
-      type: 'Regression',
+      type: 'REGRESSION',
     },
     validate: values => {
       const result = createTestCaseSchema.safeParse(values)
@@ -174,8 +174,8 @@ export function TestCasesModalCreate() {
                 fullWidth
                 color="orange"
                 data={[
-                  { label: 'Regresión', value: 'Regression' },
-                  { label: 'On demand', value: 'On demand' },
+                  { label: 'Regresión', value: 'REGRESSION' },
+                  { label: 'On demand', value: 'ON_DEMAND' },
                 ]}
                 {...form.getInputProps('type')}
                 styles={{
