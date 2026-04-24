@@ -21,13 +21,12 @@ import {
   type NotificationData,
   showNotification as mantineShowNotification,
 } from '@mantine/notifications'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { useTestCases } from '@/hooks/useCreateTestCase'
-import { type CreateTestCaseRequest, createTestCaseSchema } from '@/types/TestCases.types'
-import type { Feature } from '@/types/feature.types'
 import { featureService } from '@/services/features.service'
-
+import type { Feature } from '@/types/feature.types'
+import { type CreateTestCaseRequest, createTestCaseSchema } from '@/types/TestCases.types'
 
 type FormValues = CreateTestCaseRequest
 const showNotification = (notification: NotificationData): string =>
@@ -42,10 +41,12 @@ export function TestCasesModalCreate() {
     const loadFeatures = async () => {
       try {
         const features = await featureService.getAll()
-        setFeatureOptions(features.map((f: Feature) => ({
-          value: String(f.id),
-          label: f.featureName,
-        })))
+        setFeatureOptions(
+          features.map((f: Feature) => ({
+            value: String(f.id),
+            label: f.featureName,
+          }))
+        )
       } catch (err) {
         console.error('Error cargando features', err)
       }
