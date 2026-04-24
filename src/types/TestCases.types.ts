@@ -6,9 +6,8 @@
  */
 import { z } from 'zod'
 
-export const testCaseSchema = z.object({
-  id: z.number(),
-  code: z.string().optional(),
+// 1. Define the base/create schema FIRST (without id, code, active)
+export const createTestCaseSchema = z.object({
   title: z
     .string()
     .min(1, { message: 'El nombre es obligatorio' })
@@ -29,15 +28,15 @@ export const testCaseSchema = z.object({
     .min(1, { message: 'La salida esperada es obligatoria' })
     .max(300, { message: 'Máximo 300 caracteres' }),
   type: z.enum(['REGRESSION', 'ON_DEMAND']),
+})
+
+export type CreateTestCaseRequest = z.infer<typeof createTestCaseSchema>
+
+// 2. Extend the base schema to add the system-generated fields
+export const testCaseSchema = createTestCaseSchema.extend({
+  id: z.number(),
+  code: z.string().optional(),
   active: z.boolean().optional(),
 })
 
 export type TestCase = z.infer<typeof testCaseSchema>
-
-export const createTestCaseSchema = testCaseSchema.omit({
-  id: true,
-  code: true,
-  active: true,
-})
-
-export type CreateTestCaseRequest = z.infer<typeof createTestCaseSchema>

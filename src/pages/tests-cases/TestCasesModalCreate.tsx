@@ -150,7 +150,7 @@ export function TestCasesModalCreate() {
 
   return (
     <div>
-      <ModalTemplate textButton="+ Nuevo Test Case" title="Crear Test Case ">
+      <ModalTemplate title="Crear Test Case " opened={false} onClose={() => form.reset()}>
         <form
           onSubmit={event => {
             event.preventDefault()

@@ -5,43 +5,35 @@
  * Autozone QA Automation
  */
 
-import { Button, Modal } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
+import { Modal } from '@mantine/core'
 
 interface ModalProps {
-  textButton: string
-  title: string
+  title?: string
+  opened: boolean
+  onClose: () => void
   children?: React.ReactNode
 }
 
-export function ModalTemplate({ textButton, title, children }: ModalProps) {
-  const [opened, { open, close }] = useDisclosure(false)
-
+export function ModalTemplate({ title, opened, onClose, children }: ModalProps) {
   return (
-    <>
-      <Modal
-        opened={opened}
-        onClose={close}
-        title={title}
-        radius={16}
-        size={'40%'}
-        padding="xl"
-        styles={{
-          title: {
-            fontWeight: 700,
-            fontSize: 26,
-            color: '#1A1A1F',
-            backgroundColor: '#FFFFFF',
-          },
-        }}
-        centered
-      >
-        {children}
-      </Modal>
-
-      <Button variant="default" onClick={open}>
-        {textButton}
-      </Button>
-    </>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title={title}
+      radius={16}
+      size={'40%'}
+      padding="xl"
+      styles={{
+        title: {
+          fontWeight: 700,
+          fontSize: 26,
+          color: '#1A1A1F',
+          backgroundColor: '#FFFFFF',
+        },
+      }}
+      centered
+    >
+      {children}
+    </Modal>
   )
 }

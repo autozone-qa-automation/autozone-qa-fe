@@ -6,28 +6,38 @@
  */
 
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
+import { ConnectingDatabasePanel } from '@/components/ui/HandleStates/ConnectingDatabasePanel'
+import { ErrorPanel } from '@/components/ui/HandleStates/ErrorPanel'
 import { useFeatures } from '@/hooks/useFeatures'
+import { DropdownServices } from './DropdownServices'
 import { FeatureModalCreate } from './FeatureModalCreate'
 import { FeaturesList } from './FeaturesList'
 
 export function Features() {
-  const { features } = useFeatures()
-
+  const { features, refetch, fetchFeaturesFiltered, error, isLoading } = useFeatures()
   return (
     <div>
       <TitleHeader
-        title="Order Management"
+        title="Features"
         metaDetails={['']}
-        breadcrumbs={[
-          { title: 'Releases', href: '/releases' },
-          { title: 'Q2 2026 Regression', href: '#' },
-          { title: 'Order Management', href: '#' },
-          { title: 'Features', href: '#' },
-        ]}
-        actionComponent={<FeatureModalCreate />}
+        breadcrumbs={[{ title: 'Features', href: '#' }]}
+        actionComponent={<FeatureModalCreate onSuccess={refetch} />}
       />
 
-      <FeaturesList data={features} />
+      <DropdownServices
+        onChange={(id: string | null) => {
+          if (!id || id === 'all') {
+            refetch()
+            return
+          }
+
+          fetchFeaturesFiltered(id)
+        }}
+      />
+
+      {isLoading && features.length === 0 && <ConnectingDatabasePanel />}
+      {error && <ErrorPanel error={error} />}
+      {features.length > 0 && !isLoading && !error && <FeaturesList data={features} />}
     </div>
   )
 }
