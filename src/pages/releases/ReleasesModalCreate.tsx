@@ -12,26 +12,35 @@ import {
   Input,
   MultiSelect,
   SegmentedControl,
-  Select,
   Stack,
+  TagsInput,
   Textarea,
   TextInput,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
+import { useCreateReleases } from '@/hooks/useCreateReleases'
+import { useFeatures } from '@/hooks/useFeatures'
+import { useGetServices } from '@/hooks/useGetServices'
+import { ReleaseCreateVO } from '@/models/ReleaseCreateVO'
 import type { FormValues } from '@/utils/schemas/release.schema'
 import { releaseSchema } from '@/utils/schemas/release.schema'
 
 export function ReleasesModalCreate() {
+  const { postRelease } = useCreateReleases()
+
+  const { features } = useFeatures()
+  const { services } = useGetServices()
+
   const form = useForm<FormValues>({
     initialValues: {
       releaseName: '',
-      objective: '',
-      version: '',
-      status: 'Draft',
-      service: '',
-      features: [],
-      tags: [],
+      releaseDescription: '',
+      releaseVersion: '',
+      releaseStatus: 'Draft',
+      releaseService: [],
+      releaseFeatures: [],
+      releaseTags: [],
     },
     validate: values => {
       const result = releaseSchema.safeParse(values)
@@ -50,7 +59,8 @@ export function ReleasesModalCreate() {
     validateInputOnChange: true,
   })
 
-  const handleSubmit = () => {
+  const handleSubmit = (values: FormValues) => {
+    postRelease(new ReleaseCreateVO(values))
     form.reset()
   }
   const inputStyles = {
@@ -63,6 +73,18 @@ export function ReleasesModalCreate() {
     label: { color: '#8C8C94', fontWeight: 500, fontSize: '12px' },
     required: { color: '#8C8C94' },
   }
+
+  const servicesOptions = services.map(s => ({
+    label: s.name,
+    value: String(s.id),
+  }))
+
+  const featuresOptions = features
+    .filter(f => form.values.releaseService.includes(f.idService))
+    .map(f => ({
+      label: f.featureName,
+      value: String(f.id),
+    }))
 
   return (
     <ModalTemplate textButton="+ New Release" title="Create Release">
@@ -81,8 +103,8 @@ export function ReleasesModalCreate() {
             label="OBJECTIVE"
             placeholder="Describe the purpose of this release..."
             minRows={3}
-            {...form.getInputProps('objective')}
-            error={form.errors.objective}
+            {...form.getInputProps('releaseDescription')}
+            error={form.errors.releaseDescription}
             styles={inputStyles}
           />
 
@@ -91,16 +113,21 @@ export function ReleasesModalCreate() {
               label="VERSION"
               withAsterisk
               placeholder="2.1.0"
-              {...form.getInputProps('version')}
-              error={form.errors.version}
+              {...form.getInputProps('releaseVersion')}
+              error={form.errors.releaseVersion}
               styles={inputStyles}
             />
 
-            <Input.Wrapper label="STATUS" required error={form.errors.status} styles={inputStyles}>
+            <Input.Wrapper
+              label="STATUS"
+              required
+              error={form.errors.releaseStatus}
+              styles={inputStyles}
+            >
               <SegmentedControl
                 w="100%"
                 data={['Draft', 'Progress', 'Active']}
-                {...form.getInputProps('status')}
+                {...form.getInputProps('releaseStatus')}
                 styles={{
                   root: { backgroundColor: '#FAF9F7' },
                   indicator: { backgroundColor: '#F26621' },
@@ -109,38 +136,47 @@ export function ReleasesModalCreate() {
             </Input.Wrapper>
           </Group>
 
-          <Select
+          <MultiSelect
             label="SERVICE"
             placeholder="Select a service..."
-            data={['Inventory Service', 'Auth Service', 'Payment Gateway']}
+            data={servicesOptions}
+            searchable
+            hidePickedOptions
             withAsterisk
-            {...form.getInputProps('service')}
-            error={form.errors.service}
+            value={form.values.releaseService.map(String)}
+            onChange={values => {
+              form.setFieldValue('releaseService', values.map(Number))
+              form.setFieldValue('releaseFeatures', [])
+            }}
+            error={form.errors.releaseService}
             styles={inputStyles}
           />
 
           <MultiSelect
             label="FEATURES"
             placeholder={
-              form.values.service ? 'Select features...' : 'Requires prior service selection...'
+              form.values.releaseService.length === 0
+                ? 'Requires prior service selection...'
+                : 'Select features...'
             }
-            data={['Feature A', 'Feature B', 'Feature C']}
+            data={featuresOptions}
             searchable
             hidePickedOptions
-            disabled={!form.getInputProps('service').value}
-            {...form.getInputProps('features')}
-            error={form.errors.features}
+            withAsterisk
+            disabled={form.values.releaseService.length === 0}
+            value={form.values.releaseFeatures.map(String)}
+            onChange={values => form.setFieldValue('releaseFeatures', values.map(Number))}
+            error={form.errors.releaseFeatures}
             styles={inputStyles}
           />
 
-          <MultiSelect
+          <TagsInput
             label="TAGS"
-            placeholder="hotfix, retail..."
-            data={['hotfix', 'retail', 'critical', 'ui-update']}
-            searchable
-            hidePickedOptions
-            {...form.getInputProps('tags')}
-            error={form.errors.tags}
+            placeholder="Type a tag and press Enter..."
+            clearable
+            withAsterisk
+            {...form.getInputProps('releaseTags')}
+            error={form.errors.releaseTags}
             styles={inputStyles}
           />
 
