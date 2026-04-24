@@ -6,6 +6,7 @@
  */
 import { z } from 'zod'
 
+// 1. Define the base/create schema FIRST (without id, code, active)
 export const createTestCaseSchema = z.object({
   title: z
     .string()
@@ -31,6 +32,7 @@ export const createTestCaseSchema = z.object({
 
 export type CreateTestCaseRequest = z.infer<typeof createTestCaseSchema>
 
+// 2. Extend the base schema to add the system-generated fields
 export const testCaseSchema = createTestCaseSchema.extend({
   id: z.number(),
   code: z.string().optional(),
