@@ -24,7 +24,7 @@ describe('useGetAllReleases Hook', () => {
     const { result } = renderHook(() => useGetAllReleases())
 
     await waitFor(() => {
-      expect(result.current.error).toContain('An unexpected error occurred')
+      expect(result.current.error).toContain('Unexpected error connecting to Spring Boot')
     })
   })
 })
