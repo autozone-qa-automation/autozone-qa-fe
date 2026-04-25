@@ -32,7 +32,11 @@ type FormValues = CreateTestCaseRequest
 const showNotification = (notification: NotificationData): string =>
   (mantineShowNotification as (payload: NotificationData) => string)(notification)
 
-export function TestCasesModalCreate() {
+interface Props {
+  opened: boolean
+  onClose: () => void
+}
+export function TestCasesModalCreate({ opened, onClose }: Props) {
   const [featureOptions, setFeatureOptions] = useState<{ value: string; label: string }[]>([])
   const { create, loading, error } = useTestCases()
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null)
@@ -150,7 +154,7 @@ export function TestCasesModalCreate() {
 
   return (
     <div>
-      <ModalTemplate title="Crear Test Case " opened={false} onClose={() => form.reset()}>
+      <ModalTemplate title="Crear Test Case" opened={opened} onClose={onClose}>
         <form
           onSubmit={event => {
             event.preventDefault()
