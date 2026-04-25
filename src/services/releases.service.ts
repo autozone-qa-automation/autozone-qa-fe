@@ -1,32 +1,25 @@
-/*
- * Tecnológico de Monterrey — Campus Chihuahua
- * Desarrollo e Implantación de Sistemas de Software
- * TC3005B GPO500 - 2026
- * Autozone QA Automation
- */
-
-import type { Release } from '@/types/Release.types'
-import { apiService } from './api.service'
-
 /**
- * Clase que encapsula las llamadas a la API para Releases.
- * Utiliza un prefijo de ruta común para todas las peticiones.
+ * @file releases.service.ts
+ * @description Lógica de comunicación con el API de Spring Boot.
  */
+
+import { apiService } from '@/services/api.service'
+import type { Release } from '@/types/Release.types'
+
 class ReleaseService {
+  // IMPORTANTE: Verifica si tu server corre en http://localhost:8080
+  // Si apiService no tiene la base URL, cámbiala aquí a la ruta completa
   private readonly BASE_PATH = '/releases'
 
   /**
-   * Obtiene todos los releases desde el endpoint configurado.
-   * @returns {Promise<Release[]>} Promesa que resuelve a una lista de releases.
+   * Obtiene los releases del backend de Java.
    */
   getAll = async (): Promise<Release[]> => {
     return apiService.get<Release[]>(this.BASE_PATH)
   }
 
   /**
-   * Busca un release específico por su identificador.
-   * @param {number} id - Identificador único del release.
-   * @returns {Promise<Release>} Promesa con los datos del release.
+   * Obtiene un release por ID.
    */
   getById = async (id: number): Promise<Release> => {
     return apiService.get<Release>(`${this.BASE_PATH}/${id}`)

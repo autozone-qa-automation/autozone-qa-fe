@@ -5,6 +5,10 @@
 
 export type ReleaseStatus = 'Draft' | 'Active' | 'Progress'
 
+/**
+ * Interface que refleja exactamente el ReleaseVO del backend.
+ * Nota: releaseServices y releaseServiceIds son listas (arrays).
+ */
 export interface Release {
   releaseId: number
   releaseName: string
@@ -14,5 +18,6 @@ export interface Release {
   releaseVersion: string
   releaseTags: string
   releaseStatus: ReleaseStatus
-  releaseService: string
+  releaseServices: string[] // Corresponde a List<String> releaseServices
+  releaseServiceIds: number[] // Corresponde a List<Long> releaseServiceIds
 }

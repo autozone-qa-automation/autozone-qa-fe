@@ -1,8 +1,5 @@
-/*
- * Tecnológico de Monterrey — Campus Chihuahua
- * Desarrollo e Implantación de Sistemas de Software
- * TC3005B GPO500 - 2026
- * Autozone QA Automation
+/**
+ * @file Releases.tsx
  */
 
 import {
@@ -33,6 +30,7 @@ export function Releases() {
   const [sortBy, setSortBy] = useState<string | null>('Newest')
 
   const filteredAndSortedReleases = useMemo(() => {
+    // Mapeo dinámico: Backend (Release) -> Frontend (ReleaseData)
     const mapped: ReleaseData[] = releases.map(r => ({
       title: r.releaseName,
       objective: r.releaseDescription,
@@ -41,7 +39,9 @@ export function Releases() {
       creationDate: r.releaseCreationDate,
       releaseDate: r.releaseLaunchDate,
       status: r.releaseStatus,
-      service: r.releaseService,
+      // Extraemos el primer servicio y su ID para el enlace
+      service: r.releaseServices?.[0] || 'Global',
+      serviceId: r.releaseServiceIds?.[0] || null,
     }))
 
     return mapped
