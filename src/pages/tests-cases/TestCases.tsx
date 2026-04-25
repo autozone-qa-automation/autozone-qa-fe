@@ -13,9 +13,12 @@ import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useTestCases } from '@/hooks/useGetTestCases'
 import type { TestCaseVO } from '@/models/TestCaseVO'
 import { TestCasesList } from './TestCasesList'
+import { TestCasesModalCreate } from './TestCasesModalCreate'
 
 export function TestCases() {
   const { testCases: myTestCases, isLoading, error } = useTestCases()
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const [opened, { open, close }] = useDisclosure(false)
 
@@ -151,7 +154,7 @@ export function TestCases() {
             radius="md"
             size="md"
             fw={600}
-            onClick={() => {}}
+            onClick={() => setIsCreateModalOpen(true)}
           >
             New Test Case
           </Button>
@@ -164,6 +167,11 @@ export function TestCases() {
         data={featureOptions}
         value={selectedFeature}
         onChange={setSelectedFeature}
+      />
+
+      <TestCasesModalCreate
+        opened={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)} // Cierra el modal de creación
       />
 
       {isLoading ? (
