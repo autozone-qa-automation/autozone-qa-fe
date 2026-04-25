@@ -6,24 +6,11 @@
  */
 
 import { Accordion, Button, Card, Group, Stack, Text, UnstyledButton } from '@mantine/core'
+import { useGetTestCasesByFeature } from '@/hooks/useGetTestCasesByFeature'
 
-interface TestCase {
-  id: string
-  title: string
-}
+export function TestCasesPanel({ id }: { id: number }) {
+  const { testCases } = useGetTestCasesByFeature(id)
 
-const testCasesData: TestCase[] = [
-  { id: 'TC-0055', title: 'Display Correct Order Summary' },
-  { id: 'TC-0056', title: 'Display Correct Order ID' },
-  { id: 'TC-0057', title: 'Send Confirmation Email' },
-  { id: 'TC-0058', title: 'Email Contains Correct Order Details' },
-  { id: 'TC-0059', title: 'Generate Receipt Successfully' },
-  { id: 'TC-0060', title: 'Status Page Reflects Correct Order Status' },
-  { id: 'TC-0061', title: 'Confirmation Page Not Accessible Without Completed Order' },
-  { id: 'TC-0062', title: 'Confirmation Page Loads Within Acceptable Time' },
-]
-
-export function TestCasesPanel() {
   return (
     <Stack gap="sm">
       <Group justify="space-between">
@@ -59,21 +46,21 @@ export function TestCasesPanel() {
                   Linked test cases
                 </Text>
                 <Text size="xs" opacity={0.8}>
-                  • {testCasesData.length} test cases
+                  • {testCases.length} test cases
                 </Text>
               </Group>
             </Accordion.Control>
 
             <Accordion.Panel>
               <Stack gap={0}>
-                {testCasesData.map((testCase, index) => (
+                {testCases.map((testCase, index) => (
                   <Group
                     key={testCase.id}
                     wrap="nowrap"
                     justify="space-between"
                     gap={0}
                     style={{
-                      borderBottom: index !== testCasesData.length - 1 ? '1px solid #eee' : 'none',
+                      borderBottom: index !== testCases.length - 1 ? '1px solid #eee' : 'none',
                     }}
                   >
                     <UnstyledButton
@@ -105,7 +92,7 @@ export function TestCasesPanel() {
                   </Group>
                 ))}
 
-                {testCasesData.length === 0 && (
+                {testCases.length === 0 && (
                   <Text size="sm" p="md" c="dimmed" ta="center">
                     No hay test cases vinculados para este feature
                   </Text>

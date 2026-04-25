@@ -45,7 +45,7 @@ export function FeatureDetail() {
 
       <Divider mb="md" mt="md" />
 
-      <TestCasesPanel />
+      <TestCasesPanel id={Number(featureId)} />
     </Container>
   )
 }

@@ -23,6 +23,11 @@ export const testCaseService = {
     return testCaseSchema.parse(data)
   },
 
+  getByFeatureId: async (id: number): Promise<TestCase[]> => {
+    const data = await apiService.get<unknown>(`${BASE_URL}/feature/${id}`)
+    return testCaseSchema.array().parse(data)
+  },
+
   create: async (payload: CreateTestCaseRequest): Promise<TestCase> => {
     const data = await apiService.post<unknown>(BASE_URL, payload)
     return testCaseSchema.parse(data)
