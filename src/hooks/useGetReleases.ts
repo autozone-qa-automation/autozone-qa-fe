@@ -32,6 +32,7 @@ export const useGetAllReleases = () => {
       const data = await releaseService.getAll()
       setReleases(data)
     } catch (err: unknown) {
+      console.log(err)
       if (err instanceof Error) {
         setError(err.message)
       } else {

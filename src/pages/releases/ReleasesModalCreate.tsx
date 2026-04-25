@@ -18,16 +18,18 @@ import {
   TextInput,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { useCreateReleases } from '@/hooks/useCreateReleases'
 import { useFeatures } from '@/hooks/useFeatures'
 import { useGetServices } from '@/hooks/useGetServices'
 import { ReleaseCreateVO } from '@/models/ReleaseCreateVO'
 import type { FormValues } from '@/utils/schemas/release.schema'
 import { releaseSchema } from '@/utils/schemas/release.schema'
+import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
+import { useDisclosure } from '@mantine/hooks'
 
 export function ReleasesModalCreate() {
   const { postRelease } = useCreateReleases()
+  const [opened, { open, close }] = useDisclosure(false)
 
   const { features } = useFeatures()
   const { services } = useGetServices()
@@ -60,7 +62,13 @@ export function ReleasesModalCreate() {
   })
 
   const handleSubmit = (values: FormValues) => {
-    postRelease(new ReleaseCreateVO(values))
+    postRelease(
+      new ReleaseCreateVO({
+        ...values,
+        releaseCreationDate: new Date().toISOString().split('T')[0],
+      })
+    )
+    close()
     form.reset()
   }
   const inputStyles = {
@@ -87,109 +95,114 @@ export function ReleasesModalCreate() {
     }))
 
   return (
-    <ModalTemplate title="+ New Release" opened={false} onClose={() => form.reset()}>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="md">
-          <TextInput
-            label="RELEASE NAME"
-            withAsterisk
-            styles={inputStyles}
-            placeholder="e.g. Q4 Performance Patch"
-            {...form.getInputProps('releaseName')}
-            error={form.errors.releaseName}
-          />
-
-          <Textarea
-            label="OBJECTIVE"
-            placeholder="Describe the purpose of this release..."
-            minRows={3}
-            {...form.getInputProps('releaseDescription')}
-            error={form.errors.releaseDescription}
-            styles={inputStyles}
-          />
-
-          <Group grow align="flex-start">
+    <div>
+      <Button color="orange.6" radius="md" onClick={open}>
+        + New Feature
+      </Button>
+      <ModalTemplate opened={opened} onClose={close} title="New Feature">
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          <Stack gap="md">
             <TextInput
-              label="VERSION"
+              label="RELEASE NAME"
               withAsterisk
-              placeholder="2.1.0"
-              {...form.getInputProps('releaseVersion')}
-              error={form.errors.releaseVersion}
+              styles={inputStyles}
+              placeholder="e.g. Q4 Performance Patch"
+              {...form.getInputProps('releaseName')}
+              error={form.errors.releaseName}
+            />
+
+            <Textarea
+              label="OBJECTIVE"
+              placeholder="Describe the purpose of this release..."
+              minRows={3}
+              {...form.getInputProps('releaseDescription')}
+              error={form.errors.releaseDescription}
               styles={inputStyles}
             />
 
-            <Input.Wrapper
-              label="STATUS"
-              required
-              error={form.errors.releaseStatus}
-              styles={inputStyles}
-            >
-              <SegmentedControl
-                w="100%"
-                data={['Draft', 'Progress', 'Active']}
-                {...form.getInputProps('releaseStatus')}
-                styles={{
-                  root: { backgroundColor: '#FAF9F7' },
-                  indicator: { backgroundColor: '#F26621' },
-                }}
+            <Group grow align="flex-start">
+              <TextInput
+                label="VERSION"
+                withAsterisk
+                placeholder="2.1.0"
+                {...form.getInputProps('releaseVersion')}
+                error={form.errors.releaseVersion}
+                styles={inputStyles}
               />
-            </Input.Wrapper>
-          </Group>
 
-          <MultiSelect
-            label="SERVICE"
-            placeholder="Select a service..."
-            data={servicesOptions}
-            searchable
-            hidePickedOptions
-            withAsterisk
-            value={form.values.releaseService.map(String)}
-            onChange={values => {
-              form.setFieldValue('releaseService', values.map(Number))
-              form.setFieldValue('releaseFeatures', [])
-            }}
-            error={form.errors.releaseService}
-            styles={inputStyles}
-          />
+              <Input.Wrapper
+                label="STATUS"
+                required
+                error={form.errors.releaseStatus}
+                styles={inputStyles}
+              >
+                <SegmentedControl
+                  w="100%"
+                  data={['Draft', 'Progress', 'Active']}
+                  {...form.getInputProps('releaseStatus')}
+                  styles={{
+                    root: { backgroundColor: '#FAF9F7' },
+                    indicator: { backgroundColor: '#F26621' },
+                  }}
+                />
+              </Input.Wrapper>
+            </Group>
 
-          <MultiSelect
-            label="FEATURES"
-            placeholder={
-              form.values.releaseService.length === 0
-                ? 'Requires prior service selection...'
-                : 'Select features...'
-            }
-            data={featuresOptions}
-            searchable
-            hidePickedOptions
-            withAsterisk
-            disabled={form.values.releaseService.length === 0}
-            value={form.values.releaseFeatures.map(String)}
-            onChange={values => form.setFieldValue('releaseFeatures', values.map(Number))}
-            error={form.errors.releaseFeatures}
-            styles={inputStyles}
-          />
+            <MultiSelect
+              label="SERVICE"
+              placeholder="Select a service..."
+              data={servicesOptions}
+              searchable
+              hidePickedOptions
+              withAsterisk
+              value={form.values.releaseService.map(String)}
+              onChange={values => {
+                form.setFieldValue('releaseService', values.map(Number))
+                form.setFieldValue('releaseFeatures', [])
+              }}
+              error={form.errors.releaseService}
+              styles={inputStyles}
+            />
 
-          <TagsInput
-            label="TAGS"
-            placeholder="Type a tag and press Enter..."
-            clearable
-            withAsterisk
-            {...form.getInputProps('releaseTags')}
-            error={form.errors.releaseTags}
-            styles={inputStyles}
-          />
+            <MultiSelect
+              label="FEATURES"
+              placeholder={
+                form.values.releaseService.length === 0
+                  ? 'Requires prior service selection...'
+                  : 'Select features...'
+              }
+              data={featuresOptions}
+              searchable
+              hidePickedOptions
+              withAsterisk
+              disabled={form.values.releaseService.length === 0}
+              value={form.values.releaseFeatures.map(String)}
+              onChange={values => form.setFieldValue('releaseFeatures', values.map(Number))}
+              error={form.errors.releaseFeatures}
+              styles={inputStyles}
+            />
 
-          <Group justify="flex-end" mt="xl">
-            <Button variant="outline" bg="#FFFFFF" color="#8C8C94" onClick={() => form.reset()}>
-              Cancel
-            </Button>
-            <Button type="submit" bg="#F26621" color="#FFFFFF">
-              Create Release
-            </Button>
-          </Group>
-        </Stack>
-      </form>
-    </ModalTemplate>
+            <TagsInput
+              label="TAGS"
+              placeholder="Type a tag and press Enter..."
+              clearable
+              withAsterisk
+              {...form.getInputProps('releaseTags')}
+              error={form.errors.releaseTags}
+              styles={inputStyles}
+            />
+
+            <Group justify="flex-end" mt="xl">
+              <Button variant="outline" bg="#FFFFFF" color="#8C8C94" onClick={() => close()}>
+                Cancel
+              </Button>
+              <Button type="submit" bg="#F26621" color="#FFFFFF">
+                Create Release
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </ModalTemplate>
+    </div>
   )
 }

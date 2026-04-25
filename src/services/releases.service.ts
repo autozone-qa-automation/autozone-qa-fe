@@ -24,7 +24,6 @@ export const releaseService = {
   },
 
   create: async (payload: ReleaseCreateVO): Promise<FormValues> => {
-    console.log(payload)
     const data = await apiService.post<unknown>(BASE_URL, payload)
     return releaseSchema.parse(data)
   },

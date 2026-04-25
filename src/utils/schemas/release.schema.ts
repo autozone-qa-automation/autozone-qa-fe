@@ -20,6 +20,7 @@ export const releaseSchema = z.object({
   releaseService: z.array(z.number().min(1, { message: 'You must select a service' })),
   releaseFeatures: z.array(z.number()).min(1, { message: 'Select at least one feature' }),
   releaseTags: z.array(z.string()).min(1, { message: 'Add at least one tag' }),
+  releaseCreationDate: z.string().optional(),
 })
 
 export type FormValues = z.infer<typeof releaseSchema>

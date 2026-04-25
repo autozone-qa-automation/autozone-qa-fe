@@ -15,6 +15,7 @@ export class ReleaseCreateVO {
   readonly releaseService: number[]
   readonly releaseFeatures: number[]
   readonly releaseTags: string[]
+  readonly releaseCreationDate: string | undefined
 
   constructor(data: FormValues) {
     this.releaseName = data.releaseName
@@ -24,6 +25,7 @@ export class ReleaseCreateVO {
     this.releaseService = data.releaseService
     this.releaseFeatures = data.releaseFeatures
     this.releaseTags = data.releaseTags
+    this.releaseCreationDate = data.releaseCreationDate
   }
 
   getDisplayName(): string {

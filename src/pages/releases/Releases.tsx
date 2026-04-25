@@ -16,7 +16,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core'
-import { IconDatabaseOff, IconPlus, IconRefresh, IconSearch } from '@tabler/icons-react'
+import { IconDatabaseOff, IconRefresh, IconSearch } from '@tabler/icons-react'
 import { useMemo, useState } from 'react'
 import type {
   ReleaseData,
@@ -25,6 +25,7 @@ import type {
 import { ButtonContentModal } from '@/components/layout/ButtonContentModal/ButtonContentModal'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetAllReleases } from '@/hooks/useGetReleases'
+import { ReleasesModalCreate } from './ReleasesModalCreate'
 
 export function Releases() {
   const { releases, loading, error, refetch } = useGetAllReleases()
@@ -105,11 +106,7 @@ export function Releases() {
         title="Releases"
         metaDetails={['Manage your automated deployment pipelines']}
         breadcrumbs={[]}
-        actionComponent={
-          <Button leftSection={<IconPlus size={16} stroke={2.5} />} color="orange.6" radius="md">
-            New Release
-          </Button>
-        }
+        actionComponent={<ReleasesModalCreate />}
       />
 
       <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', width: '100%' }}>
