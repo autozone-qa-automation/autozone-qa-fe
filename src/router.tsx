@@ -17,6 +17,7 @@ import { Reports } from './pages/reports/Reports'
 import { Services } from './pages/services/Services'
 import { ServicesId } from './pages/services/ServicesId/ServicesId'
 import { TestCases } from './pages/tests-cases/TestCases'
+import { Users } from './pages/users/Users'
 
 /**
  * Configuración del enrutador principal de la aplicación.
@@ -64,6 +65,10 @@ export const router = createBrowserRouter([
       {
         path: 'test-cases',
         element: <TestCases />,
+      },
+      {
+        path: 'users',
+        element: <Users />,
       },
     ],
   },

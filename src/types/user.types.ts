@@ -7,13 +7,25 @@
 
 /**
  * Interfaz describiendo un
+ * Role como estructura de datos
+ */
+export interface Role {
+  idRole: number
+  permisionlevel: string
+}
+
+/**
+ * Interfaz describiendo un
  * User como estructura de datos
  */
-
 export interface User {
   id: number
   name: string
+  lastname: string
   email: string
+  password?: string
+  idRole: number
+  role?: Role
 }
 
 /**
@@ -22,7 +34,10 @@ export interface User {
  */
 export interface UserRequest {
   name: string
+  lastname: string
   email: string
+  password: string
+  idRole: number
 }
 
 /**
@@ -31,5 +46,8 @@ export interface UserRequest {
  */
 export interface UserUpdateRequest {
   name?: string
+  lastname?: string
   email?: string
+  password?: string
+  idRole?: number
 }
