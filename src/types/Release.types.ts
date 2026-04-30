@@ -3,6 +3,8 @@
  * Autozone QA Automation - 2026
  */
 
+import type { FeatureVO } from '../models/FeatureVO'
+
 export type ReleaseStatus = 'Draft' | 'Active' | 'Progress'
 
 /**
@@ -14,10 +16,11 @@ export interface Release {
   releaseName: string
   releaseDescription: string
   releaseCreationDate: string
-  releaseLaunchDate: string
+  releaseLaunchDate: string | null
   releaseVersion: string
-  releaseTags: string
+  releaseTags: string[]
   releaseStatus: ReleaseStatus
-  releaseServices: string[] // Corresponde a List<String> releaseServices
-  releaseServiceIds: number[] // Corresponde a List<Long> releaseServiceIds
+  releaseServices: string[]
+  releaseServiceId: number
+  releaseFeatures: FeatureVO[]
 }

@@ -18,7 +18,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core'
-import { IconDatabaseOff, IconPlus, IconRefresh, IconSearch } from '@tabler/icons-react'
+import { IconDatabaseOff, IconRefresh, IconSearch } from '@tabler/icons-react'
 import { useMemo, useState } from 'react'
 import type {
   ReleaseData,
@@ -27,6 +27,7 @@ import type {
 import { ButtonContentModal } from '@/components/layout/ButtonContentModal/ButtonContentModal'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetAllReleases } from '@/hooks/useGetReleases'
+import { ReleasesModalCreate } from './ReleasesModalCreate'
 
 /**
  * Componente funcional que renderiza la página de gestión de Releases.
@@ -54,21 +55,18 @@ export function Releases() {
    * * @returns {ReleaseData[]} Lista de releases filtrada y ordenada lista para renderizar.
    */
   const filteredAndSortedReleases = useMemo(() => {
-    // 1. Mapeo dinámico: Backend (Release) -> Frontend (ReleaseData)
     const mapped: ReleaseData[] = releases.map(r => ({
       title: r.releaseName,
       objective: r.releaseDescription,
       version: r.releaseVersion,
-      tags: r.releaseTags,
+      tags: r.releaseTags.join(', '),
       creationDate: r.releaseCreationDate,
-      releaseDate: r.releaseLaunchDate,
+      releaseDate: r.releaseLaunchDate ?? '',
       status: r.releaseStatus,
-      // Extraemos el primer servicio y su ID para la navegación dinámica
       service: r.releaseServices?.[0] || 'Global',
-      serviceId: r.releaseServiceIds?.[0] || null,
+      serviceId: r.releaseServiceId || null,
     }))
 
-    // 2. Filtrado y 3. Ordenamiento
     return mapped
       .filter(release => {
         const matchesStatus = statusFilter === 'All' || release.status === statusFilter
@@ -126,6 +124,12 @@ export function Releases() {
     )
   }
 
+  const handleOnClose = () => {
+    setTimeout(() => {
+      refetch()
+    }, 200)
+  }
+
   // --- Vista Principal ---
   return (
     <div>
@@ -134,9 +138,11 @@ export function Releases() {
         metaDetails={['Manage your automated deployment pipelines']}
         breadcrumbs={[]}
         actionComponent={
-          <Button leftSection={<IconPlus size={16} stroke={2.5} />} color="orange.6" radius="md">
-            New Release
-          </Button>
+          <ReleasesModalCreate
+            handleOnClose={() => {
+              handleOnClose()
+            }}
+          />
         }
       />
 

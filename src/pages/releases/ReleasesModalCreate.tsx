@@ -14,24 +14,43 @@ import {
   SegmentedControl,
   Select,
   Stack,
+  TagsInput,
   Textarea,
   TextInput,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { useDisclosure } from '@mantine/hooks'
+import { useState } from 'react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
+import { useCreateReleases } from '@/hooks/useCreateReleases'
+import { useFeatures } from '@/hooks/useFeatures'
+import { useGetServices } from '@/hooks/useGetServices'
+import { ReleaseCreateVO } from '@/models/ReleaseCreateVO'
 import type { FormValues } from '@/utils/schemas/release.schema'
 import { releaseSchema } from '@/utils/schemas/release.schema'
 
-export function ReleasesModalCreate() {
+interface ReleaseCreateModalInterface {
+  handleOnClose: () => void
+}
+
+export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterface) {
+  const { postRelease } = useCreateReleases()
+  const [opened, { open, close }] = useDisclosure(false)
+
+  const { features } = useFeatures()
+  const { services } = useGetServices()
+
+  const [loading, setLoading] = useState<boolean>(false)
+
   const form = useForm<FormValues>({
     initialValues: {
       releaseName: '',
-      objective: '',
-      version: '',
-      status: 'Draft',
-      service: '',
-      features: [],
-      tags: [],
+      releaseDescription: '',
+      releaseVersion: '',
+      releaseStatus: 'Draft',
+      releaseServiceId: null,
+      releaseFeatureIds: [],
+      releaseTags: [],
     },
     validate: values => {
       const result = releaseSchema.safeParse(values)
@@ -50,8 +69,23 @@ export function ReleasesModalCreate() {
     validateInputOnChange: true,
   })
 
-  const handleSubmit = () => {
-    form.reset()
+  const handleSubmit = (values: FormValues) => {
+    try {
+      setLoading(true)
+      postRelease(
+        new ReleaseCreateVO({
+          ...values,
+          releaseCreationDate: new Date().toISOString().split('T')[0],
+        })
+      )
+      close()
+      form.reset()
+      handleOnClose()
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
   }
   const inputStyles = {
     input: {
@@ -64,96 +98,126 @@ export function ReleasesModalCreate() {
     required: { color: '#8C8C94' },
   }
 
+  const servicesOptions = services.map(s => ({
+    label: s.name,
+    value: String(s.id),
+  }))
+
+  const featuresOptions = features
+    .filter(f => f.idService === form.values.releaseServiceId)
+    .map(f => ({
+      label: f.featureName,
+      value: String(f.id),
+    }))
+
   return (
-    <ModalTemplate title="+ New Release" opened={false} onClose={() => form.reset()}>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="md">
-          <TextInput
-            label="RELEASE NAME"
-            withAsterisk
-            styles={inputStyles}
-            placeholder="e.g. Q4 Performance Patch"
-            {...form.getInputProps('releaseName')}
-            error={form.errors.releaseName}
-          />
-
-          <Textarea
-            label="OBJECTIVE"
-            placeholder="Describe the purpose of this release..."
-            minRows={3}
-            {...form.getInputProps('objective')}
-            error={form.errors.objective}
-            styles={inputStyles}
-          />
-
-          <Group grow align="flex-start">
+    <div>
+      <Button color="orange.6" radius="md" onClick={open}>
+        + New Release
+      </Button>
+      <ModalTemplate opened={opened} onClose={close} title="Create Release">
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          <Stack gap="md">
             <TextInput
-              label="VERSION"
+              label="RELEASE NAME"
               withAsterisk
-              placeholder="2.1.0"
-              {...form.getInputProps('version')}
-              error={form.errors.version}
+              styles={inputStyles}
+              placeholder="e.g. Q4 Performance Patch"
+              {...form.getInputProps('releaseName')}
+              error={form.errors.releaseName}
+            />
+
+            <Textarea
+              label="OBJECTIVE"
+              placeholder="Describe the purpose of this release..."
+              minRows={3}
+              {...form.getInputProps('releaseDescription')}
+              error={form.errors.releaseDescription}
               styles={inputStyles}
             />
 
-            <Input.Wrapper label="STATUS" required error={form.errors.status} styles={inputStyles}>
-              <SegmentedControl
-                w="100%"
-                data={['Draft', 'Progress', 'Active']}
-                {...form.getInputProps('status')}
-                styles={{
-                  root: { backgroundColor: '#FAF9F7' },
-                  indicator: { backgroundColor: '#F26621' },
-                }}
+            <Group grow align="flex-start">
+              <TextInput
+                label="VERSION"
+                withAsterisk
+                placeholder="2.1.0"
+                {...form.getInputProps('releaseVersion')}
+                error={form.errors.releaseVersion}
+                styles={inputStyles}
               />
-            </Input.Wrapper>
-          </Group>
 
-          <Select
-            label="SERVICE"
-            placeholder="Select a service..."
-            data={['Inventory Service', 'Auth Service', 'Payment Gateway']}
-            withAsterisk
-            {...form.getInputProps('service')}
-            error={form.errors.service}
-            styles={inputStyles}
-          />
+              <Input.Wrapper
+                label="STATUS"
+                required
+                error={form.errors.releaseStatus}
+                styles={inputStyles}
+              >
+                <SegmentedControl
+                  w="100%"
+                  data={['Draft', 'Progress', 'Active']}
+                  {...form.getInputProps('releaseStatus')}
+                  styles={{
+                    root: { backgroundColor: '#FAF9F7' },
+                    indicator: { backgroundColor: '#F26621' },
+                  }}
+                />
+              </Input.Wrapper>
+            </Group>
 
-          <MultiSelect
-            label="FEATURES"
-            placeholder={
-              form.values.service ? 'Select features...' : 'Requires prior service selection...'
-            }
-            data={['Feature A', 'Feature B', 'Feature C']}
-            searchable
-            hidePickedOptions
-            disabled={!form.getInputProps('service').value}
-            {...form.getInputProps('features')}
-            error={form.errors.features}
-            styles={inputStyles}
-          />
+            <Select
+              label="SERVICE"
+              placeholder="Select a service..."
+              data={servicesOptions}
+              searchable
+              withAsterisk
+              value={form.values.releaseServiceId ? String(form.values.releaseServiceId) : null}
+              onChange={value => {
+                form.setFieldValue('releaseServiceId', value ? Number(value) : null)
+                form.setFieldValue('releaseFeaturesIds', [])
+              }}
+              error={form.errors.releaseService}
+              styles={inputStyles}
+            />
 
-          <MultiSelect
-            label="TAGS"
-            placeholder="hotfix, retail..."
-            data={['hotfix', 'retail', 'critical', 'ui-update']}
-            searchable
-            hidePickedOptions
-            {...form.getInputProps('tags')}
-            error={form.errors.tags}
-            styles={inputStyles}
-          />
+            <MultiSelect
+              label="FEATURES"
+              placeholder={
+                !form.values.releaseServiceId
+                  ? 'Requires prior service selection...'
+                  : 'Select features...'
+              }
+              data={featuresOptions}
+              searchable
+              hidePickedOptions
+              withAsterisk
+              disabled={!form.values.releaseServiceId}
+              value={form.values.releaseFeatureIds.map(String)}
+              onChange={values => form.setFieldValue('releaseFeatureIds', values.map(Number))}
+              error={form.errors.releaseFeaturesIds}
+              styles={inputStyles}
+            />
 
-          <Group justify="flex-end" mt="xl">
-            <Button variant="outline" bg="#FFFFFF" color="#8C8C94" onClick={() => form.reset()}>
-              Cancel
-            </Button>
-            <Button type="submit" bg="#F26621" color="#FFFFFF">
-              Create Release
-            </Button>
-          </Group>
-        </Stack>
-      </form>
-    </ModalTemplate>
+            <TagsInput
+              label="TAGS"
+              placeholder="Type a tag and press Enter..."
+              clearable
+              withAsterisk
+              {...form.getInputProps('releaseTags')}
+              error={form.errors.releaseTags}
+              styles={inputStyles}
+            />
+
+            <Group justify="flex-end" mt="xl">
+              <Button variant="outline" bg="#FFFFFF" color="#8C8C94" onClick={() => close()}>
+                Cancel
+              </Button>
+              <Button type="submit" bg="#F26621" color="#FFFFFF">
+                {loading ? 'Cargando' : 'Create Release'}
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </ModalTemplate>
+    </div>
   )
 }

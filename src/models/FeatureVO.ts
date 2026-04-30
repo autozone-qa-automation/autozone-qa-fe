@@ -12,6 +12,7 @@ export class FeatureVO {
   readonly featureName: string
   readonly featureDescription: string
   readonly idService: number
+  readonly serviceName?: string
 
   constructor(data: Feature) {
     this.id = data.id

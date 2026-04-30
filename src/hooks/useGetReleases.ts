@@ -19,11 +19,10 @@ export const useGetAllReleases = () => {
       const data = await releaseService.getAll()
       setReleases(data)
     } catch (err: unknown) {
-      // Solución al error de "Unsafe any"
       if (err instanceof Error) {
         setError(err.message)
       } else {
-        setError('Unexpected error connecting to Spring Boot')
+        setError('Unexpected error!')
       }
     } finally {
       setLoading(false)
