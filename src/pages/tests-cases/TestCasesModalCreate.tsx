@@ -6,6 +6,7 @@
  */
 
 import {
+  Alert,
   Button,
   Group,
   SegmentedControl,
@@ -16,42 +17,47 @@ import {
   TextInput,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { zodResolver } from 'mantine-form-zod-resolver'
-import { z } from 'zod'
+import {
+  type NotificationData,
+  showNotification as mantineShowNotification,
+} from '@mantine/notifications'
+import { useEffect, useState } from 'react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
+import { useTestCases } from '@/hooks/useCreateTestCase'
+import { featureService } from '@/services/features.service'
+import type { Feature } from '@/types/feature.types'
+import { type CreateTestCaseRequest, createTestCaseSchema } from '@/types/TestCases.types'
 
-const schema = z.object({
-  title: z
-    .string()
-    .min(1, { message: 'El nombre es obligatorio' })
-    .max(30, { message: 'El nombre no puede exceder los 30 caracteres' }),
-  relatedFeature: z
-    .number({ message: 'El feature es obligatorio' })
-    .min(1, { message: 'El feature es obligatorio' }),
-  description: z.string().max(300, { message: 'Máximo 300 caracteres' }).optional().default(''),
-  preconditions: z.string().max(300, { message: 'Máximo 300 caracteres' }).optional().default(''),
-  inputs: z.string().max(300, { message: 'Máximo 150 caracteres' }).optional().default(''),
-  steps: z
-    .string()
-    .min(1, { message: 'Los pasos son obligatorios' })
-    .max(500, { message: 'Máximo 500 caracteres' }),
-  postconditions: z.string().max(300, { message: 'Máximo 300 caracteres' }).optional().default(''),
-  outputs: z
-    .string()
-    .min(1, { message: 'La salida esperada es obligatoria' })
-    .max(300, { message: 'Máximo 300 caracteres' }),
-  type: z.enum(['Regression', 'On demand']),
-})
+type FormValues = CreateTestCaseRequest
+const showNotification = (notification: NotificationData): string =>
+  (mantineShowNotification as (payload: NotificationData) => string)(notification)
 
-type FormValues = z.infer<typeof schema>
+interface Props {
+  opened: boolean
+  onClose: () => void
+}
+export function TestCasesModalCreate({ opened, onClose }: Props) {
+  const [featureOptions, setFeatureOptions] = useState<{ value: string; label: string }[]>([])
+  const { create, loading, error } = useTestCases()
+  const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null)
 
-const DUMMY_FEATURES = [
-  { value: '1', label: 'Feature 1' },
-  { value: '2', label: 'Feature 2' },
-  { value: '3', label: 'Feature 3' },
-]
+  useEffect(() => {
+    const loadFeatures = async () => {
+      try {
+        const features = await featureService.getAll()
+        setFeatureOptions(
+          features.map((f: Feature) => ({
+            value: String(f.id),
+            label: f.featureName,
+          }))
+        )
+      } catch (err) {
+        console.error('Error cargando features', err)
+      }
+    }
+    void loadFeatures()
+  }, [])
 
-export function TestCasesModalCreate() {
   const form = useForm<FormValues>({
     initialValues: {
       title: '',
@@ -61,36 +67,116 @@ export function TestCasesModalCreate() {
       inputs: '',
       steps: '',
       postconditions: '',
-      outputs: '',
-      type: 'Regression',
+      expectedOutput: '',
+      type: 'REGRESSION',
     },
+    validate: values => {
+      const result = createTestCaseSchema.safeParse(values)
+      if (result.success) {
+        return {}
+      }
 
-    validate: zodResolver(schema),
+      return result.error.issues.reduce<Record<string, string>>((acc, issue) => {
+        const key = issue.path[0]
+        if (typeof key === 'string' && !acc[key]) {
+          acc[key] = issue.message
+        }
+        return acc
+      }, {})
+    },
+    validateInputOnChange: true,
+    validateInputOnBlur: true,
   })
 
-  const handleSubmit = (values: FormValues) => {
-    console.error(values)
+  const handleSubmit = async (values: FormValues) => {
+    try {
+      setFormErrorMessage(null)
+      const success = await create(values)
+      if (success) {
+        form.reset()
+        showNotification({
+          title: 'Test case creado',
+          message: 'El test case se creó correctamente.',
+          color: 'green',
+          position: 'top-right',
+        })
+      } else {
+        showNotification({
+          title: 'No se pudo crear',
+          message: error ?? 'Ocurrió un error al crear el test case.',
+          color: 'red',
+          position: 'top-right',
+        })
+      }
+    } catch (submitError) {
+      const message =
+        submitError instanceof Error ? submitError.message : 'Error inesperado al crear.'
+      setFormErrorMessage(message)
+      showNotification({
+        title: 'Error inesperado',
+        message,
+        color: 'red',
+        position: 'top-right',
+      })
+    }
+  }
+
+  const handleCreateClick = async () => {
+    try {
+      const validation = form.validate()
+      if (validation.hasErrors) {
+        const message = 'Corrige los errores del formulario para continuar.'
+        setFormErrorMessage(message)
+        showNotification({
+          title: 'Formulario invalido',
+          message,
+          color: 'yellow',
+          position: 'top-right',
+        })
+        return
+      }
+      setFormErrorMessage(null)
+      await handleSubmit(form.values)
+    } catch (validationError) {
+      const message =
+        validationError instanceof Error
+          ? validationError.message
+          : 'No se pudo validar el formulario.'
+      setFormErrorMessage(message)
+      showNotification({
+        title: 'Error de validacion',
+        message,
+        color: 'red',
+        position: 'top-right',
+      })
+    }
   }
 
   return (
     <div>
-      <ModalTemplate textButton="+ New Test Case" title="Create Test Case ">
-        <form onSubmit={form.onSubmit(handleSubmit)}>
+      <ModalTemplate title="Crear Test Case" opened={opened} onClose={onClose}>
+        <form
+          onSubmit={event => {
+            event.preventDefault()
+          }}
+        >
           <Stack gap="md">
             <TextInput
-              label="TEST CASE NAME"
+              label="NAME"
               placeholder="e.g. User Login Validation"
               withAsterisk
+              error={form.errors.title}
               {...form.getInputProps('title')}
             />
-            <TextInput label="ID" value="Se generará automáticamente" readOnly />
+
+            <TextInput label="ID" value="Automatically generated" placeholder="" disabled />
 
             <Select
-              label="FEATURE RELACIONADO"
+              label="RELATED FEATURE"
               placeholder="Buscar o seleccionar feature"
-              data={DUMMY_FEATURES}
+              data={featureOptions}
               searchable
-              nothingFoundMessage="No se encontraron features"
+              nothingFoundMessage="Features not found"
               withAsterisk
               value={form.values.relatedFeature ? String(form.values.relatedFeature) : null}
               onChange={val => form.setFieldValue('relatedFeature', val ? Number(val) : 0)}
@@ -98,15 +184,15 @@ export function TestCasesModalCreate() {
             />
 
             <Stack gap={4}>
-              <Text size="sm" fw={500} c="dimmed">
-                TIPO*
+              <Text size="sm" fw={600} c="black">
+                TYPE
               </Text>
               <SegmentedControl
                 fullWidth
                 color="orange"
                 data={[
-                  { label: 'Regresión', value: 'Regression' },
-                  { label: 'On demand', value: 'On demand' },
+                  { label: 'Regression', value: 'REGRESSION' },
+                  { label: 'On demand', value: 'ON_DEMAND' },
                 ]}
                 {...form.getInputProps('type')}
                 styles={{
@@ -117,47 +203,62 @@ export function TestCasesModalCreate() {
             </Stack>
 
             <Textarea
-              label="DESCRIPCIÓN"
-              placeholder="Descripción del test case..."
+              label="DESCRIPTION"
+              placeholder="Describe the test case in detail..."
+              error={form.errors.description}
               {...form.getInputProps('description')}
             />
 
             <Textarea
-              label="PRECONDICIONES"
-              placeholder="Define el estado antes del test..."
+              label="PRECONDITIONS"
+              placeholder="Define the state required before executing the test..."
+              error={form.errors.preconditions}
               {...form.getInputProps('preconditions')}
             />
 
             <Textarea
-              label="ENTRADAS"
-              placeholder="Datos de entrada necesarios para ejecutar el test..."
+              label="INPUTS"
+              placeholder="Inputs required for the test case..."
+              error={form.errors.inputs}
               {...form.getInputProps('inputs')}
             />
 
             <Textarea
-              label="PASOS"
-              placeholder="Describe cada uno de los pasos..."
+              label="STEPS"
+              placeholder="Describe each step to execute the test case..."
               withAsterisk
+              error={form.errors.steps}
               {...form.getInputProps('steps')}
             />
 
             <Textarea
-              label="POSTCONDICIONES"
-              placeholder="Define el estado esperado después del test..."
+              label="POSTCONDITIONS"
+              placeholder="Define the state expected after executing the test..."
+              error={form.errors.postconditions}
               {...form.getInputProps('postconditions')}
             />
 
             <Textarea
-              label="SALIDA ESPERADA"
-              placeholder="Datos de salida esperados..."
-              {...form.getInputProps('outputs')}
+              label="EXPECTED OUTPUT"
+              placeholder="Output expected after executing the test case..."
+              withAsterisk
+              error={form.errors.expectedOutput}
+              {...form.getInputProps('expectedOutput')}
             />
 
+            {formErrorMessage && <Alert color="yellow">{formErrorMessage}</Alert>}
+            {error && <Alert color="red">{error}</Alert>}
+
             <Group justify="flex-end" mt="xl">
-              <Button variant="outline" color="gray" radius="md" onClick={() => form.reset()}>
-                Cancelar
-              </Button>
-              <Button type="submit" bg="#f46624" radius="md">
+              <Button
+                type="button"
+                bg="#f46624"
+                radius="md"
+                loading={loading}
+                onClick={() => {
+                  void handleCreateClick()
+                }}
+              >
                 Crear Test Case
               </Button>
             </Group>

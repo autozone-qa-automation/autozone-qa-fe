@@ -87,7 +87,7 @@ export function ReleasesModalCreate() {
     }))
 
   return (
-    <ModalTemplate textButton="+ New Release" title="Create Release">
+    <ModalTemplate title="+ New Release" opened={false} onClose={() => form.reset()}>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="md">
           <TextInput

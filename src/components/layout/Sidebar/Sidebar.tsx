@@ -4,19 +4,35 @@
  * TC3005B GPO500 - 2026
  * Autozone QA Automation
  */
-import { ActionIcon, Avatar, Box, Divider, Group, NavLink, Stack, Text } from '@mantine/core'
+import {
+  ActionIcon,
+  Avatar,
+  Badge,
+  Box,
+  Divider,
+  Group,
+  NavLink,
+  Popover,
+  Stack,
+  Text,
+  UnstyledButton,
+} from '@mantine/core'
 import {
   IconBox,
   IconBug,
+  IconChevronRight,
   IconChevronsLeft,
   IconFileDescription,
   IconHome,
+  IconLogout,
   IconPlugConnected,
   IconSubtitlesAi,
   IconTestPipe,
+  IconUsers,
 } from '@tabler/icons-react'
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
+import { useGetUserById } from '@/hooks/userGetUserById'
 import classes from './Sidebar.module.css'
 
 /**
@@ -42,8 +58,15 @@ const navData = [
 export function Sidebar() {
   const location = useLocation()
 
-  // Estado para rastrear qué enlace está seleccionado, inicializado con la ruta actual de la URL
   const [active, setActive] = useState(location.pathname)
+  const [popoverOpened, setPopoverOpened] = useState(false)
+
+  // ID=1 placeholder — replace with auth context user ID when auth is implemented
+  const { user } = useGetUserById(1)
+
+  const fullName = user ? `${user.name} ${user.lastname}` : '...'
+  const initials = user ? `${user.name[0]}${user.lastname[0]}`.toUpperCase() : '?'
+  const roleLabel = user?.role?.permisionlevel ?? '—'
 
   /**
    * Mapeo de navData para transformar objetos de configuración en componentes NavLink de Mantine.
@@ -91,19 +114,65 @@ export function Sidebar() {
       {/* Sección de Pie de página: Información del usuario */}
       <Box>
         <Divider mb="lg" />
-        <Group>
-          <Avatar color="orange" radius="xl" size="lg">
-            RS
-          </Avatar>
-          <Box>
-            <Text fw={600} size="sm">
-              Santiago Estrada
-            </Text>
-            <Text size="xs" c="dimmed">
-              Developer
-            </Text>
-          </Box>
-        </Group>
+        <Popover
+          opened={popoverOpened}
+          onChange={setPopoverOpened}
+          position="top-start"
+          width={224}
+          shadow="md"
+          radius="md"
+          withArrow={false}
+        >
+          <Popover.Target>
+            <UnstyledButton w="100%" onClick={() => setPopoverOpened(o => !o)}>
+              <Group>
+                <Avatar color="orange" radius="xl" size="lg">
+                  {initials}
+                </Avatar>
+                <Box>
+                  <Text fw={600} size="sm">
+                    {fullName}
+                  </Text>
+                  <Text size="xs" c="dimmed">
+                    {roleLabel}
+                  </Text>
+                </Box>
+              </Group>
+            </UnstyledButton>
+          </Popover.Target>
+
+          <Popover.Dropdown p={0}>
+            <Group p="xs" gap="xs" wrap="nowrap">
+              <Avatar color="orange" radius="xl" size="md">
+                {initials}
+              </Avatar>
+              <Box>
+                <Text fw={600} size="sm">
+                  {fullName}
+                </Text>
+                <Badge color="violet" variant="light" size="sm">
+                  {roleLabel}
+                </Badge>
+              </Box>
+            </Group>
+            <Divider />
+            <NavLink
+              component={Link}
+              to="/users"
+              label="User Management"
+              leftSection={<IconUsers size="1rem" />}
+              rightSection={<IconChevronRight size="0.8rem" />}
+              onClick={() => setPopoverOpened(false)}
+            />
+            <Divider />
+            <NavLink
+              label="Log Out"
+              leftSection={<IconLogout size="1rem" />}
+              onClick={() => setPopoverOpened(false)}
+              color="red"
+            />
+          </Popover.Dropdown>
+        </Popover>
       </Box>
     </Stack>
   )

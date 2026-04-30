@@ -4,7 +4,10 @@
  * TC3005B GPO500 - 2026
  * Autozone QA Automation
  */
+
+// 1. Se agregó UnstyledButton a la importación
 import { Accordion, Button, Card, Group, Stack, Text, UnstyledButton } from '@mantine/core'
+import { useNavigate } from 'react-router'
 
 export interface FeatureItem {
   idFeature: number
@@ -17,6 +20,12 @@ interface FeaturesListProps {
 }
 
 export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
+  const navigate = useNavigate()
+
+  const handleFeatureClick = (id: number) => {
+    navigate(`/features/${id}`)
+  }
+
   return (
     <Stack gap="sm">
       <Group justify="space-between">
@@ -67,11 +76,18 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
                     gap={0}
                     style={{
                       borderBottom: index !== data.length - 1 ? '1px solid #eee' : 'none',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s ease',
                     }}
+                    onClick={() => handleFeatureClick(feature.idFeature)}
+                    onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) =>
+                      (e.currentTarget.style.backgroundColor = '#f8f9fa')
+                    }
+                    onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) =>
+                      (e.currentTarget.style.backgroundColor = 'transparent')
+                    }
                   >
                     <UnstyledButton
-                      component="a"
-                      href={`/features/${feature.idFeature}`}
                       p="sm"
                       style={{
                         flex: 1,
@@ -79,8 +95,6 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
                         alignItems: 'center',
                         transition: 'background 0.2s ease',
                       }}
-                      onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#f8f9fa')}
-                      onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
                       <Group gap="sm">
                         <Text size="xs" c="orange.6" fw={700}>
@@ -96,9 +110,8 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
                       size="xs"
                       color="red"
                       variant="subtle"
-                      mr="md"
                       onClick={e => {
-                        e.preventDefault()
+                        e.stopPropagation()
                         onDeleteClick?.(feature.idFeature)
                       }}
                     >
