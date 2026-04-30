@@ -69,13 +69,13 @@ describe('TestCasesModalCreate', () => {
     await user.type(screen.getByLabelText(/STEPS/i), '1. Abrir navegador')
     await user.type(screen.getByLabelText(/EXPECTED OUTPUT/i), 'Sesión iniciada')
 
-    const select = screen.getByPlaceholderText(/Buscar o seleccionar feature/i)
+    const select = screen.getByPlaceholderText(/Search and select a related feature/i)
     await user.click(select)
 
     const option = await screen.findByText('Login')
     await user.click(option)
 
-    const submitBtn = screen.getByRole('button', { name: /Crear Test Case/i })
+    const submitBtn = screen.getByRole('button', { name: /Create Test Case/i })
     await user.click(submitBtn)
 
     await waitFor(() => {
