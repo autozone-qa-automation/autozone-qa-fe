@@ -52,7 +52,7 @@ export function TestCasesModalCreate({ opened, onClose }: Props) {
           }))
         )
       } catch (err) {
-        console.error('Error cargando features', err)
+        console.error('Error loading features', err)
       }
     }
     void loadFeatures()
@@ -95,25 +95,25 @@ export function TestCasesModalCreate({ opened, onClose }: Props) {
       if (success) {
         form.reset()
         showNotification({
-          title: 'Test case creado',
-          message: 'El test case se creó correctamente.',
+          title: 'Test case created',
+          message: 'The test case was created successfully.',
           color: 'green',
           position: 'top-right',
         })
       } else {
         showNotification({
-          title: 'No se pudo crear',
-          message: error ?? 'Ocurrió un error al crear el test case.',
+          title: 'Could not create test case',
+          message: error ?? 'An error occurred while creating the test case.',
           color: 'red',
           position: 'top-right',
         })
       }
     } catch (submitError) {
       const message =
-        submitError instanceof Error ? submitError.message : 'Error inesperado al crear.'
+        submitError instanceof Error ? submitError.message : 'Unexpected error occurred.'
       setFormErrorMessage(message)
       showNotification({
-        title: 'Error inesperado',
+        title: 'Unexpected error',
         message,
         color: 'red',
         position: 'top-right',
@@ -125,10 +125,10 @@ export function TestCasesModalCreate({ opened, onClose }: Props) {
     try {
       const validation = form.validate()
       if (validation.hasErrors) {
-        const message = 'Corrige los errores del formulario para continuar.'
+        const message = 'Please fix the validation errors before submitting the form.'
         setFormErrorMessage(message)
         showNotification({
-          title: 'Formulario invalido',
+          title: 'Invalid form',
           message,
           color: 'yellow',
           position: 'top-right',
@@ -141,10 +141,10 @@ export function TestCasesModalCreate({ opened, onClose }: Props) {
       const message =
         validationError instanceof Error
           ? validationError.message
-          : 'No se pudo validar el formulario.'
+          : 'Form could not be submitted due to validation errors.'
       setFormErrorMessage(message)
       showNotification({
-        title: 'Error de validacion',
+        title: 'Validation error',
         message,
         color: 'red',
         position: 'top-right',
@@ -154,7 +154,7 @@ export function TestCasesModalCreate({ opened, onClose }: Props) {
 
   return (
     <div>
-      <ModalTemplate title="Crear Test Case" opened={opened} onClose={onClose}>
+      <ModalTemplate title="Create Test Case" opened={opened} onClose={onClose}>
         <form
           onSubmit={event => {
             event.preventDefault()
@@ -169,11 +169,11 @@ export function TestCasesModalCreate({ opened, onClose }: Props) {
               {...form.getInputProps('title')}
             />
 
-            <TextInput label="ID" value="Automatically generated" placeholder="" disabled />
+            {/*<TextInput label="ID" value="Automatically generated" placeholder="" disabled /> */}
 
             <Select
               label="RELATED FEATURE"
-              placeholder="Buscar o seleccionar feature"
+              placeholder="Search and select a related feature"
               data={featureOptions}
               searchable
               nothingFoundMessage="Features not found"
@@ -259,7 +259,7 @@ export function TestCasesModalCreate({ opened, onClose }: Props) {
                   void handleCreateClick()
                 }}
               >
-                Crear Test Case
+                Create Test Case
               </Button>
             </Group>
           </Stack>

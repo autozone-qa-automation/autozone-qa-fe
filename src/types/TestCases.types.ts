@@ -6,33 +6,31 @@
  */
 import { z } from 'zod'
 
-// 1. Define the base/create schema FIRST (without id, code, active)
 export const createTestCaseSchema = z.object({
   title: z
     .string()
-    .min(1, { message: 'El nombre es obligatorio' })
-    .max(30, { message: 'Máximo 30 caracteres' }),
+    .min(1, { message: 'Name is required' })
+    .max(30, { message: 'Maximum 30 characters' }),
   relatedFeature: z
-    .number({ message: 'El feature es obligatorio' })
-    .min(1, { message: 'El feature es obligatorio' }),
-  description: z.string().max(300, { message: 'Máximo 300 caracteres' }).optional().default(''),
-  preconditions: z.string().max(300, { message: 'Máximo 300 caracteres' }).optional().default(''),
-  inputs: z.string().max(300, { message: 'Máximo 300 caracteres' }).optional().default(''),
+    .number({ message: 'Feature is required' })
+    .min(1, { message: 'Feature is required' }),
+  description: z.string().max(300, { message: 'Maximum 300 characters' }).optional().default(''),
+  preconditions: z.string().max(300, { message: 'Maximum 300 characters' }).optional().default(''),
+  inputs: z.string().max(300, { message: 'Maximum 300 characters' }).optional().default(''),
   steps: z
     .string()
-    .min(1, { message: 'Los pasos son obligatorios' })
-    .max(500, { message: 'Máximo 500 caracteres' }),
-  postconditions: z.string().max(300, { message: 'Máximo 300 caracteres' }).optional().default(''),
+    .min(1, { message: 'Steps are required' })
+    .max(500, { message: 'Maximum 500 characters' }),
+  postconditions: z.string().max(300, { message: 'Maximum 300 characters' }).optional().default(''),
   expectedOutput: z
     .string()
-    .min(1, { message: 'La salida esperada es obligatoria' })
-    .max(300, { message: 'Máximo 300 caracteres' }),
+    .min(1, { message: 'Expected output is required' })
+    .max(300, { message: 'Maximum 300 characters' }),
   type: z.enum(['REGRESSION', 'ON_DEMAND']),
 })
 
 export type CreateTestCaseRequest = z.infer<typeof createTestCaseSchema>
 
-// 2. Extend the base schema to add the system-generated fields
 export const testCaseSchema = createTestCaseSchema.extend({
   id: z.number(),
   code: z.string().optional(),
