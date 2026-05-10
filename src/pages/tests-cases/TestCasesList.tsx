@@ -45,6 +45,7 @@ export function TestCasesList({ data, onViewClick, onEditClick }: TestCasesListP
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
         <Button
+          data-testid="view-button" //Diego agrego esto, pal selenium
           variant="subtle"
           size="sm"
           color="orange.7"
