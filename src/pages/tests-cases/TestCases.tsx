@@ -65,7 +65,7 @@ export function TestCases() {
     <div>
       <Modal.Root opened={opened} onClose={handleClose}>
         <Modal.Overlay />
-        <Modal.Content>
+        <Modal.Content data-testid="testcase-modal">
           <Modal.Header>
             <Modal.Title fw={700} mb="lg" c="#1A1A1F">
               {selectedTestCase?.title}
