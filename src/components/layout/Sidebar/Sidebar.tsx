@@ -64,7 +64,7 @@ export function Sidebar() {
   // ID=1 placeholder — replace with auth context user ID when auth is implemented
   const { user } = useGetUserById(1)
 
-  const fullName = user ? `${user.name} ${user.lastname}` : '...'
+  const fullName = user ? `${user?.name} ${user.lastname}` : '...'
   const initials = user ? `${user.name[0]}${user.lastname[0]}`.toUpperCase() : '?'
   const roleLabel = user?.role?.permisionlevel ?? '—'
 
