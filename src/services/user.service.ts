@@ -26,11 +26,22 @@ class UserService {
 
   /**
    * Obtiene un usuario por su ID.
-   * @param {number} id - El ID del usuario a obtener
+   * @param {number} _id - El ID del usuario a obtener
    * @returns {Promise<User>} El usuario encontrado
    */
-  async getById(id: number): Promise<User> {
-    return apiService.get<User>(`${this.BASE_PATH}/${id}`)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async getById(_id: number): Promise<User> {
+    //return apiService.get<User>(`${this.BASE_PATH}/${id}`)
+    const hardcodedUser: User = {
+      id: 1,
+      name: 'John',
+      lastname: 'Doe',
+      email: 'text@example.com',
+      password: 'password',
+      idRole: 1,
+    }
+
+    return new Promise(res => setTimeout(() => res(hardcodedUser), 10))
   }
 
   /**
