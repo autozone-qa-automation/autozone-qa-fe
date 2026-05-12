@@ -13,3 +13,19 @@
 .mantine-SegmentedControl-label[data-active] {
   color: #FFFFFF !important;
 }
+
+.loginRightContainer {
+  width: 100%;
+  min-height: 100dvh;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginLeftContainer {
+  
+  width: 100%;
+  min-height: 100dvh;
+
+}
