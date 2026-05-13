@@ -5,7 +5,7 @@
  * Autozone QA Automation
  */
 
-import type { User, UserRequest, UserUpdateRequest } from '../types/user.types'
+import type { User, UserRequest, UserResponse, UserUpdateRequest } from '../types/user.types'
 import { apiService } from './api.service'
 
 /**
@@ -14,7 +14,7 @@ import { apiService } from './api.service'
  * Comunicación directa con la API a través del servicio de Axios.
  */
 class UserService {
-  private readonly BASE_PATH = '/v1/users'
+  private readonly BASE_PATH = '/users'
 
   /**
    * Obtiene la lista de todos los usuarios.
@@ -49,8 +49,8 @@ class UserService {
    * @param {UserRequest} data - Los datos del nuevo usuario
    * @returns {Promise<User>} El usuario creado con su ID asignado
    */
-  async create(data: UserRequest): Promise<User> {
-    return apiService.post<User>(this.BASE_PATH, data)
+  async create(data: UserRequest): Promise<UserResponse> {
+    return apiService.post<UserResponse>(this.BASE_PATH, data)
   }
 
   /**
