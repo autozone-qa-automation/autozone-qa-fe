@@ -20,6 +20,7 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
 import { useState } from 'react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { useCreateReleases } from '@/hooks/useCreateReleases'
@@ -48,7 +49,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
       releaseDescription: '',
       releaseVersion: '',
       releaseStatus: 'Draft',
-      releaseServiceId: null,
+      releaseServiceId: 0,
       releaseFeatureIds: [],
       releaseTags: [],
     },
@@ -78,6 +79,11 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
           releaseCreationDate: new Date().toISOString().split('T')[0],
         })
       )
+      notifications.show({
+        title: 'Success!',
+        message: 'Release created successfully',
+        color: 'teal',
+      })
       close()
       form.reset()
       handleOnClose()
@@ -115,7 +121,14 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
       <Button color="orange.6" radius="md" onClick={open}>
         + New Release
       </Button>
-      <ModalTemplate opened={opened} onClose={close} title="Create Release">
+      <ModalTemplate
+        opened={opened}
+        onClose={() => {
+          form.reset()
+          close()
+        }}
+        title="Create Release"
+      >
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="md">
             <TextInput
@@ -172,10 +185,10 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               withAsterisk
               value={form.values.releaseServiceId ? String(form.values.releaseServiceId) : null}
               onChange={value => {
-                form.setFieldValue('releaseServiceId', value ? Number(value) : null)
-                form.setFieldValue('releaseFeaturesIds', [])
+                form.setFieldValue('releaseServiceId', value ? Number(value) : 0)
+                form.setFieldValue('releaseFeatureIds', [])
               }}
-              error={form.errors.releaseService}
+              error={form.errors.releaseServiceId}
               styles={inputStyles}
             />
 
@@ -193,7 +206,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               disabled={!form.values.releaseServiceId}
               value={form.values.releaseFeatureIds.map(String)}
               onChange={values => form.setFieldValue('releaseFeatureIds', values.map(Number))}
-              error={form.errors.releaseFeaturesIds}
+              error={form.errors.releaseFeatureIds}
               styles={inputStyles}
             />
 
@@ -208,11 +221,19 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
             />
 
             <Group justify="flex-end" mt="xl">
-              <Button variant="outline" bg="#FFFFFF" color="#8C8C94" onClick={() => close()}>
+              <Button
+                variant="outline"
+                bg="#FFFFFF"
+                color="#8C8C94"
+                onClick={() => {
+                  form.reset()
+                  close()
+                }}
+              >
                 Cancel
               </Button>
               <Button type="submit" bg="#F26621" color="#FFFFFF">
-                {loading ? 'Cargando' : 'Create Release'}
+                {loading ? 'Loading' : 'Create Release'}
               </Button>
             </Group>
           </Stack>
