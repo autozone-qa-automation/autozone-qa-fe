@@ -14,6 +14,11 @@ export interface Role {
   permisionlevel: string
 }
 
+export interface RoleResponse {
+  id: number
+  permission: 'ADMIN' | 'DEV' | 'READ_ONLY'
+}
+
 /**
  * Interfaz describiendo un
  * User como estructura de datos
@@ -21,11 +26,22 @@ export interface Role {
 export interface User {
   id: number
   name: string
-  lastname: string
+  lastName: string
   email: string
   password?: string
-  idRole: number
+  roleId: number
   role?: Role
+}
+
+export interface UserResponse {
+  id: number
+  name: string
+  lastName: string
+  email: string
+  password: string
+  isActive: boolean
+  roleId: number
+  rolePermission: RoleResponse
 }
 
 /**
@@ -34,10 +50,11 @@ export interface User {
  */
 export interface UserRequest {
   name: string
-  lastname: string
+  lastName: string
   email: string
   password: string
-  idRole: number
+  roleId: number
+  isActive?: boolean
 }
 
 /**
@@ -46,8 +63,8 @@ export interface UserRequest {
  */
 export interface UserUpdateRequest {
   name?: string
-  lastname?: string
+  lastName?: string
   email?: string
   password?: string
-  idRole?: number
+  roleId?: number
 }

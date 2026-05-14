@@ -6,18 +6,15 @@
  */
 
 import { Button, Group, PasswordInput, Select, SimpleGrid, Stack, TextInput } from '@mantine/core'
-import { useForm } from '@mantine/form'
+import { isEmail, isNotEmpty, useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
-import { useState } from 'react'
+import bcrypt from 'bcryptjs'
+import { useEffect, useState } from 'react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
+import { roleService } from '@/services/role.service'
 import { userService } from '@/services/user.service'
 import type { UserRequest } from '@/types/user.types'
-
-const ROLE_OPTIONS = [
-  { value: '1', label: 'Developer' },
-  { value: '2', label: 'System Admin' },
-]
 
 const labelStyles = {
   label: {
@@ -31,21 +28,41 @@ const labelStyles = {
 export function UserCreateModal({ onSuccess }: { onSuccess?: () => Promise<void> }) {
   const [opened, { open, close }] = useDisclosure(false)
   const [loading, setLoading] = useState(false)
+  const [roleOptions, setRoleOptions] = useState<{ value: string; label: string }[]>([])
+
+  useEffect(() => {
+    if (!opened) return
+    roleService
+      .getAll()
+      .then(roles => setRoleOptions(roles.map(r => ({ value: String(r.id), label: r.permission }))))
+      .catch(() =>
+        notifications.show({ title: 'Error', message: 'Failed to load roles', color: 'red' })
+      )
+  }, [opened])
 
   const form = useForm<UserRequest>({
     initialValues: {
       name: '',
-      lastname: '',
+      lastName: '',
       email: '',
       password: '',
-      idRole: 0,
+      roleId: 0,
+      isActive: true,
+    },
+    validate: {
+      name: isNotEmpty('Name is required'),
+      lastName: isNotEmpty('Last name is required'),
+      email: isEmail('Valid email required'),
+      password: isNotEmpty('Password is required'),
+      roleId: v => (v > 0 ? null : 'Role is required'),
     },
   })
 
   const handleSubmit = async (values: UserRequest) => {
     setLoading(true)
     try {
-      await userService.create(values)
+      const hashedPassword = await bcrypt.hash(values.password, 10)
+      await userService.create({ ...values, password: hashedPassword })
       notifications.show({ title: 'Success!', message: 'User created successfully', color: 'teal' })
       form.reset()
       close()
@@ -83,7 +100,7 @@ export function UserCreateModal({ onSuccess }: { onSuccess?: () => Promise<void>
                 label="LAST NAME"
                 placeholder="e.g. Estrada"
                 withAsterisk
-                {...form.getInputProps('lastname')}
+                {...form.getInputProps('lastName')}
                 styles={labelStyles}
                 data-testid="user-lastname-input"
               />
@@ -110,11 +127,11 @@ export function UserCreateModal({ onSuccess }: { onSuccess?: () => Promise<void>
             <Select
               label="ROLE"
               placeholder="Select a role..."
-              data={ROLE_OPTIONS}
+              data={roleOptions}
               withAsterisk
-              value={form.values.idRole !== 0 ? String(form.values.idRole) : null}
-              onChange={v => form.setFieldValue('idRole', v ? parseInt(v) : 0)}
-              error={form.errors.idRole}
+              value={form.values.roleId !== 0 ? String(form.values.roleId) : null}
+              onChange={v => form.setFieldValue('roleId', v ? parseInt(v) : 0)}
+              error={form.errors.roleId}
               styles={labelStyles}
               data-testid="user-role-select"
             />
