@@ -26,10 +26,10 @@ export interface RoleResponse {
 export interface User {
   id: number
   name: string
-  lastname: string
+  lastName: string
   email: string
   password?: string
-  idRole: number
+  roleId: number
   role?: Role
 }
 
@@ -63,8 +63,8 @@ export interface UserRequest {
  */
 export interface UserUpdateRequest {
   name?: string
-  lastname?: string
+  lastName?: string
   email?: string
   password?: string
-  idRole?: number
+  roleId?: number
 }

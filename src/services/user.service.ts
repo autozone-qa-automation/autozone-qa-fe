@@ -35,10 +35,10 @@ class UserService {
     const hardcodedUser: User = {
       id: 1,
       name: 'John',
-      lastname: 'Doe',
+      lastName: 'Doe',
       email: 'text@example.com',
       password: 'password',
-      idRole: 1,
+      roleId: 1,
     }
 
     return new Promise(res => setTimeout(() => res(hardcodedUser), 10))
