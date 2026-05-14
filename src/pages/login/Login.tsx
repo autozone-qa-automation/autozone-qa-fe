@@ -10,24 +10,40 @@ import {
   Box,
   Button,
   Container,
+  Divider,
   Flex,
   Group,
+  Paper,
   Stack,
   TextInput,
+  Title,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
+import { useLogin } from '@/hooks/useLogin'
 import { type FormValues, loginschema } from '@/utils/schemas/login.schema'
 import azBackground from '../../assets/AZ_bg.png'
 import classes from './LoginModal.module.css'
 
+/**
+ * Login page component — Main authentication screen for QA-Zone.
+ *
+ * @component
+ * @returns {React.ReactElement} Full-screen login form with background
+ */
 export function Login() {
-  const [opened, { open, close }] = useDisclosure(false)
+  const [opened, { open }] = useDisclosure(false)
+  const navigate = useNavigate()
+  const { login, isLoading, error } = useLogin()
 
   useEffect(() => {
+    if (error) {
+      alert('Error logging in: ' + error)
+    }
     open()
-  }, [open])
+  }, [opened, open, error])
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -51,8 +67,21 @@ export function Login() {
     validateInputOnChange: true,
   })
 
-  const handleSubmit = () => {
-    return null
+  /**
+   * Handles login form submission.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
+  const handleSubmit = async () => {
+    const validated = form.validate()
+    if (validated.hasErrors) return
+    try {
+      const user = await login({ mail: form.values.email, password: form.values.password })
+      if (user) navigate('/')
+    } catch {
+      // error is handled in the hook
+    }
   }
   const inputStyles = {
     input: {
@@ -70,44 +99,51 @@ export function Login() {
       <BackgroundImage src={azBackground} radius="xs" h="100%" w="100%">
         <Flex>
           <Container className={classes.loginRightContainer}>
-            <form>
-              <Stack gap="md">
-                <TextInput
-                  label="Email"
-                  withAsterisk
-                  styles={inputStyles}
-                  placeholder="e.g. user@example.com"
-                  {...form.getInputProps('email')}
-                  error={form?.errors?.email}
-                  data-testid="login-email-input"
-                />
+            <Paper radius="xl" p="xl" bg="white" w={{ base: '90%', sm: 450 }} shadow="md">
+              <Title order={3} ta="center" c="black" mb="md">
+                LogIn into QA-Zone
+              </Title>
+              <Divider mb="xl" color="#EAEAEA" />
+              <form>
+                <Stack gap="md">
+                  <TextInput
+                    label="Email"
+                    withAsterisk
+                    styles={inputStyles}
+                    placeholder="e.g. user@example.com"
+                    {...form.getInputProps('email')}
+                    error={form?.errors?.email}
+                    data-testid="login-email-input"
+                  />
 
-                <TextInput
-                  label="Password"
-                  withAsterisk
-                  type="password"
-                  styles={inputStyles}
-                  placeholder="Your password"
-                  {...form.getInputProps('password')}
-                  error={form?.errors?.password}
-                  data-testid="login-password-input"
-                />
+                  <TextInput
+                    label="Password"
+                    withAsterisk
+                    type="password"
+                    styles={inputStyles}
+                    placeholder="Your password"
+                    {...form.getInputProps('password')}
+                    error={form?.errors?.password}
+                    data-testid="login-password-input"
+                  />
 
-                <Group justify="center" mt="xl">
-                  <Button
-                    type="submit"
-                    bg="#F26621"
-                    color="#FFFFFF"
-                    radius="md"
-                    size="md"
-                    data-testid="login-submit-button"
-                    onClick={handleSubmit}
-                  >
-                    Log-in
-                  </Button>
-                </Group>
-              </Stack>
-            </form>
+                  <Group justify="center" mt="xl">
+                    <Button
+                      type="button"
+                      bg="#F26621"
+                      color="#FFFFFF"
+                      radius="md"
+                      size="md"
+                      data-testid="login-submit-button"
+                      onClick={() => void handleSubmit()}
+                      disabled={isLoading}
+                    >
+                      Log-in
+                    </Button>
+                  </Group>
+                </Stack>
+              </form>
+            </Paper>
           </Container>
           <Container className={classes.loginLeftContainer} />
         </Flex>

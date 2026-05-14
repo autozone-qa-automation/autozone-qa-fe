@@ -5,27 +5,31 @@
  * Autozone QA Automation
  */
  
-.mantine-SegmentedControl-label {
-  color: #8C8C94 !important;
-  font-weight: 500;
-}
-
-.mantine-SegmentedControl-label[data-active] {
-  color: #FFFFFF !important;
-}
-
 .loginRightContainer {
-  width: 100%;
+  width: 60%;
   min-height: 100dvh;
-  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.loginRightContainer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  background-color: rgba(0, 0, 0, 0.25);
+
+  -webkit-mask-image: linear-gradient(to right, black 70%, transparent 100%);
+  mask-image: linear-gradient(to right, black 70%, transparent 100%);
 }
 
 .loginLeftContainer {
-  
-  width: 100%;
+  width: 50%;
   min-height: 100dvh;
-
 }
