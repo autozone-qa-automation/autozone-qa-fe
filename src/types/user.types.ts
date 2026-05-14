@@ -11,7 +11,7 @@
  */
 export interface Role {
   idRole: number
-  permisionlevel: string
+  permission: string
 }
 
 /**
@@ -21,11 +21,12 @@ export interface Role {
 export interface User {
   id: number
   name: string
-  lastname: string
+  lastName: string
   email: string
   password?: string
-  idRole: number
-  role?: Role
+  isActive: boolean
+  roleId: number
+  rolePermission?: Role
 }
 
 /**

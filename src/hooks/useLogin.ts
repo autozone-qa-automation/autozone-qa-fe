@@ -40,14 +40,11 @@ export const useLogin = (): UseLoginReturn => {
     try {
       const res = await authService.login(payload)
       localStorage.setItem('authToken', res.token)
-      localStorage.setItem('userEmail', /*res.user.email || */ 'QA')
-      /*if (res.user.name)*/ localStorage.setItem('name', /*res.user.name ||*/ 'QA')
-      /*if (res.user.lastname) */ localStorage.setItem('sureName', /*res.user.lastname ||*/ 'QA')
-      /*if (res.user.role)*/ localStorage.setItem(
-        'role',
-        String(/*res.user.role.permisionlevel ||*/ 'QA')
-      )
-
+      localStorage.setItem('userEmail', res.user.email)
+      localStorage.setItem('name', res.user.name)
+      localStorage.setItem('sureName', res.user.lastName)
+      if (res.user.rolePermission)
+        localStorage.setItem('role', String(res.user.rolePermission.permission))
       return new UserVO(res.user)
     } catch (err: unknown) {
       let message = 'Login failed'

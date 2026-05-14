@@ -16,10 +16,11 @@ import type { User } from '../types/user.types'
 export class UserVO {
   readonly id: number
   readonly name: string
-  readonly lastname: string
+  readonly lastName: string
   readonly email: string
-  readonly idRole: number
-  readonly roleName?: string
+  readonly isActive: boolean
+  readonly roleId: number
+  readonly rolePermission?: string
 
   /**
    * Creates a UserVO instance from raw User API response data.
@@ -28,10 +29,11 @@ export class UserVO {
   constructor(data: User) {
     this.id = data.id
     this.name = data.name
-    this.lastname = data.lastname
+    this.lastName = data.lastName
     this.email = data.email
-    this.idRole = data.idRole
-    this.roleName = data.role?.permisionlevel
+    this.isActive = data.isActive
+    this.roleId = data.roleId
+    this.rolePermission = data.rolePermission?.permission
   }
 
   /**
@@ -39,7 +41,7 @@ export class UserVO {
    * @returns Combined first and last name (e.g., 'John Doe')
    */
   getFullName(): string {
-    return `${this.name} ${this.lastname}`
+    return `${this.name} ${this.lastName}`
   }
 
   /**

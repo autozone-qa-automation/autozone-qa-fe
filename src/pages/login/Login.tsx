@@ -33,7 +33,7 @@ import classes from './LoginModal.module.css'
  * @component
  * @returns {React.ReactElement} Full-screen login form with background
  */
-export function Login() {
+export function Login(): React.ReactElement {
   const [opened, { open }] = useDisclosure(false)
   const navigate = useNavigate()
   const { login, isLoading, error } = useLogin()
@@ -44,6 +44,21 @@ export function Login() {
     }
     open()
   }, [opened, open, error])
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken')
+    const checkSession = () => {
+      if (!token) {
+        navigate('/login')
+        return
+      }
+      if (token) {
+        // Placeholder
+        navigate('/')
+      }
+    }
+    checkSession()
+  }, [navigate])
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -73,7 +88,7 @@ export function Login() {
    * @async
    * @returns {Promise<void>}
    */
-  const handleSubmit = async () => {
+  const handleSubmit = async (): Promise<void> => {
     const validated = form.validate()
     if (validated.hasErrors) return
     try {
