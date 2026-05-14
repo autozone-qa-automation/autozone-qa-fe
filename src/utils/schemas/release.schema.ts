@@ -18,8 +18,8 @@ export const releaseSchema = z.object({
     .regex(/^\d+\.\d+\.\d+$/, { message: 'Required format: X.X.X (e.g., 1.0.0)' }),
   releaseStatus: z.enum(['Draft', 'Progress', 'Active']),
   releaseCreationDate: z.string().optional(),
-  releaseServiceId: z.number().min(1, 'Required').nullable(),
-  releaseFeatureIds: z.array(z.number()).min(1, 'Select at least one'),
+  releaseServiceId: z.number().min(1, 'Select at least one service'),
+  releaseFeatureIds: z.array(z.number()).min(1, 'Select at least one feature'),
   releaseTags: z.array(z.string()).min(1, 'Add at least one tag'),
 })
 
