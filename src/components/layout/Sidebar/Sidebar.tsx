@@ -33,6 +33,7 @@ import {
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import { useGetUserById } from '@/hooks/userGetUserById'
+import { logout } from '@/utils/logout'
 import classes from './Sidebar.module.css'
 
 /**
@@ -168,7 +169,10 @@ export function Sidebar() {
             <NavLink
               label="Log Out"
               leftSection={<IconLogout size="1rem" />}
-              onClick={() => setPopoverOpened(false)}
+              onClick={() => {
+                setPopoverOpened(false)
+                logout()
+              }}
               color="red"
             />
           </Popover.Dropdown>
