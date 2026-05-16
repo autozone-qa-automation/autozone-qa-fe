@@ -18,15 +18,16 @@ import {
   Stack,
   Text,
 } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 import { IconDatabaseOff, IconRefresh, IconSearch } from '@tabler/icons-react'
 import { useMemo, useState } from 'react'
-import type {
-  ReleaseData,
-  ReleaseStatus,
-} from '@/components/layout/ButtonContentModal/ButtonContentModal'
+import type { ReleaseData } from '@/components/layout/ButtonContentModal/ButtonContentModal'
 import { ButtonContentModal } from '@/components/layout/ButtonContentModal/ButtonContentModal'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetAllReleases } from '@/hooks/useGetReleases'
+import { useUpdateReleaseStatus } from '@/hooks/useUpdateReleaseStatus'
+import { ReleasesModalStatus } from '@/pages/releases/ReleasesModalStatus'
+import type { ReleaseStatus } from '@/types/Release.types'
 import { ReleasesModalCreate } from './ReleasesModalCreate'
 
 /**
@@ -37,6 +38,8 @@ export function Releases() {
   /** Hook personalizado para obtener releases y estados de carga/error del backend */
   const { releases, loading, error, refetch } = useGetAllReleases()
 
+  const { updateReleaseStatus, loading: updatingStatus } = useUpdateReleaseStatus()
+
   /** @type {'All' | ReleaseStatus} Estado seleccionado para filtrar la lista */
   const [statusFilter, setStatusFilter] = useState<'All' | ReleaseStatus>('All')
 
@@ -46,6 +49,11 @@ export function Releases() {
   /** @type {string | null} Criterio de ordenamiento ('Newest' | 'Oldest') */
   const [sortBy, setSortBy] = useState<string | null>('Newest')
 
+    /** Estado para controlar el modal de cambio de status */
+  const [statusModalOpened, setStatusModalOpened] = useState(false)
+
+  /** Release seleccionado para actualizar status */
+  const [selectedRelease, setSelectedRelease] = useState<ReleaseData | null>(null)
   /**
    * Memoriza la lista de releases procesada.
    * Realiza tres pasos correlativos:
@@ -56,6 +64,7 @@ export function Releases() {
    */
   const filteredAndSortedReleases = useMemo(() => {
     const mapped: ReleaseData[] = releases.map(r => ({
+      releaseId: r.releaseId,
       title: r.releaseName,
       objective: r.releaseDescription,
       version: r.releaseVersion,
@@ -64,7 +73,7 @@ export function Releases() {
       releaseDate: r.releaseLaunchDate ?? '',
       status: r.releaseStatus,
       service: r.releaseServices?.[0] || 'Global',
-      serviceId: r.releaseServiceId || null,
+      serviceId: r.releaseServiceId ?? null,
     }))
 
     return mapped
@@ -124,11 +133,43 @@ export function Releases() {
     )
   }
 
-  const handleOnClose = () => {
-    setTimeout(() => {
-      refetch()
-    }, 200)
+const handleOnClose = () => {
+  setTimeout(() => {
+    void refetch()
+  }, 200)
+}
+
+const openStatusModal = (release: ReleaseData) => {
+  setSelectedRelease(release)
+  setStatusModalOpened(true)
+}
+
+const closeStatusModal = () => {
+  setStatusModalOpened(false)
+  setSelectedRelease(null)
+}
+
+const handleUpdateStatus = async (releaseId: number, status: ReleaseStatus) => {
+  try {
+    await updateReleaseStatus(releaseId, status)
+
+    notifications.show({
+      title: 'Success!',
+      message: 'Release status updated successfully',
+      color: 'teal',
+    })
+
+    await refetch()
+  } catch (e) {
+    notifications.show({
+      title: 'Error updating release status',
+      message: e instanceof Error ? e.message : 'Unexpected error',
+      color: 'red',
+    })
+
+    throw e
   }
+}
 
   // --- Vista Principal ---
   return (
@@ -191,13 +232,11 @@ export function Releases() {
 
       {/* Grid de Contenido: Tarjetas de Release */}
       <div style={{ marginTop: '20px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-        {filteredAndSortedReleases.map((item, index) => (
+        {filteredAndSortedReleases.map(item => (
           <ButtonContentModal
-            key={`${item.title}-${index}`}
+            key={item.releaseId}
             data={item}
-            onStatusChange={() => {
-              /** @todo Implementar actualización de estatus vía API */
-            }}
+            onOpenStatusModal={openStatusModal}
           />
         ))}
 
@@ -210,6 +249,14 @@ export function Releases() {
           </Box>
         )}
       </div>
+
+      <ReleasesModalStatus
+        opened={statusModalOpened}
+        onClose={closeStatusModal}
+        release={selectedRelease}
+        loading={updatingStatus}
+        onUpdateStatus={handleUpdateStatus}
+      />
     </div>
   )
 }
