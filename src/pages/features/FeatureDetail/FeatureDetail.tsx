@@ -6,14 +6,19 @@
  */
 
 import { Button, Container, Divider, Group, Stack, Text } from '@mantine/core'
+import { useState } from 'react'
 import { useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useFeature } from '@/hooks/useGetFeature'
+import { FeatureEditModal } from './FeatureEditModal'
 import { TestCasesPanel } from './TestCasesPanel'
 
 export function FeatureDetail() {
   const { featureId } = useParams()
-  const { feature } = useFeature(featureId || '')
+
+  const { feature, refetch } = useFeature(featureId || '')
+
+  const [isEditOpen, setIsEditOpen] = useState(false)
 
   return (
     <Container size="md" mt="md">
@@ -26,9 +31,10 @@ export function FeatureDetail() {
         ]}
         actionComponent={
           <Group gap="xs">
-            <Button size="xs" color="orange.6">
+            <Button size="xs" color="orange.6" onClick={() => setIsEditOpen(true)}>
               Edit
             </Button>
+
             <Button size="xs" color="red" variant="outline">
               Delete
             </Button>
@@ -36,10 +42,21 @@ export function FeatureDetail() {
         }
       />
 
-      <Stack gap={4} mt="md" mb={'md'}>
+      <FeatureEditModal
+        opened={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        feature={feature}
+        onUpdated={() => {
+          void refetch()
+          setIsEditOpen(false)
+        }}
+      />
+
+      <Stack gap={4} mt="md" mb="md">
         <Text fw={600} size="sm" c="dimmed" tt="uppercase">
           Description
         </Text>
+
         <Text size="sm">{feature?.featureDescription || 'Sin descripción'}</Text>
       </Stack>
 
