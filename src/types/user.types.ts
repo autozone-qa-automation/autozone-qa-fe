@@ -11,7 +11,7 @@
  */
 export interface Role {
   idRole: number
-  permisionlevel: string
+  permission: string
 }
 
 /**
@@ -21,11 +21,17 @@ export interface Role {
 export interface User {
   id: number
   name: string
-  lastname: string
+  lastName: string
   email: string
   password?: string
-  idRole: number
-  role?: Role
+  isActive: boolean
+  roleId: number
+  rolePermission?: Role
+}
+
+export interface RoleResponse {
+  id: number
+  permission: 'ADMIN' | 'DEV' | 'READ_ONLY'
 }
 
 /**
@@ -34,10 +40,22 @@ export interface User {
  */
 export interface UserRequest {
   name: string
-  lastname: string
+  lastName: string
   email: string
   password: string
-  idRole: number
+  roleId: number
+  isActive?: boolean
+}
+
+export interface UserResponse {
+  id: number
+  name: string
+  lastName: string
+  email: string
+  password: string
+  isActive: boolean
+  roleId: number
+  rolePermission: RoleResponse
 }
 
 /**
@@ -46,8 +64,8 @@ export interface UserRequest {
  */
 export interface UserUpdateRequest {
   name?: string
-  lastname?: string
+  lastName?: string
   email?: string
   password?: string
-  idRole?: number
+  roleId?: number
 }

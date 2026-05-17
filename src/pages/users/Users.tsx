@@ -5,6 +5,12 @@
  * Autozone QA Automation
  */
 
+import { UserCreateModal } from './UserCreateModal'
+
 export function Users() {
-  return <div>User Management</div>
+  return (
+    <div>
+      <UserCreateModal />
+    </div>
+  )
 }
