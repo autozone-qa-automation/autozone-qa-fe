@@ -77,7 +77,7 @@ export function TestCasesList({ data, onViewClick }: TestCasesListProps) {
     <div>
       <TestCasesModalEdit
         opened={opened}
-        activeTestCase={activeTestCase as TestCaseVO}
+        activeTestCase={activeTestCase}
         onClose={() => {
           close()
           setActiveTestCase(null)

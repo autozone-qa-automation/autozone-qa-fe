@@ -18,7 +18,7 @@ import type { CreateTestCaseRequest } from '@/types/TestCases.types'
 import { createTestCaseSchema } from '@/types/TestCases.types'
 
 const showNotification = (notification: NotificationData): string =>
-  (mantineShowNotification as (payload: NotificationData) => string)(notification)
+  mantineShowNotification(notification)
 
 type FormValues = CreateTestCaseRequest
 

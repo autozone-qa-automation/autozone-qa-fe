@@ -1,8 +1,8 @@
 import { Badge, Button, Table } from '@mantine/core'
-import type { Role, User } from '@/types/user.types'
+import type { RoleResponse, User } from '@/types/user.types'
 
-function roleBadgeStyle(permisionlevel: Role | undefined): { bg: string; c: string } {
-  const level = (permisionlevel?.permission ?? '').toLowerCase()
+function roleBadgeStyle(role: RoleResponse | undefined): { bg: string; c: string } {
+  const level = (role?.permission ?? '').toLowerCase()
   if (level.includes('admin')) return { bg: '#F3EFFE', c: '#6D28D9' }
   if (level.includes('dev')) return { bg: '#FFF4EB', c: '#C2540A' }
   if (level.includes('read')) return { bg: '#ECFDF5', c: '#047857' }

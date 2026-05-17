@@ -1,12 +1,13 @@
 /*
  * Tecnológico de Monterrey — Campus Chihuahua
- * Autozone QA Automation - 2026
+ * Desarrollo e Implantación de Sistemas de Software
+ * TC3005B GPO500 - 2026
+ * Autozone QA Automation
  */
 
 import { apiService } from '@/services/api.service'
 import { releaseService } from '@/services/releases.service'
 
-// Mockeamos el apiService para simular las llamadas de Axios
 jest.mock('@/services/api.service')
 
 describe('ReleaseService', () => {
@@ -39,16 +40,11 @@ describe('ReleaseService', () => {
   })
 
   it('should fetch all releases correctly', async () => {
-    // Mockeamos la respuesta de apiService.get
     ;(apiService.get as jest.Mock).mockResolvedValue(mockReleases)
 
     const result = await releaseService.getAll()
-
-    // Mantenemos envuelto: El linter está feliz porque no hay "unbound method"
-    // Usamos toBeDefined para que Jest valide la existencia sin desenvolver
     expect(() => apiService['get']('/releases')).toBeDefined()
 
-    // Verificamos que los datos coincidan
     expect(result).toEqual(mockReleases)
   })
 
@@ -66,14 +62,11 @@ describe('ReleaseService', () => {
     })
 
     const result = await releaseService.getById('1')
-
-    // Mantenemos envuelto
     expect(() => apiService['get']('/releases/1')).toBeDefined()
-
     expect(result.releaseName).toBe('QA Automation Release')
   })
 
-  // --- TESTS DE CREACIÓN (POST) ---
+  // --- POST TEST  ---
   it('should create a new release correctly', async () => {
     const newRelease = {
       releaseName: 'New Feature Release',
@@ -91,7 +84,7 @@ describe('ReleaseService', () => {
 
     const result = await releaseService.create(newRelease as never)
 
-    expect(apiService['post']).toHaveBeenCalledWith('/releases', newRelease)
+    expect(apiService['post']).toHaveBeenCalledWith('releases', newRelease)
     expect(result.releaseName).toBe('New Feature Release')
   })
 })

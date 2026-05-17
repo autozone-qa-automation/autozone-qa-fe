@@ -6,17 +6,26 @@
  */
 
 /**
- * Interfaz describiendo un
- * Role como estructura de datos
+ * Interface describing a
+ * Role as a data structure
  */
 export interface Role {
   idRole: number
-  permission: string
+  permisionlevel: string
 }
 
 /**
- * Interfaz describiendo un
- * User como estructura de datos
+ * Interface describing
+ * the response for a role
+ */
+export interface RoleResponse {
+  id: number
+  permission: 'ADMIN' | 'DEV' | 'READ_ONLY'
+}
+
+/**
+ * Interface describing a
+ * User as a data structure
  */
 export interface User {
   id: number
@@ -26,17 +35,12 @@ export interface User {
   password?: string
   isActive: boolean
   roleId: number
-  rolePermission?: Role
-}
-
-export interface RoleResponse {
-  id: number
-  permission: 'ADMIN' | 'DEV' | 'READ_ONLY'
+  rolePermission?: RoleResponse
 }
 
 /**
- * Interfaz del userRequest
- * usado por el servicio
+ * UserRequest interface
+ * used by the service
  */
 export interface UserRequest {
   name: string
@@ -44,6 +48,19 @@ export interface UserRequest {
   email: string
   password: string
   roleId: number
+  isActive?: boolean
+}
+
+/**
+ * UserUpdateRequest interface
+ * used by the service
+ */
+export interface UserUpdateRequest {
+  name?: string
+  lastName?: string
+  email?: string
+  password?: string
+  roleId?: number
   isActive?: boolean
 }
 
@@ -56,16 +73,4 @@ export interface UserResponse {
   isActive: boolean
   roleId: number
   rolePermission: RoleResponse
-}
-
-/**
- * Interfaz del userRequest
- * especifico para metodo PUT
- */
-export interface UserUpdateRequest {
-  name?: string
-  lastName?: string
-  email?: string
-  password?: string
-  roleId?: number
 }

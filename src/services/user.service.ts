@@ -14,7 +14,7 @@ import { apiService } from './api.service'
  * Comunicación directa con la API a través del servicio de Axios.
  */
 class UserService {
-  private readonly BASE_PATH = 'v1/users'
+  private readonly BASE_PATH = 'users'
 
   /**
    * Obtiene la lista de todos los usuarios.

@@ -12,7 +12,7 @@ import type { CreateReleasesRequest, FormValues } from '@/utils/schemas/release.
 import { releaseSchema } from '@/utils/schemas/release.schema'
 import { apiService } from './api.service'
 
-const BASE_URL = '/releases'
+const BASE_URL = 'releases'
 
 export const releaseService = {
   getAll: async (): Promise<Release[]> => {
