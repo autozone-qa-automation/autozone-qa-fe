@@ -14,7 +14,7 @@ export const loginschema = z.object({
     .max(50, { message: 'Maximum 50 characters allowed' }),
   password: z
     .string()
-    .min(6, { message: 'Minimum 6 characters required' })
+    .min(1, { message: 'Minimum 1 characters required' })
     .max(100, { message: 'Maximum 100 characters allowed' }),
 })
 

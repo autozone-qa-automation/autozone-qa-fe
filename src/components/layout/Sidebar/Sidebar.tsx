@@ -62,12 +62,13 @@ export function Sidebar() {
   const [active, setActive] = useState(location.pathname)
   const [popoverOpened, setPopoverOpened] = useState(false)
 
-  // ID=1 placeholder — replace with auth context user ID when auth is implemented
-  const { user } = useGetUserById(1)
+  const name = localStorage.getItem('name') || '""'
+  const sureName = localStorage.getItem('sureName') || '""'
+  const role = localStorage.getItem('role') || '""'
 
-  const fullName = user ? `${user?.name} ${user.lastName}` : '...'
-  const initials = user ? `${user.name[0]}${user.lastName[0]}`.toUpperCase() : '?'
-  const roleLabel = user?.role?.permisionlevel ?? '—'
+  const fullName = `${name} ${sureName}`
+  const initials = `${name[0]}${sureName[0]}`.toUpperCase()
+  const roleLabel = role
 
   /**
    * Mapeo de navData para transformar objetos de configuración en componentes NavLink de Mantine.
