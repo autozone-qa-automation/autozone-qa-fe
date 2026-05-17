@@ -114,12 +114,19 @@ export function Login(): React.ReactElement {
       <BackgroundImage src={azBackground} radius="xs" h="100%" w="100%">
         <Flex>
           <Container className={classes.loginRightContainer}>
-            <Paper radius="xl" p="xl" bg="white" w={{ base: '90%', sm: 450 }} shadow="md">
-              <Title order={3} ta="center" c="black" mb="md">
+            <Paper
+              data-testid="login-paper-container"
+              radius="xl"
+              p="xl"
+              bg="white"
+              w={{ base: '90%', sm: 450 }}
+              shadow="md"
+            >
+              <Title data-testid="login-page-title" order={3} ta="center" c="black" mb="md">
                 LogIn into QA-Zone
               </Title>
               <Divider mb="xl" color="#EAEAEA" />
-              <form>
+              <form data-testid="logIn-form">
                 <Stack gap="md">
                   <TextInput
                     label="Email"
