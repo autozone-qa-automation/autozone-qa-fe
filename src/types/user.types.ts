@@ -19,7 +19,7 @@ export interface Role {
  * User como estructura de datos
  */
 export interface User {
-  id: number
+  id: string
   name: string
   lastName: string
   email: string
@@ -27,6 +27,11 @@ export interface User {
   isActive: boolean
   roleId: number
   rolePermission?: Role
+}
+
+export interface RoleResponse {
+  id: number
+  permission: 'ADMIN' | 'DEV' | 'READ_ONLY'
 }
 
 /**
@@ -40,6 +45,17 @@ export interface UserRequest {
   password: string
   roleId: number
   isActive: boolean
+}
+
+export interface UserResponse {
+  id: number
+  name: string
+  lastName: string
+  email: string
+  password: string
+  isActive: boolean
+  roleId: number
+  rolePermission: RoleResponse
 }
 
 /**
