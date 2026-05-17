@@ -35,10 +35,11 @@ export interface User {
  */
 export interface UserRequest {
   name: string
-  lastname: string
+  lastName: string
   email: string
   password: string
-  idRole: number
+  roleId: number
+  isActive: boolean
 }
 
 /**
@@ -47,8 +48,8 @@ export interface UserRequest {
  */
 export interface UserUpdateRequest {
   name?: string
-  lastname?: string
+  lastName?: string
   email?: string
   password?: string
-  idRole?: number
+  roleId?: number
 }

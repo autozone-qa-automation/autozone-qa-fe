@@ -34,7 +34,9 @@ export function UserCreateModal({ onSuccess }: { onSuccess?: () => Promise<void>
     if (!opened) return
     roleService
       .getAll()
-      .then(roles => setRoleOptions(roles.map(r => ({ value: String(r.id), label: r.permission }))))
+      .then((roles: Array<{ id: number; permission: string }>) =>
+        setRoleOptions(roles.map(r => ({ value: String(r.id), label: r.permission })))
+      )
       .catch(() =>
         notifications.show({ title: 'Error', message: 'Failed to load roles', color: 'red' })
       )
