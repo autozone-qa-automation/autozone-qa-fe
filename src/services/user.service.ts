@@ -14,7 +14,7 @@ import { apiService } from './api.service'
  * Comunicación directa con la API a través del servicio de Axios.
  */
 class UserService {
-  private readonly BASE_PATH = '/users'
+  private readonly BASE_PATH = 'v1/users'
 
   /**
    * Obtiene la lista de todos los usuarios.
@@ -31,7 +31,6 @@ class UserService {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getById(_id: number): Promise<User> {
-    //return apiService.get<User>(`${this.BASE_PATH}/${id}`)
     const hardcodedUser: User = {
       id: 1,
       name: 'John',
@@ -48,7 +47,7 @@ class UserService {
   /**
    * Crea un nuevo usuario.
    * @param {UserRequest} data - Los datos del nuevo usuario
-   * @returns {Promise<User>} El usuario creado con su ID asignado
+   * @returns {Promise<UserResponse>} El usuario creado con su ID asignado
    */
   async create(data: UserRequest): Promise<UserResponse> {
     return apiService.post<UserResponse>(this.BASE_PATH, data)
