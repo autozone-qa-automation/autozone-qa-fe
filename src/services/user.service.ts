@@ -38,6 +38,7 @@ class UserService {
       lastName: 'Doe',
       email: 'text@example.com',
       password: 'password',
+      isActive: true,
       roleId: 1,
     }
 

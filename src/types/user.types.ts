@@ -19,7 +19,7 @@ export interface Role {
  * User como estructura de datos
  */
 export interface User {
-  id: string
+  id: number
   name: string
   lastName: string
   email: string
