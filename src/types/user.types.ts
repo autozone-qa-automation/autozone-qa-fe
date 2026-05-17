@@ -44,7 +44,7 @@ export interface UserRequest {
   email: string
   password: string
   roleId: number
-  isActive: boolean
+  isActive?: boolean
 }
 
 export interface UserResponse {
