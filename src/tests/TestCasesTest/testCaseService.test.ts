@@ -24,6 +24,18 @@ describe('testCaseService', () => {
     expectedOutput: 'Out',
   }
 
+  const mockCreatePayload = {
+    title: 'Valid Test',
+    relatedFeature: 1,
+    description: 'Desc',
+    type: 'REGRESSION' as const,
+    preconditions: 'Pre',
+    postconditions: 'Post',
+    inputs: 'In',
+    steps: 'Steps',
+    expectedOutput: 'Out',
+  }
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -43,5 +55,43 @@ describe('testCaseService', () => {
     ;(apiService.get as jest.Mock).mockResolvedValue([{ id: 1 }])
 
     await expect(testCaseService.getAll()).rejects.toThrow()
+  })
+
+  describe('update', () => {
+    const mockedPut = jest.fn()
+
+    beforeEach(() => {
+      ;(apiService as unknown as Record<string, jest.Mock>)['put'] = mockedPut
+    })
+
+    it('should call PUT with the correct endpoint and payload', async () => {
+      mockedPut.mockResolvedValue(mockTestCase)
+
+      await testCaseService.update(1, mockCreatePayload)
+
+      expect(mockedPut).toHaveBeenCalledWith('/test-cases/1', mockCreatePayload)
+    })
+
+    it('should return the updated test case parsed correctly', async () => {
+      const updatedTestCase = { ...mockTestCase, title: 'Updated Title' }
+      mockedPut.mockResolvedValue(updatedTestCase)
+
+      const result = await testCaseService.update(1, mockCreatePayload)
+
+      expect(result.title).toBe('Updated Title')
+      expect(result.id).toBe(1)
+    })
+
+    it('should fail when the API returns invalid data according to Zod', async () => {
+      mockedPut.mockResolvedValue({ id: 'invalid' })
+
+      await expect(testCaseService.update(1, mockCreatePayload)).rejects.toThrow()
+    })
+
+    it('should propagate API errors (e.g. 404, 409)', async () => {
+      mockedPut.mockRejectedValue(new Error('404 Not Found'))
+
+      await expect(testCaseService.update(999, mockCreatePayload)).rejects.toThrow('404 Not Found')
+    })
   })
 })

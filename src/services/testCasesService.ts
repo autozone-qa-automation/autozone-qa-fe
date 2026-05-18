@@ -33,7 +33,7 @@ export const testCaseService = {
     return testCaseSchema.parse(data)
   },
 
-  update: async (id: number, payload: Partial<CreateTestCaseRequest>): Promise<TestCase> => {
+  update: async (id: number, payload: CreateTestCaseRequest): Promise<TestCase> => {
     const data = await apiService.put<unknown>(`${BASE_URL}/${id}`, payload)
     return testCaseSchema.parse(data)
   },
