@@ -31,8 +31,7 @@ import {
   IconUsers,
 } from '@tabler/icons-react'
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router'
-import { useGetUserById } from '@/hooks/userGetUserById'
+import { Link, useLocation, useNavigate } from 'react-router'
 import { logout } from '@/utils/logout'
 import classes from './Sidebar.module.css'
 
@@ -58,6 +57,7 @@ const navData = [
  */
 export function Sidebar() {
   const location = useLocation()
+  const navigate = useNavigate()
 
   const [active, setActive] = useState(location.pathname)
   const [popoverOpened, setPopoverOpened] = useState(false)
@@ -173,6 +173,7 @@ export function Sidebar() {
               onClick={() => {
                 setPopoverOpened(false)
                 logout()
+                navigate('/login')
               }}
               color="red"
             />

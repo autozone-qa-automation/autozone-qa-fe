@@ -1,5 +1,7 @@
 export const logout = (): void => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('user')
-  window.location.href = '/login'
+  localStorage.removeItem('authToken')
+  localStorage.removeItem('name')
+  localStorage.removeItem('role')
+  localStorage.removeItem('sureName')
+  localStorage.removeItem('userEmail')
 }
