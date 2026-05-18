@@ -7,13 +7,13 @@ import { UsersRoleFilter } from '@/components/users/UsersRoleFilter'
 import { useGetAllUsers } from '@/hooks/userGetUsers'
 import type { User } from '@/types/user.types'
 import { UserCreateModal } from './UserCreateModal'
-import { UserDeactivateModal } from './UserDeactivateModal'
+import { UserDeleteModal } from './UserDeleteModal'
 
 export function Users() {
   const { users, loading, error, refetch } = useGetAllUsers()
   const [selectedRole, setSelectedRole] = useState<string>('ALL')
   const [editUser, setEditUser] = useState<User | null>(null)
-  const [deactivateUser, setDeactivateUser] = useState<User | null>(null)
+  const [deleteUser, setDeleteUser] = useState<User | null>(null)
 
   useEffect(() => {
     if (error) {
@@ -61,16 +61,15 @@ export function Users() {
 
       <UsersRoleFilter data={roleOptions} value={selectedRole} onChange={setSelectedRole} />
 
-      <UsersList data={filteredUsers} onEditClick={setEditUser} onDeleteClick={setDeactivateUser} />
+      <UsersList data={filteredUsers} onEditClick={setEditUser} onDeleteClick={setDeleteUser} />
 
-      {deactivateUser && (
-        <UserDeactivateModal
-          user={deactivateUser}
-          onClose={() => setDeactivateUser(null)}
-          onSuccess={async () => {
-            setDeactivateUser(null)
-            await refetch()
-          }}
+      {deleteUser && (
+        <UserDeleteModal
+          isOpen={true}
+          userId={deleteUser.id}
+          userName={`${deleteUser.name} ${deleteUser.lastName}`}
+          onClose={() => setDeleteUser(null)}
+          onSuccess={() => void refetch()}
         />
       )}
 
