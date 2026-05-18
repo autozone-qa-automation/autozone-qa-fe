@@ -30,7 +30,7 @@ import { type CreateTestCaseRequest, createTestCaseSchema } from '@/types/TestCa
 
 type FormValues = CreateTestCaseRequest
 const showNotification = (notification: NotificationData): string =>
-  (mantineShowNotification as (payload: NotificationData) => string)(notification)
+  mantineShowNotification(notification)
 
 interface Props {
   opened: boolean

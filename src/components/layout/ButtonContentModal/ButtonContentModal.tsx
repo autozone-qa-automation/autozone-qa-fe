@@ -154,7 +154,7 @@ export function ButtonContentModal({ data, onStatusChange }: ButtonReleaseProps)
                   data={['Active', 'Draft', 'Progress']}
                   value={data.status}
                   allowDeselect={false}
-                  onChange={value => value && onStatusChange?.(value as ReleaseStatus)}
+                  onChange={value => value && onStatusChange?.(value)}
                   styles={{
                     input: {
                       backgroundColor: statusBg,

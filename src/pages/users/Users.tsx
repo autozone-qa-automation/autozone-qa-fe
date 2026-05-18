@@ -25,7 +25,9 @@ export function Users() {
   const roleOptions = [
     { value: 'ALL', label: 'All Users' },
     ...Array.from(
-      new Map(users.filter(u => u.role).map(u => [u.roleId, u.role!.permisionlevel])).entries()
+      new Map(
+        users.filter(u => u.rolePermission).map(u => [u.roleId, u.rolePermission!.permission])
+      ).entries()
     ).map(([value, label]) => ({ value: String(value), label })),
   ]
 

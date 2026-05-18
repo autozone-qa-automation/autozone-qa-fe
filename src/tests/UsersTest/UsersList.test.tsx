@@ -10,7 +10,8 @@ const mockUsers: User[] = [
     lastName: 'Lopez',
     email: 'samuel@autozone.com',
     roleId: 1,
-    role: { idRole: 1, permisionlevel: 'Admin' },
+    isActive: true,
+    rolePermission: { idRole: 1, permission: 'Admin' },
   },
   {
     id: 2,
@@ -18,7 +19,8 @@ const mockUsers: User[] = [
     lastName: 'Martinez',
     email: 'andrea@autozone.com',
     roleId: 2,
-    role: { idRole: 2, permisionlevel: 'Developer' },
+    isActive: true,
+    rolePermission: { idRole: 2, permission: 'Developer' },
   },
 ]
 

@@ -1,8 +1,8 @@
 import { Badge, Button, Table } from '@mantine/core'
-import type { User } from '@/types/user.types'
+import type { Role, User } from '@/types/user.types'
 
-function roleBadgeStyle(permisionlevel: string | undefined): { bg: string; c: string } {
-  const level = (permisionlevel ?? '').toLowerCase()
+function roleBadgeStyle(permisionlevel: Role | undefined): { bg: string; c: string } {
+  const level = (permisionlevel?.permission ?? '').toLowerCase()
   if (level.includes('admin')) return { bg: '#F3EFFE', c: '#6D28D9' }
   if (level.includes('dev')) return { bg: '#FFF4EB', c: '#C2540A' }
   if (level.includes('read')) return { bg: '#ECFDF5', c: '#047857' }
@@ -17,8 +17,8 @@ interface UsersListProps {
 
 export function UsersList({ data, onEditClick, onDeleteClick }: UsersListProps) {
   const rows = data.map(user => {
-    const roleLabel = user.role?.permisionlevel ?? `Role ${user.roleId}`
-    const { bg, c } = roleBadgeStyle(user.role?.permisionlevel)
+    const roleLabel = user.rolePermission?.permission ?? `Role ${user.roleId}`
+    const { bg, c } = roleBadgeStyle(user.rolePermission)
 
     return (
       <Table.Tr key={user.id}>
