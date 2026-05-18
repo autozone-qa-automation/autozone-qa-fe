@@ -7,8 +7,8 @@ const mockUsers: User[] = [
   {
     id: 1,
     name: 'Samuel',
-    lastName: 'Lopez',
-    email: 'samuel@autozone.com',
+    lastName: 'Eliel',
+    email: 'mejia@autozone.com',
     roleId: 1,
     isActive: true,
     rolePermission: { idRole: 1, permission: 'Admin' },
