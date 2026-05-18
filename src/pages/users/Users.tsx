@@ -57,7 +57,7 @@ export function Users() {
             Users
           </Title>
           <Text size="sm" c="dimmed" fw={400}>
-            {activeUsers.length} users
+            {filteredUsers.length} users
           </Text>
         </Stack>
         <UserCreateModal onSuccess={refetch} />
