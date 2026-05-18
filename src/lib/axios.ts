@@ -52,6 +52,10 @@ const axiosInstance = axios.create({
  */
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    const token = localStorage.getItem('authToken')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
   (error: AxiosError) => Promise.reject(error)
