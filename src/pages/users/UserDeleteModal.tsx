@@ -31,8 +31,8 @@ export function UserDeleteModal({
     try {
       await userService.deactivate(userId)
       notifications.show({
-        title: 'User deactivated',
-        message: `${userName} has been deactivated successfully.`,
+        title: 'User deleted',
+        message: `${userName} has been deleted successfully.`,
         color: 'teal',
       })
       onSuccess?.()

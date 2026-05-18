@@ -26,11 +26,13 @@ export function Users() {
     }
   }, [error])
 
+  const activeUsers = users.filter(u => u.isActive)
+
   const roleOptions = [
     { value: 'ALL', label: 'All Users' },
     ...Array.from(
       new Map(
-        users
+        activeUsers
           .filter(u => u.rolePermission?.permission)
           .map(u => [u.roleId, u.rolePermission!.permission])
       ).entries()
@@ -38,7 +40,9 @@ export function Users() {
   ]
 
   const filteredUsers =
-    selectedRole === 'ALL' ? users : users.filter(u => u.roleId === Number(selectedRole))
+    selectedRole === 'ALL'
+      ? activeUsers
+      : activeUsers.filter(u => u.roleId === Number(selectedRole))
 
   if (loading) return <ConnectingDatabasePanel />
 
@@ -53,7 +57,7 @@ export function Users() {
             Users
           </Title>
           <Text size="sm" c="dimmed" fw={400}>
-            {filteredUsers.length} users
+            {activeUsers.length} users
           </Text>
         </Stack>
         <UserCreateModal onSuccess={refetch} />

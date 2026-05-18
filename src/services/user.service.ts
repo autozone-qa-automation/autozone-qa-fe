@@ -69,7 +69,7 @@ class UserService {
    * @returns {Promise<void>}
    */
   async deactivate(id: number | string): Promise<void> {
-    await apiService.patch<User>(`${this.BASE_PATH}/${id}/deactivate`)
+    await apiService.put<void>(`${this.BASE_PATH}/${id}/deactivate`)
   }
 }
 
