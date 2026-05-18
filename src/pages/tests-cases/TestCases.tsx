@@ -183,11 +183,7 @@ export function TestCases() {
           No test cases available
         </Text>
       ) : (
-        <TestCasesList
-          data={filteredTestCases}
-          onViewClick={handleViewClick}
-          onEditClick={() => {}}
-        />
+        <TestCasesList data={filteredTestCases} onViewClick={handleViewClick} />
       )}
     </div>
   )
