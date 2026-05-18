@@ -150,8 +150,8 @@ export function ButtonContentModal({ data, onOpenStatusModal }: ButtonReleasePro
                 <Text style={labelStyle}>STATUS:</Text>
                 <Badge bg={statusBg} c={statusColor} size="sm" radius="sm">
                   {data.status}
-              </Badge>
-            </Group>
+                </Badge>
+              </Group>
 
               {/* Redirección dinámica al servicio específico */}
               <Group align="flex-start">

@@ -25,7 +25,7 @@ const releaseResponseSchema = releaseSchema
     releaseServices: z.array(z.string()),
     releaseFeatures: z.array(z.any()),
   })
-  
+
 export const releaseService = {
   getAll: async (): Promise<Release[]> => {
     const data = await apiService.get<unknown>(BASE_URL)

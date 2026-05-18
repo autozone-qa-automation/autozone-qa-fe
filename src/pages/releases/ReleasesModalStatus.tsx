@@ -112,7 +112,7 @@ export function ReleasesModalStatus({
               data={statusOptions}
               value={selectedStatus}
               allowDeselect={false}
-              onChange={value => value && setSelectedStatus(value as ReleaseStatus)}
+              onChange={value => value && setSelectedStatus(value)}
               styles={inputStyles}
             />
           </Input.Wrapper>
@@ -143,7 +143,12 @@ export function ReleasesModalStatus({
           </Text>
 
           <Group justify="center" mt="md">
-            <Button bg="#F26621" color="#FFFFFF" loading={loading} onClick={handleConfirmUpdate}>
+            <Button
+              bg="#F26621"
+              color="#FFFFFF"
+              loading={loading}
+              onClick={() => void handleConfirmUpdate()}
+            >
               Sí
             </Button>
 

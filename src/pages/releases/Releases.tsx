@@ -49,7 +49,7 @@ export function Releases() {
   /** @type {string | null} Criterio de ordenamiento ('Newest' | 'Oldest') */
   const [sortBy, setSortBy] = useState<string | null>('Newest')
 
-    /** Estado para controlar el modal de cambio de status */
+  /** Estado para controlar el modal de cambio de status */
   const [statusModalOpened, setStatusModalOpened] = useState(false)
 
   /** Release seleccionado para actualizar status */
@@ -133,43 +133,43 @@ export function Releases() {
     )
   }
 
-const handleOnClose = () => {
-  setTimeout(() => {
-    void refetch()
-  }, 200)
-}
-
-const openStatusModal = (release: ReleaseData) => {
-  setSelectedRelease(release)
-  setStatusModalOpened(true)
-}
-
-const closeStatusModal = () => {
-  setStatusModalOpened(false)
-  setSelectedRelease(null)
-}
-
-const handleUpdateStatus = async (releaseId: number, status: ReleaseStatus) => {
-  try {
-    await updateReleaseStatus(releaseId, status)
-
-    notifications.show({
-      title: 'Success!',
-      message: 'Release status updated successfully',
-      color: 'teal',
-    })
-
-    await refetch()
-  } catch (e) {
-    notifications.show({
-      title: 'Error updating release status',
-      message: e instanceof Error ? e.message : 'Unexpected error',
-      color: 'red',
-    })
-
-    throw e
+  const handleOnClose = () => {
+    setTimeout(() => {
+      void refetch()
+    }, 200)
   }
-}
+
+  const openStatusModal = (release: ReleaseData) => {
+    setSelectedRelease(release)
+    setStatusModalOpened(true)
+  }
+
+  const closeStatusModal = () => {
+    setStatusModalOpened(false)
+    setSelectedRelease(null)
+  }
+
+  const handleUpdateStatus = async (releaseId: number, status: ReleaseStatus) => {
+    try {
+      await updateReleaseStatus(releaseId, status)
+
+      notifications.show({
+        title: 'Success!',
+        message: 'Release status updated successfully',
+        color: 'teal',
+      })
+
+      await refetch()
+    } catch (e) {
+      notifications.show({
+        title: 'Error updating release status',
+        message: e instanceof Error ? e.message : 'Unexpected error',
+        color: 'red',
+      })
+
+      throw e
+    }
+  }
 
   // --- Vista Principal ---
   return (
