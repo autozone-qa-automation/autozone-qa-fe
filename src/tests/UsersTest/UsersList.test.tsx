@@ -11,7 +11,7 @@ const mockUsers: User[] = [
     email: 'samuel@autozone.com',
     roleId: 1,
     isActive: true,
-    rolePermission: { idRole: 1, permission: 'Admin' },
+    rolePermission: { id: 1, permission: 'ADMIN' },
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const mockUsers: User[] = [
     email: 'andrea@autozone.com',
     roleId: 2,
     isActive: true,
-    rolePermission: { idRole: 2, permission: 'Developer' },
+    rolePermission: { id: 2, permission: 'DEV' },
   },
 ]
 
@@ -46,8 +46,8 @@ describe('UsersList', () => {
 
   it('renders role badges', () => {
     renderComponent()
-    expect(screen.getByText('Admin')).toBeInTheDocument()
-    expect(screen.getByText('Developer')).toBeInTheDocument()
+    expect(screen.getByText('ADMIN')).toBeInTheDocument()
+    expect(screen.getByText('DEV')).toBeInTheDocument()
   })
 
   it('renders user emails', () => {

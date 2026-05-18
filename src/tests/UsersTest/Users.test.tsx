@@ -29,7 +29,7 @@ const mockUsers: User[] = [
     email: 'samuel@autozone.com',
     roleId: 1,
     isActive: true,
-    rolePermission: { idRole: 1, permission: 'Admin' },
+    rolePermission: { id: 1, permission: 'ADMIN' },
   },
   {
     id: 2,
@@ -38,7 +38,7 @@ const mockUsers: User[] = [
     email: 'andrea@autozone.com',
     roleId: 2,
     isActive: true,
-    rolePermission: { idRole: 2, permission: 'Developer' },
+    rolePermission: { id: 2, permission: 'DEV' },
   },
   {
     id: 3,
@@ -47,7 +47,7 @@ const mockUsers: User[] = [
     email: 'carlos@autozone.com',
     roleId: 2,
     isActive: true,
-    rolePermission: { idRole: 2, permission: 'Developer' },
+    rolePermission: { id: 2, permission: 'DEV' },
   },
   {
     id: 4,
@@ -56,7 +56,7 @@ const mockUsers: User[] = [
     email: 'laura@autozone.com',
     roleId: 4,
     isActive: true,
-    rolePermission: { idRole: 4, permission: 'Read-Only' },
+    rolePermission: { id: 4, permission: 'READ_ONLY' },
   },
   {
     id: 5,
@@ -65,7 +65,7 @@ const mockUsers: User[] = [
     email: 'diego@autozone.com',
     roleId: 2,
     isActive: true,
-    rolePermission: { idRole: 2, permission: 'Developer' },
+    rolePermission: { id: 2, permission: 'DEV' },
   },
 ]
 

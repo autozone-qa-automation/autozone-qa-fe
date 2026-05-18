@@ -1,10 +1,8 @@
 /**
- * @file Releases.tsx
- * @description Componente principal de la vista de Releases.
- * Gestiona la visualización, filtrado por estado, búsqueda y ordenamiento de lanzamientos.
- * Conecta con el backend de Autozone QA para obtener datos en tiempo real.
- * * @author Tecnológico de Monterrey — Campus Chihuahua
- * @version 1.0.0 (2026)
+ * Tecnológico de Monterrey — Campus Chihuahua
+ * Desarrollo e Implantación de Sistemas de Software
+ * TC3005B GPO500 - 2026
+ * Autozone QA Automation
  */
 
 import {
@@ -87,7 +85,7 @@ export function Releases() {
         <Stack align="center" gap="xs">
           <Loader color="orange.6" size="lg" type="dots" />
           <Text size="sm" c="dimmed" fw={500}>
-            Connecting to database...
+            Loading Releases...
           </Text>
         </Stack>
       </Center>

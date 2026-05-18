@@ -5,11 +5,13 @@ import { ConnectingDatabasePanel } from '@/components/ui/HandleStates/Connecting
 import { UsersList } from '@/components/users/UsersList'
 import { UsersRoleFilter } from '@/components/users/UsersRoleFilter'
 import { useGetAllUsers } from '@/hooks/userGetUsers'
+import type { User } from '@/types/user.types'
 import { UserCreateModal } from './UserCreateModal'
 
 export function Users() {
   const { users, loading, error, refetch } = useGetAllUsers()
   const [selectedRole, setSelectedRole] = useState<string>('ALL')
+  const [editUser, setEditUser] = useState<User | null>(null)
 
   useEffect(() => {
     if (error) {
@@ -26,7 +28,9 @@ export function Users() {
     { value: 'ALL', label: 'All Users' },
     ...Array.from(
       new Map(
-        users.filter(u => u.rolePermission).map(u => [u.roleId, u.rolePermission!.permission])
+        users
+          .filter(u => u.rolePermission?.permission)
+          .map(u => [u.roleId, u.rolePermission!.permission])
       ).entries()
     ).map(([value, label]) => ({ value: String(value), label })),
   ]
@@ -55,7 +59,21 @@ export function Users() {
 
       <UsersRoleFilter data={roleOptions} value={selectedRole} onChange={setSelectedRole} />
 
-      <UsersList data={filteredUsers} />
+      <UsersList data={filteredUsers} onEditClick={setEditUser} />
+
+      {editUser && (
+        <UserCreateModal
+          key={editUser.id}
+          user={editUser}
+          showPassword={false}
+          opened={true}
+          onClose={() => setEditUser(null)}
+          onSuccess={async () => {
+            setEditUser(null)
+            await refetch()
+          }}
+        />
+      )}
     </Stack>
   )
 }
