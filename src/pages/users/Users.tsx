@@ -7,11 +7,13 @@ import { UsersRoleFilter } from '@/components/users/UsersRoleFilter'
 import { useGetAllUsers } from '@/hooks/userGetUsers'
 import type { User } from '@/types/user.types'
 import { UserCreateModal } from './UserCreateModal'
+import { UserDeleteModal } from './UserDeleteModal'
 
 export function Users() {
   const { users, loading, error, refetch } = useGetAllUsers()
   const [selectedRole, setSelectedRole] = useState<string>('ALL')
   const [editUser, setEditUser] = useState<User | null>(null)
+  const [deleteUser, setDeleteUser] = useState<User | null>(null)
 
   useEffect(() => {
     if (error) {
@@ -24,11 +26,13 @@ export function Users() {
     }
   }, [error])
 
+  const activeUsers = users.filter(u => u.isActive)
+
   const roleOptions = [
     { value: 'ALL', label: 'All Users' },
     ...Array.from(
       new Map(
-        users
+        activeUsers
           .filter(u => u.rolePermission?.permission)
           .map(u => [u.roleId, u.rolePermission!.permission])
       ).entries()
@@ -36,7 +40,9 @@ export function Users() {
   ]
 
   const filteredUsers =
-    selectedRole === 'ALL' ? users : users.filter(u => u.roleId === Number(selectedRole))
+    selectedRole === 'ALL'
+      ? activeUsers
+      : activeUsers.filter(u => u.roleId === Number(selectedRole))
 
   if (loading) return <ConnectingDatabasePanel />
 
@@ -59,7 +65,17 @@ export function Users() {
 
       <UsersRoleFilter data={roleOptions} value={selectedRole} onChange={setSelectedRole} />
 
-      <UsersList data={filteredUsers} onEditClick={setEditUser} />
+      <UsersList data={filteredUsers} onEditClick={setEditUser} onDeleteClick={setDeleteUser} />
+
+      {deleteUser && (
+        <UserDeleteModal
+          isOpen={true}
+          userId={deleteUser.id}
+          userName={`${deleteUser.name} ${deleteUser.lastName}`}
+          onClose={() => setDeleteUser(null)}
+          onSuccess={() => void refetch()}
+        />
+      )}
 
       {editUser && (
         <UserCreateModal

@@ -62,6 +62,15 @@ class UserService {
   async update(id: number, data: UserUpdateRequest): Promise<User> {
     return apiService.put<User>(`${this.BASE_PATH}/${id}`, data)
   }
+
+  /**
+   * Desactiva un usuario mediante el endpoint dedicado.
+   * @param {number | string} id - El ID del usuario a desactivar
+   * @returns {Promise<void>}
+   */
+  async deactivate(id: number | string): Promise<void> {
+    await apiService.put<void>(`${this.BASE_PATH}/${id}/deactivate`)
+  }
 }
 
 export const userService = new UserService()

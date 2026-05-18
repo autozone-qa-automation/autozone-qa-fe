@@ -66,6 +66,20 @@ class ApiService {
   }
 
   /**
+   * Realiza una petición PATCH
+   *
+   * @template T - Tipo genérico para el tipo de dato de la respuesta
+   * @param {string} url - URL del endpoint a actualizar parcialmente
+   * @param {unknown} [data] - Datos parciales a enviar en el cuerpo de la petición
+   * @param {AxiosRequestConfig} [config] - Configuración opcional de Axios (headers, params, etc.)
+   * @returns {Promise<T>} Promesa que se resuelve con los datos de la respuesta tipados
+   */
+  async patch<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
+    const response: AxiosResponse<T> = await axiosInstance.patch(url, data, config)
+    return response.data
+  }
+
+  /**
    * Realiza una petición DELETE
    *
    * @template T - Tipo genérico para el tipo de dato de la respuesta
