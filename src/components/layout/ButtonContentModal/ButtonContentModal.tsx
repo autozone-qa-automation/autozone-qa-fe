@@ -6,18 +6,22 @@
  * @version 1.1.0 (2026)
  */
 
-import { Badge, Box, Button, Divider, Group, Modal, Select, Stack, Text } from '@mantine/core'
+import { Badge, Box, Button, Divider, Group, Modal, Stack, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
+import type { ReleaseStatus as ReleaseStatusType } from '@/types/Release.types'
 
-/** * Estatus permitidos para un Release.
- * @type {string}
+/**
+ * Estatus permitidos para un Release.
+ * Se re-exporta para mantener compatibilidad con imports existentes.
  */
-export type ReleaseStatus = 'Active' | 'Draft' | 'Progress'
+export type ReleaseStatus = ReleaseStatusType
 
 /**
  * Interfaz que define la estructura de datos para la UI del Release.
  */
 export interface ReleaseData {
+  /** ID único del release */
+  releaseId: number
   /** Nombre o título del lanzamiento */
   title: string
   /** Descripción del objetivo principal */
@@ -44,8 +48,8 @@ export interface ReleaseData {
 interface ButtonReleaseProps {
   /** Objeto de datos del release */
   data: ReleaseData
-  /** Callback opcional para manejar el cambio de estatus desde el Select del modal */
-  onStatusChange?: (newStatus: ReleaseStatus) => void
+  /** Callback opcional para abrir el modal de actualización de status */
+  onOpenStatusModal?: (release: ReleaseData) => void
 }
 
 /**
@@ -53,7 +57,7 @@ interface ButtonReleaseProps {
  * * @param {ButtonReleaseProps} props - Propiedades del componente.
  * @returns {JSX.Element} Fragmento de React con Modal y Card.
  */
-export function ButtonContentModal({ data, onStatusChange }: ButtonReleaseProps) {
+export function ButtonContentModal({ data, onOpenStatusModal }: ButtonReleaseProps) {
   /** Hook para controlar el estado de apertura/cierre del modal */
   const [opened, { open, close }] = useDisclosure(false)
 
@@ -147,25 +151,9 @@ export function ButtonContentModal({ data, onStatusChange }: ButtonReleaseProps)
 
               <Group align="center">
                 <Text style={labelStyle}>STATUS:</Text>
-                <Select
-                  variant="filled"
-                  size="xs"
-                  radius="md"
-                  data={['Active', 'Draft', 'Progress']}
-                  value={data.status}
-                  allowDeselect={false}
-                  onChange={value => value && onStatusChange?.(value)}
-                  styles={{
-                    input: {
-                      backgroundColor: statusBg,
-                      color: statusColor,
-                      fontWeight: 700,
-                      width: 120,
-                      height: 24,
-                      fontSize: 10,
-                    },
-                  }}
-                />
+                <Badge bg={statusBg} c={statusColor} size="sm" radius="sm">
+                  {data.status}
+                </Badge>
               </Group>
 
               {/* Redirección dinámica al servicio específico */}
@@ -185,8 +173,21 @@ export function ButtonContentModal({ data, onStatusChange }: ButtonReleaseProps)
               </Group>
             </Stack>
 
-            <Box mt={30} display="flex" style={{ justifyContent: 'flex-end' }}>
-              <Button onClick={close} color="orange.6" radius="md" size="xs">
+            <Box mt={30} display="flex" style={{ justifyContent: 'flex-end', gap: 8 }}>
+              <Button
+                color="orange.6"
+                radius="md"
+                size="xs"
+                disabled={data.status === 'Active'}
+                onClick={() => {
+                  close()
+                  onOpenStatusModal?.(data)
+                }}
+              >
+                Update
+              </Button>
+
+              <Button variant="outline" color="gray" radius="md" size="xs" onClick={close}>
                 Close
               </Button>
             </Box>
