@@ -10,7 +10,7 @@ import { UserCreateModal } from './UserCreateModal'
 import { UserDeleteModal } from './UserDeleteModal'
 
 export function Users() {
-  const { users, loading, error, refetch } = useGetAllUsers()
+  const { users, loading, error, refetch, addUser } = useGetAllUsers()
   const [selectedRole, setSelectedRole] = useState<string>('ALL')
   const [editUser, setEditUser] = useState<User | null>(null)
   const [deleteUser, setDeleteUser] = useState<User | null>(null)
@@ -60,7 +60,7 @@ export function Users() {
             {filteredUsers.length} users
           </Text>
         </Stack>
-        <UserCreateModal onSuccess={refetch} />
+        <UserCreateModal onSuccess={createdUser => { if (createdUser) addUser(createdUser) }} />
       </Flex>
 
       <UsersRoleFilter data={roleOptions} value={selectedRole} onChange={setSelectedRole} />

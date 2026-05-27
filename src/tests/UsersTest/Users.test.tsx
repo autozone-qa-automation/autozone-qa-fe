@@ -75,6 +75,7 @@ const mockUseGetAllUsers = (overrides = {}) =>
     loading: false,
     error: null,
     refetch: jest.fn(async () => {}),
+    addUser: jest.fn(),
     ...overrides,
   })
 

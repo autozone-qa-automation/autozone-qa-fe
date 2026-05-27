@@ -18,6 +18,7 @@ interface IUseGetAllUsersResponse {
   loading: boolean
   error: string | null
   refetch: () => Promise<void>
+  addUser: (user: User) => void
 }
 
 /**
@@ -62,5 +63,7 @@ export const useGetAllUsers = (): IUseGetAllUsersResponse => {
     void fetchUsers()
   }, [fetchUsers])
 
-  return { users, loading, error, refetch: fetchUsers }
+  const addUser = (user: User) => setUsers(prev => [...prev, user])
+
+  return { users, loading, error, refetch: fetchUsers, addUser }
 }

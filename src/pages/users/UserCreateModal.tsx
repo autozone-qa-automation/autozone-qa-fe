@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { roleService } from '@/services/role.service'
 import { userService } from '@/services/user.service'
-import type { User, UserRequest } from '@/types/user.types'
+import type { User, UserRequest, UserResponse } from '@/types/user.types'
 
 /**
  * Object encapsulating the
@@ -30,11 +30,11 @@ const labelStyles = {
 }
 
 /**
- * Interface describring the
+ * Interface describing the
  * props the components waits for
  */
 interface UserCreateModalProps {
-  onSuccess?: () => Promise<void>
+  onSuccess?: (createdUser?: UserResponse) => Promise<void> | void
   user?: User
   buttonLabel?: string
   showPassword?: boolean
@@ -45,7 +45,7 @@ interface UserCreateModalProps {
 /**
  *
  * @function onSucces - Function triggered on submit success
- * @param user - A user information (for edit purpouses)
+ * @param user - A user information (for edit purposes)
  * @param buttonLabel - Text label for the modal
  * @param showPassword - Bool flag to either show or hide the password
  * @returns
@@ -126,12 +126,16 @@ export function UserCreateModal({
         })
       } else {
         const hashedPassword = await bcrypt.hash(values.password, 10)
-        await userService.create({ ...values, password: hashedPassword })
+        const createdUser = await userService.create({ ...values, password: hashedPassword })
         notifications.show({
           title: 'Success!',
           message: 'User created successfully',
           color: 'teal',
         })
+        form.reset()
+        close()
+        await onSuccess?.(createdUser)
+        return
       }
       form.reset()
       close()
