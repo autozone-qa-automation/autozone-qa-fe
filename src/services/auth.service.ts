@@ -34,8 +34,11 @@ export const authService = {
    */
   login: async (payload: LoginRequest): Promise<LoginResponse> => {
     try {
-      const data = await apiService.post<unknown>(`${BASE_PATH}`, payload)
-      return data as LoginResponse
+      const data = await apiService.post<LoginResponse>(`${BASE_PATH}`, payload)
+      if (data.user.isActive === false) {
+        throw new Error('User account is inactive. Please contact support.')
+      }
+      return data
     } catch (error: unknown) {
       return handleServiceError(error)
     }
