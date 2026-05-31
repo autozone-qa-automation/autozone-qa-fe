@@ -10,6 +10,8 @@ import { useState } from 'react'
 import { useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useFeature } from '@/hooks/useGetFeature'
+import { useDeactivateFeature } from '@/hooks/useDeactivateFeature' 
+import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { FeatureEditModal } from './FeatureEditModal'
 import { TestCasesPanel } from './TestCasesPanel'
 
@@ -17,8 +19,18 @@ export function FeatureDetail() {
   const { featureId } = useParams()
 
   const { feature, refetch } = useFeature(featureId || '')
+  
+  const { deactivateFeature } = useDeactivateFeature()
 
   const [isEditOpen, setIsEditOpen] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+
+  const handleConfirmDelete = async () => {
+    if (featureId) {
+      await deactivateFeature(featureId)
+      setIsDeleteOpen(false)
+    }
+  }
 
   return (
     <Container size="md" mt="md">
@@ -35,7 +47,12 @@ export function FeatureDetail() {
               Edit
             </Button>
 
-            <Button size="xs" color="red" variant="outline">
+            <Button 
+              size="xs" 
+              color="red" 
+              variant="outline" 
+              onClick={() => setIsDeleteOpen(true)}
+            >
               Delete
             </Button>
           </Group>
@@ -51,6 +68,39 @@ export function FeatureDetail() {
           setIsEditOpen(false)
         }}
       />
+
+      <ModalTemplate
+  opened={isDeleteOpen}
+  onClose={() => setIsDeleteOpen(false)}
+  title="Confirm Deletion"
+>
+  <Stack gap="md" mt="xs">
+    {/* H: El cuerpo del mensaje solicitado */}
+    <Text size="sm">
+      Would you like to delete this feature?
+    </Text>
+
+    {/* H: Grupo de botones de acción alineados pa la derecha */}
+    <Group justify="flex-end" gap="xs" mt="md">
+      <Button 
+        variant="subtle" 
+        color="gray" 
+        size="xs" 
+        onClick={() => setIsDeleteOpen(false)}
+      >
+        Cancel
+      </Button>
+      
+      <Button 
+        color="red" 
+        size="xs" 
+        onClick={handleConfirmDelete}
+      >
+        Confirm
+      </Button>
+    </Group>
+  </Stack>
+</ModalTemplate>
 
       <Stack gap={4} mt="md" mb="md">
         <Text fw={600} size="sm" c="dimmed" tt="uppercase">
