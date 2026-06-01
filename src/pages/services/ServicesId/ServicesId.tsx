@@ -117,7 +117,9 @@ export function ServicesId() {
           onClose={() => setDeleteModalOpened(false)}
           serviceId={service.id}
           serviceName={service.getDisplayName()}
-          onSuccess={() => navigate('/services')}
+          onSuccess={() => {
+            navigate('/services')
+          }}
         />
       )}
     </Container>
