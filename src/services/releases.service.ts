@@ -46,6 +46,18 @@ class ReleaseService {
   }
 
   /**
+   * Obtiene el último release asociado a un servicio específico.
+   * @param {number} serviceId - El ID del servicio para filtrar el último release
+   * @returns {Promise<Release[]>} Un arreglo con el último release encontrado para el servicio dado
+   */
+  async getLastByServiceId(serviceId: number): Promise<Release[]> {
+    const data = await apiService.get<unknown>(`${this.BASE_URL}/last`, {
+      params: { serviceId },
+    })
+    return releaseResponseSchema.array().parse(data) as Release[]
+  }
+
+  /**
    * Obtiene un release por su ID.
    * @param {string} id - El ID del release a obtener
    * @returns {Promise<Release>} El release encontrado

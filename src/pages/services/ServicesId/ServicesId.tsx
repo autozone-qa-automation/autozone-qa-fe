@@ -7,7 +7,9 @@
 import { Anchor, Button, Container, Divider, Group, Loader, Stack, Text } from '@mantine/core'
 import { useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
+import { useGetLastReleasesByServiceId } from '@/hooks/useGetLastReleasesByServiceId'
 import { useGetServiceById } from '@/hooks/useGetServiceById'
+import { ReleasesList } from '@/pages/services/ServicesId/ReleasesList'
 import { ServicesList } from '@/pages/services/ServicesId/ServicesList'
 
 export function ServicesId() {
@@ -15,6 +17,11 @@ export function ServicesId() {
   const id = Number(serviceId)
 
   const { service, features, loading, error } = useGetServiceById(id)
+  const {
+    releases,
+    loading: releasesLoading,
+    error: releasesError,
+  } = useGetLastReleasesByServiceId(id)
 
   if (!id) return <Text p="xl">ID de servicio no válido</Text>
 
@@ -90,14 +97,9 @@ export function ServicesId() {
 
         <ServicesList data={featureItems} onDeleteClick={() => {}} />
 
-        <Stack gap="sm" mt="md">
-          <Text fw={600} size="sm" c="dimmed" tt="uppercase">
-            Last Releases
-          </Text>
-          <Text size="sm" c="dimmed" fs="italic">
-            No hay releases recientes para mostrar.
-          </Text>
-        </Stack>
+        <Divider />
+
+        <ReleasesList releases={releases} loading={releasesLoading} error={releasesError} />
       </Stack>
     </Container>
   )
