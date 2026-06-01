@@ -76,7 +76,7 @@ export function FeatureModalCreate({ onSuccess }: { onSuccess?: () => Promise<vo
         color: 'teal',
       })
       form.reset()
-      close() // <-- Cerramos el modal tras el éxito
+      close()
       onSuccess?.()
     }
   }
@@ -137,6 +137,9 @@ export function FeatureModalCreate({ onSuccess }: { onSuccess?: () => Promise<vo
               </Button>
               <Button type="submit" bg="#f46624" radius="md" loading={creating}>
                 Create Feature
+              </Button>
+              <Button type="button" bg="#f46624" radius="md" loading={loadingServices}>
+                Update Feature
               </Button>
             </Group>
           </Stack>
