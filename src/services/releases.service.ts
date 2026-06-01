@@ -32,6 +32,13 @@ export const releaseService = {
     return releaseResponseSchema.array().parse(data) as Release[]
   },
 
+  getLastByServiceId: async (serviceId: number): Promise<Release[]> => {
+    const data = await apiService.get<unknown>(`${BASE_URL}/last`, {
+      params: { serviceId },
+    })
+    return releaseResponseSchema.array().parse(data) as Release[]
+  },
+
   getById: async (id: string): Promise<FormValues> => {
     const data = await apiService.get<unknown>(`${BASE_URL}/${id}`)
     return releaseSchema.parse(data)
