@@ -63,7 +63,7 @@ const setup = () =>
 const openAndFill = async ({
   name = 'Santiago',
   lastName = 'Estrada',
-  email = 's.estrada@testflow.io',
+  email = 's.estrada@autozone.com',
   password = 'mypassword',
   roleValue = '1',
 } = {}) => {
@@ -71,7 +71,7 @@ const openAndFill = async ({
   await screen.findByTestId('user-create-form')
   fireEvent.change(screen.getByPlaceholderText('e.g. Santiago'), { target: { value: name } })
   fireEvent.change(screen.getByPlaceholderText('e.g. Estrada'), { target: { value: lastName } })
-  fireEvent.change(screen.getByPlaceholderText('e.g. s.estrada@testflow.io'), {
+  fireEvent.change(screen.getByPlaceholderText('e.g. s.estrada@autozone.com'), {
     target: { value: email },
   })
   fireEvent.change(screen.getByPlaceholderText('Min. 8 characters'), {
@@ -121,7 +121,7 @@ describe('UserCreateModal', () => {
         expect.objectContaining({
           name: 'Santiago',
           lastName: 'Estrada',
-          email: 's.estrada@testflow.io',
+          email: 's.estrada@autozone.com',
           password: 'hashed-password',
           roleId: 1,
           isActive: true,
@@ -153,5 +153,18 @@ describe('UserCreateModal', () => {
     await screen.findByTestId('user-create-form')
     fireEvent.click(screen.getByTestId('user-cancel-btn'))
     await waitFor(() => expect(screen.queryByTestId('user-create-form')).not.toBeInTheDocument())
+  })
+
+  test('onSuccess is called after a successful create', async () => {
+    const onSuccess = jest.fn().mockResolvedValue(undefined)
+    render(
+      <MantineProvider>
+        <UserCreateModal onSuccess={onSuccess} />
+      </MantineProvider>
+    )
+    await openAndFill()
+    fireEvent.click(screen.getByTestId('user-submit-btn'))
+
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1))
   })
 })

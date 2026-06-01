@@ -60,7 +60,7 @@ const mockUser: User = {
   id: 42,
   name: 'Santiago',
   lastName: 'Estrada',
-  email: 's.estrada@testflow.io',
+  email: 's.estrada@autozone.com',
   roleId: 1,
   isActive: true,
 }
@@ -121,7 +121,7 @@ describe('UserCreateModal — edit mode', () => {
     expect(screen.getByTestId<HTMLInputElement>('user-name-input').value).toBe('Santiago')
     expect(screen.getByTestId<HTMLInputElement>('user-lastname-input').value).toBe('Estrada')
     expect(screen.getByTestId<HTMLInputElement>('user-email-input').value).toBe(
-      's.estrada@testflow.io'
+      's.estrada@autozone.com'
     )
   })
 
@@ -150,7 +150,7 @@ describe('UserCreateModal — edit mode', () => {
         expect.objectContaining({
           name: 'Luis',
           lastName: 'Estrada',
-          email: 's.estrada@testflow.io',
+          email: 's.estrada@autozone.com',
           roleId: 1,
           isActive: true,
         })
@@ -219,5 +219,15 @@ describe('UserCreateModal — edit mode', () => {
     fireEvent.click(screen.getByTestId('user-cancel-btn'))
 
     await waitFor(() => expect(onClose).toHaveBeenCalled())
+  })
+
+  test('onSuccess is called with no createdUser argument in edit mode', async () => {
+    const { onSuccess } = setup()
+    await screen.findByTestId('user-create-form')
+    fireEvent.click(screen.getByTestId('user-submit-btn'))
+
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled())
+    const callArgs = (onSuccess.mock.calls[0] as unknown[]) ?? []
+    expect(callArgs).toHaveLength(0)
   })
 })
