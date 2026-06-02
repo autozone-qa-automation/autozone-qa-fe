@@ -5,28 +5,49 @@
  * Autozone QA Automation
  */
 import { Anchor, Button, Container, Divider, Group, Loader, Stack, Text } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 import { IconTrash } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetLastReleasesByServiceId } from '@/hooks/useGetLastReleasesByServiceId'
 import { useGetServiceById } from '@/hooks/useGetServiceById'
+import ServiceEditModal from '@/pages/services/ServiceEditModal'
 import { ReleasesList } from '@/pages/services/ServicesId/ReleasesList'
 import { ServiceDeleteModal } from '@/pages/services/ServicesId/ServiceDeleteModal'
 import { ServicesList } from '@/pages/services/ServicesId/ServicesList'
+import { featureService } from '@/services/features.service'
 
 export function ServicesId() {
   const { serviceId } = useParams()
   const navigate = useNavigate()
   const id = Number(serviceId)
-  const [deleteModalOpened, setDeleteModalOpened] = useState(false)
+  const [editOpened, setEditOpened] = useState(false)
 
-  const { service, features, loading, error } = useGetServiceById(id)
+  const { service, features, loading, error, refetch } = useGetServiceById(id)
   const {
     releases,
     loading: releasesLoading,
     error: releasesError,
   } = useGetLastReleasesByServiceId(id)
+
+  const handleUnlinkFeature = async (featureId: number) => {
+    try {
+      const feature = await featureService.getById(String(featureId))
+      await featureService.update(String(featureId), {
+        featureName: feature.featureName,
+        featureDescription: feature.featureDescription,
+      })
+      notifications.show({ title: 'Success', message: 'Feature unlinked', color: 'teal' })
+      await refetch?.()
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: err instanceof Error ? err.message : 'Failed to unlink feature',
+        color: 'red',
+      })
+    }
+  }
 
   if (!id) return <Text p="xl">ID de servicio no válido</Text>
 
@@ -68,7 +89,7 @@ export function ServicesId() {
           />
 
           <Group gap="xs">
-            <Button size="xs" color="orange.6">
+            <Button size="xs" color="orange.6" onClick={() => setEditOpened(true)}>
               Edit
             </Button>
             <Button
@@ -76,12 +97,24 @@ export function ServicesId() {
               color="red"
               variant="outline"
               leftSection={<IconTrash size={14} stroke={2.5} />}
-              onClick={() => setDeleteModalOpened(true)}
+              onClick={() => setEditOpened(true)}
             >
               Delete
             </Button>
           </Group>
         </Group>
+
+        <ServiceEditModal
+          service={{
+            id: service.id,
+            name: service.name,
+            description: service.description,
+            urls: service.urls,
+          }}
+          opened={editOpened}
+          onClose={() => setEditOpened(false)}
+          onSuccess={refetch}
+        />
 
         <Stack gap={4}>
           <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
@@ -95,18 +128,33 @@ export function ServicesId() {
             URLs
           </Text>
           <Stack gap={2}>
-            <Anchor size="sm" href="#" target="_blank">
-              Repository
-            </Anchor>
-            <Anchor size="sm" href="#" target="_blank">
-              Documentation
-            </Anchor>
+            {service.urls && service.urls.length > 0 ? (
+              service.urls.map(urlItem => (
+                <Anchor
+                  key={urlItem.idUrl ?? urlItem.url}
+                  size="sm"
+                  href={urlItem.url}
+                  target="_blank"
+                >
+                  {urlItem.nombre || urlItem.url}
+                </Anchor>
+              ))
+            ) : (
+              <Text size="sm" c="dimmed">
+                Sin URLs disponibles.
+              </Text>
+            )}
           </Stack>
         </Stack>
 
         <Divider />
 
-        <ServicesList data={featureItems} onDeleteClick={() => {}} />
+        <ServicesList
+          data={featureItems}
+          onDeleteClick={id => {
+            void handleUnlinkFeature(id)
+          }}
+        />
 
         <Divider />
 
@@ -115,8 +163,8 @@ export function ServicesId() {
 
       {service && (
         <ServiceDeleteModal
-          isOpen={deleteModalOpened}
-          onClose={() => setDeleteModalOpened(false)}
+          isOpen={editOpened}
+          onClose={() => setEditOpened(false)}
           serviceId={service.id}
           serviceName={service.getDisplayName()}
           onSuccess={() => {
