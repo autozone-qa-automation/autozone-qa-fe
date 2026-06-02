@@ -25,7 +25,7 @@ export class ReportServiceVO {
     this.serviceName = data.serviceName
     this.features = (data.features ?? []).map((feature) => new ReportFeatureVO(feature))
   }
-}
+} 
 
 export class ReportVO {
   readonly releaseId: number

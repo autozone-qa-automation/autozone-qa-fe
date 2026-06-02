@@ -23,21 +23,33 @@ import dayjs from 'dayjs'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useGetServices } from '@/hooks/useGetServices'
 import { reportsService } from '@/services/reports.service'
+import type { ReportsQueryParams } from '@/services/reports.service'
 import type { ReportVO } from '@/models/ReportVO'
 import './Reports.css'
 
 export function Reports() {
   const [startDate, setStartDate] = useState<string | null>(null)
   const [endDate, setEndDate] = useState<string | null>(null)
+  
   const [selectedService, setSelectedService] = useState('')
+  const [selectedServiceId, setSelectedServiceId] = useState<number | undefined>()
+
+  const [selectedTag, setSelectedTag] = useState('')
+
   const [reports, setReports] = useState<ReportVO[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
   const { services } = useGetServices()
+  
   const startDateInputRef = useRef<HTMLInputElement>(null)
   const endDateInputRef = useRef<HTMLInputElement>(null)
 
   const serviceOptions = services.map(service => service.name)
+  
+  const serviceMap = new Map(services.map(service => [service.name, service.id]));
+  const tagOptions = [...new Set(reports.flatMap(report => report.releaseTags))].sort()
+
 
   const formatDateForApi = useCallback((value: string | null): string | undefined => {
     if (!value) return undefined
@@ -45,7 +57,7 @@ export function Reports() {
     return formatted.isValid() ? formatted.format('YYYY-MM-DD') : value
   }, [])
 
-  const loadReports = useCallback(async (filters?: { from?: string; to?: string; service?: string }) => {
+  const loadReports = useCallback(async (filters?: ReportsQueryParams) => {
     setLoading(true)
     setError(null)
 
@@ -59,6 +71,38 @@ export function Reports() {
       setLoading(false)
     }
   }, [])
+
+  const handleExportCsv = async () => {
+    try {
+      const blob = await reportsService.exportCsv({
+        serviceId: selectedServiceId,
+        startDate: formatDateForApi(startDate),
+        endDate: formatDateForApi(endDate),
+        tagName: selectedTag || undefined,
+      })
+
+      const url = window.URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+
+      link.href = url
+      link.download = 'reportes_releases.csv'
+
+      document.body.appendChild(link)
+
+      link.click()
+
+      document.body.removeChild(link)
+
+      window.URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error(err)
+
+      setError(
+        err instanceof Error ? err.message : 'Failed to export CSV'
+      )
+    }
+  }
 
   useEffect(() => {
     void loadReports()
@@ -85,9 +129,10 @@ export function Reports() {
           radius="md"
           onClick={() =>
             void loadReports({
-              from: formatDateForApi(startDate),
-              to: formatDateForApi(endDate),
-              service: selectedService || undefined,
+              serviceId: selectedServiceId,
+              startDate: formatDateForApi(startDate),
+              endDate: formatDateForApi(endDate),
+              tagName: selectedTag || undefined,
             })
           }
         >
@@ -100,6 +145,7 @@ export function Reports() {
           <Text c="dimmed">From</Text>
 
           <DateInput
+            clearable
             ref={startDateInputRef}
             label="Start Date"
             placeholder="--/--/----"
@@ -120,6 +166,7 @@ export function Reports() {
           <Text c="dimmed">To</Text>
 
           <DateInput
+            clearable
             ref={endDateInputRef}
             label="End Date"
             placeholder="--/--/----"
@@ -145,19 +192,27 @@ export function Reports() {
             limit={5}
             w={260}
             value={selectedService}
-            onChange={setSelectedService}
+            onChange={(value) => {
+              setSelectedService(value)
+              setSelectedServiceId(serviceMap.get(value))
+            }}
             leftSection={<IconSearch size={16} />}
           />
           <Text>{selectedService || 'Chosen Service'}</Text>
         </Group>
 
         <Group>
-          <TextInput
+          <Autocomplete
             placeholder="Search Tags..."
-            leftSection={<IconSearch size={16} />}
+            data={tagOptions}
+            limit={5}
             w={260}
+            value={selectedTag}
+            onChange={setSelectedTag}
+            leftSection={<IconSearch size={16} />}
           />
-          <Text>Chosen Tags</Text>
+          <Text>{selectedTag || 'Chosen Tag'}</Text>
+          
         </Group>
       </Stack>
 
@@ -168,7 +223,7 @@ export function Reports() {
           variant="default"
           radius="md"
           leftSection={<IconDownload size={16} />}
-          onClick={() => void loadReports()}
+          onClick={() => void handleExportCsv()}
         >
           Export CSV
         </Button>
@@ -237,6 +292,17 @@ export function Reports() {
       </Table>
 
       <Group justify="space-between" mt="sm">
+        <Text c="dimmed" //aqui abajo estaba el showing 10 pages hardcodeado
+        >Showing 10 of 24 records</Text>
+
+        
+      </Group>
+    </div>
+  )
+}
+
+/*
+<Group justify="space-between" mt="sm">
         <Text c="dimmed">Showing 10 of 24 records</Text>
 
         <Group gap="xs">
@@ -248,6 +314,4 @@ export function Reports() {
           </Button>
         </Group>
       </Group>
-    </div>
-  )
-}
+*/
