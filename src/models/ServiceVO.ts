@@ -17,7 +17,7 @@ export class ServiceVO {
     this.id = data.id
     this.name = data.name
     this.description = data.description ?? ''
-    this.urls = data.urls
+    this.urls = data.urls ?? []
   }
 
   getDisplayName(): string {
