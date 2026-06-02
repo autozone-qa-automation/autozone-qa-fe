@@ -9,12 +9,15 @@ import { useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetServiceById } from '@/hooks/useGetServiceById'
 import { ServicesList } from '@/pages/services/ServicesId/ServicesList'
+import { useState } from 'react'
+import ServiceEditModal from '@/pages/services/ServiceEditModal'
 
 export function ServicesId() {
   const { serviceId } = useParams()
   const id = Number(serviceId)
+  const [editOpened, setEditOpened] = useState(false)
 
-  const { service, features, loading, error } = useGetServiceById(id)
+  const { service, features, loading, error, refetch } = useGetServiceById(id)
 
   if (!id) return <Text p="xl">ID de servicio no válido</Text>
 
@@ -42,6 +45,7 @@ export function ServicesId() {
     nombre: f.featureName,
   }))
 
+
   return (
     <Container size="xl">
       <Stack gap="xl">
@@ -56,7 +60,7 @@ export function ServicesId() {
           />
 
           <Group gap="xs">
-            <Button size="xs" color="orange.6">
+            <Button size="xs" color="orange.6" onClick={() => setEditOpened(true)}>
               Edit
             </Button>
             <Button size="xs" color="red" variant="outline">
@@ -64,6 +68,13 @@ export function ServicesId() {
             </Button>
           </Group>
         </Group>
+
+        <ServiceEditModal
+          service={{ id: service.id, name: service.name, description: service.description, urls: service.urls }}
+          opened={editOpened}
+          onClose={() => setEditOpened(false)}
+          onSuccess={refetch}
+        />
 
         <Stack gap={4}>
           <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
@@ -77,12 +88,17 @@ export function ServicesId() {
             URLs
           </Text>
           <Stack gap={2}>
-            <Anchor size="sm" href="#" target="_blank">
-              Repository
-            </Anchor>
-            <Anchor size="sm" href="#" target="_blank">
-              Documentation
-            </Anchor>
+            {service.urls && service.urls.length > 0 ? (
+              service.urls.map(urlItem => (
+                <Anchor key={urlItem.idUrl ?? urlItem.url} size="sm" href={urlItem.url} target="_blank">
+                  {urlItem.nombre || urlItem.url}
+                </Anchor>
+              ))
+            ) : (
+              <Text size="sm" c="dimmed">
+                Sin URLs disponibles.
+              </Text>
+            )}
           </Stack>
         </Stack>
 

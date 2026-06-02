@@ -11,11 +11,13 @@ export class ServiceVO {
   readonly id: number
   readonly name: string
   readonly description: string
+  readonly urls?: { idUrl?: number; nombre: string; url: string }[]
 
   constructor(data: Service) {
     this.id = data.id
     this.name = data.name
     this.description = data.description ?? ''
+    this.urls = data.urls ?? []
   }
 
   getDisplayName(): string {
