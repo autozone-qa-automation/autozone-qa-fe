@@ -34,21 +34,15 @@ const reportSchema = z.object({
   services: z.array(reportServiceSchema),
 })
 
-/*
-export interface ReportsQueryParams {
-  from?: string
-  to?: string
-  service?: string
-  tag?: string
-  status?: string
-}
-*/
-
 export interface ReportsQueryParams {
   serviceId?: number
   startDate?: string
   endDate?: string
   tagName?: string
+}
+
+export interface ExportReportsQueryParams {
+  releaseIds: string
 }
 
 export const reportsService = {
@@ -62,7 +56,7 @@ export const reportsService = {
     return reports.map(report => new ReportVO(report))
   },
 
-  exportCsv: async (params?: ReportsQueryParams): Promise<Blob> => {
+  exportCsv: async (params: ExportReportsQueryParams): Promise<Blob> => {
     return apiService.get<Blob>(`${BASE_URL}/export`, {
       params,
       responseType: 'blob',
