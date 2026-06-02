@@ -33,12 +33,12 @@ export type Service = z.infer<typeof serviceSchema>
 /**
  * URL payload schema for creation — omits idUrl, which is assigned by the backend.
  */
-const createServiceUrlSchema = serviceUrlSchema.omit({ idUrl: true })
+export const createServiceUrlSchema = serviceUrlSchema.omit({ idUrl: true })
 
 /**
  * Payload schema for POST /services — omits all server-generated fields.
  */
-const createServiceSchema = serviceSchema.omit({ id: true }).extend({
+export const createServiceSchema = serviceSchema.omit({ id: true }).extend({
   urls: z.array(createServiceUrlSchema),
 })
 
