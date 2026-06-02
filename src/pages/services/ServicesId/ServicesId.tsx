@@ -55,7 +55,7 @@ export function ServicesId() {
         <Group justify="space-between" align="flex-start">
           <TitleHeader
             title={service.getDisplayName()}
-            metaDetails={[`${features.length} features`, `0 test cases`]}
+            metaDetails={[`${features.length} features`]}
             breadcrumbs={[
               { title: 'Services', href: '/services' },
               { title: service.name, href: '#' },
