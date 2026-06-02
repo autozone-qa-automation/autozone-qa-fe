@@ -67,7 +67,7 @@ export function Reports() {
         </div>
 
         <Button color="orange.6" radius="md" onClick={() => void handleGenerateReport()}>
-          ⚙️ Generate Report
+          Generate Report
         </Button>
       </Group>
 
