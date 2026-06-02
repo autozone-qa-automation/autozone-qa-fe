@@ -27,38 +27,41 @@ export const useDeactivateFeature = (): IUseDeactivateFeatureResponse => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<boolean>(false)
-  
+
   const navigate = useNavigate()
 
   /**
    * Función para ejecutar la petición PUT de desactivación
    */
-  const deactivateFeature = useCallback(async (id: string): Promise<boolean> => {
-    setLoading(true)
-    setError(null)
-    setSuccess(false)
+  const deactivateFeature = useCallback(
+    async (id: string): Promise<boolean> => {
+      setLoading(true)
+      setError(null)
+      setSuccess(false)
 
-    try {
-      // H: Llama a nuestro servicio recién modificado alineado al backend
-      await featureService.deactivate(id)
-      
-      setSuccess(true)
-      
-      //H: Redirección automática a la pantalla general de Features
-      navigate('/features') 
-      
-      return true
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message)
-      } else {
-        setError('Error inesperado al desactivar el feature.')
+      try {
+        // H: Llama a nuestro servicio recién modificado alineado al backend
+        await featureService.deactivate(id)
+
+        setSuccess(true)
+
+        //H: Redirección automática a la pantalla general de Features
+        navigate('/features')
+
+        return true
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message)
+        } else {
+          setError('Error inesperado al desactivar el feature.')
+        }
+        return false
+      } finally {
+        setLoading(false)
       }
-      return false
-    } finally {
-      setLoading(false)
-    }
-  }, [navigate])
+    },
+    [navigate]
+  )
 
   return { deactivateFeature, loading, error, success }
 }

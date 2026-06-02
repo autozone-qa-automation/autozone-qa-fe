@@ -9,9 +9,9 @@ import { Button, Container, Divider, Group, Stack, Text } from '@mantine/core'
 import { useState } from 'react'
 import { useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
-import { useFeature } from '@/hooks/useGetFeature'
-import { useDeactivateFeature } from '@/hooks/useDeactivateFeature' 
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
+import { useDeactivateFeature } from '@/hooks/useDeactivateFeature'
+import { useFeature } from '@/hooks/useGetFeature'
 import { FeatureEditModal } from './FeatureEditModal'
 import { TestCasesPanel } from './TestCasesPanel'
 
@@ -42,20 +42,20 @@ export function FeatureDetail() {
         ]}
         actionComponent={
           <Group gap="xs">
-            <Button 
-              data-testid="feature-detail-edit-button" 
-              size="xs" 
-              color="orange.6" 
+            <Button
+              data-testid="feature-detail-edit-button"
+              size="xs"
+              color="orange.6"
               onClick={() => setIsEditOpen(true)}
             >
               Edit
             </Button>
 
-            <Button 
-              data-testid="feature-detail-delete-trigger-button" 
-              size="xs" 
-              color="red" 
-              variant="outline" 
+            <Button
+              data-testid="feature-detail-delete-trigger-button"
+              size="xs"
+              color="red"
+              variant="outline"
               onClick={() => setIsDeleteOpen(true)}
             >
               Delete
@@ -85,21 +85,23 @@ export function FeatureDetail() {
           </Text>
 
           <Group justify="flex-end" gap="xs" mt="md">
-            <Button 
+            <Button
               data-testid="feature-delete-modal-cancel-button"
-              variant="subtle" 
-              color="gray" 
-              size="xs" 
+              variant="subtle"
+              color="gray"
+              size="xs"
               onClick={() => setIsDeleteOpen(false)}
             >
               Cancel
             </Button>
-            
-            <Button 
+
+            <Button
               data-testid="feature-delete-modal-confirm-button"
-              color="red" 
-              size="xs" 
-              onClick={handleConfirmDelete}
+              color="red"
+              size="xs"
+              onClick={() => {
+                void handleConfirmDelete()
+              }}
             >
               Confirm
             </Button>

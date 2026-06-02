@@ -17,19 +17,26 @@ import { FeaturesList } from './FeaturesList'
 export function Features() {
   const { features, refetch, fetchFeaturesFiltered, error, isLoading } = useFeatures()
 
-  if (features.length > 0) console.log("¿Qué propiedades tiene un feature aquí?:", features[0]);
-  
-  const activeFeatures = features.filter((f: any) => {
-    const isFeatureActive = f.active ?? f.isActive ?? true;
-    return isFeatureActive !== 0 && isFeatureActive !== false && isFeatureActive !== '0';
-  });
+  const activeFeatures = features.filter(f => {
+    // 1. Usamos doble cast (as unknown as) para indicarle al compilador que la conversión es intencional.
+    // 2. Definimos una estructura con unión de tipos primitivos. Esto le permite al compilador realizar
+    //    las comparaciones (!== 0, !== false) de forma segura y sin usar 'any'.
+    const record = f as unknown as {
+      active?: string | number | boolean | null
+      isActive?: string | number | boolean | null
+    }
+
+    const isFeatureActive = record.active ?? record.isActive ?? true
+
+    return isFeatureActive !== 0 && isFeatureActive !== false && isFeatureActive !== '0'
+  })
 
   return (
     <div data-testid="features-page-container">
       <TitleHeader
         title="Features"
         metaDetails={['']}
-        breadcrumbs={[ { title: 'Features', href: '#' } ]}
+        breadcrumbs={[{ title: 'Features', href: '#' }]}
         actionComponent={<FeatureModalCreate onSuccess={refetch} />}
       />
 
@@ -44,21 +51,13 @@ export function Features() {
       />
 
       {isLoading && activeFeatures.length === 0 && <ConnectingDatabasePanel />}
-      
+
       {error && <ErrorPanel error={error} />}
-      
-      {activeFeatures.length > 0 && !isLoading && !error && (
-        <FeaturesList data={activeFeatures} />
-      )}
-      
+
+      {activeFeatures.length > 0 && !isLoading && !error && <FeaturesList data={activeFeatures} />}
+
       {!isLoading && activeFeatures.length === 0 && (
-        <Text 
-          data-testid="features-empty-message" 
-          ta="center" 
-          c="#8C8C94" 
-          mt="xl" 
-          size="xl"
-        >
+        <Text data-testid="features-empty-message" ta="center" c="#8C8C94" mt="xl" size="xl">
           No Features available
         </Text>
       )}

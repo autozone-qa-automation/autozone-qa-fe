@@ -91,7 +91,7 @@ export const featureService = {
     }
   },
 
-/**
+  /**
    * Desactiva un feature y sus casos de prueba relacionados en el backend.
    * @param {string} id - El identificador único del feature a desactivar.
    * @returns {Promise<void>} Una promesa que se resuelve cuando la operación se completa con éxito.
