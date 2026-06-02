@@ -19,6 +19,7 @@ const mockServiceSQL = {
   id: 16,
   name: 'AI',
   description: 'Entrenamiento de modelos',
+  urls: [],
 }
 
 const mockFeaturesSQL = [
