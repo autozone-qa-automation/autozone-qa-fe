@@ -60,7 +60,12 @@ export function Services() {
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
             <BaseCard onClick={open}>New Service</BaseCard>
 
-            <ServicesList searchQuery={searchQuery} services={services} loading={loading} error={error} />
+            <ServicesList
+              searchQuery={searchQuery}
+              services={services}
+              loading={loading}
+              error={error}
+            />
           </SimpleGrid>
         </Stack>
       </Container>

@@ -150,7 +150,6 @@ export function ServicesModalCreate({ opened, onClose, onSuccess }: ServicesModa
                 )}
               </Group>
             ))}
-            
             <Button
               variant="light"
               color="orange"
@@ -174,7 +173,13 @@ export function ServicesModalCreate({ opened, onClose, onSuccess }: ServicesModa
             >
               Cancel
             </Button>
-            <Button type="submit" bg="#f46624" radius="md" loading={loading} data-testid="service-submit-btn">
+            <Button
+              type="submit"
+              bg="#f46624"
+              radius="md"
+              loading={loading}
+              data-testid="service-submit-btn"
+            >
               Create Service
             </Button>
           </Group>

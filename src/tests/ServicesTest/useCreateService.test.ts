@@ -71,7 +71,9 @@ describe('useCreateService', () => {
     const { result } = renderHook(() => useCreateService())
 
     await act(async () => {
-      await expect(result.current.createService(mockRequest)).rejects.toThrow('Service already exists')
+      await expect(result.current.createService(mockRequest)).rejects.toThrow(
+        'Service already exists'
+      )
     })
 
     expect(result.current.error).toBe('Service already exists')

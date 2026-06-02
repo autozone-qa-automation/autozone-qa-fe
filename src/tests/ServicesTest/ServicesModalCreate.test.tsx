@@ -17,6 +17,7 @@ jest.mock('@/services/services.service')
 jest.mock('@/hooks/useGetServices')
 jest.mock('@mantine/notifications', () => ({ notifications: { show: jest.fn() } }))
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 const notify = jest.requireMock('@mantine/notifications').notifications.show as jest.Mock
 
 const fillForm = (name = 'Payment API', urlName = 'Swagger', url = 'https://swagger.io') => {
@@ -36,16 +37,29 @@ const setup = (props = {}) =>
 
 const mockServices = () =>
   (useGetServices as jest.Mock).mockReturnValue({
-    services: [], loading: false, error: null, refetch: jest.fn(),
+    services: [],
+    loading: false,
+    error: null,
+    refetch: jest.fn(),
   })
 
 describe('ServicesModalCreate', () => {
-  beforeEach(() => { jest.clearAllMocks(); mockServices() })
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockServices()
+  })
 
   test('renders all form fields and buttons', () => {
     setup()
-    ;['service-create-form', 'service-name-input', 'url-nombre-0', 'url-url-0', 'add-url-btn', 'service-submit-btn', 'service-cancel-btn']
-      .forEach(id => expect(screen.getByTestId(id)).toBeInTheDocument())
+    ;[
+      'service-create-form',
+      'service-name-input',
+      'url-nombre-0',
+      'url-url-0',
+      'add-url-btn',
+      'service-submit-btn',
+      'service-cancel-btn',
+    ].forEach(id => expect(screen.getByTestId(id)).toBeInTheDocument())
   })
 
   test('fields update on input', () => {
@@ -116,10 +130,17 @@ describe('ServicesModalCreate', () => {
 })
 
 describe('Services page', () => {
-  beforeEach(() => { jest.clearAllMocks(); mockServices() })
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockServices()
+  })
 
   test('New Service button opens the modal', async () => {
-    render(<MantineProvider><Services /></MantineProvider>)
+    render(
+      <MantineProvider>
+        <Services />
+      </MantineProvider>
+    )
     fireEvent.click(screen.getByRole('button', { name: /new service/i }))
     await waitFor(() => expect(screen.getByTestId('service-create-form')).toBeInTheDocument())
   })
