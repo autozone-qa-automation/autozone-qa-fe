@@ -236,17 +236,22 @@ export function Releases() {
       {/* Grid de Contenido: Tarjetas de Release */}
       <div style={{ marginTop: '20px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
         {filteredAndSortedReleases.map(item => (
-          <div key={item.releaseId} data-testid={`release-card-${item.releaseId}`} style={{ display: 'contents' }}>
-            <ButtonContentModal
-              data={item}
-              onOpenStatusModal={openStatusModal}
-            />
+          <div
+            key={item.releaseId}
+            data-testid={`release-card-${item.releaseId}`}
+            style={{ display: 'contents' }}
+          >
+            <ButtonContentModal data={item} onOpenStatusModal={openStatusModal} />
           </div>
         ))}
 
         {/* Empty State */}
         {filteredAndSortedReleases.length === 0 && (
-          <Box style={{ width: '100%', textAlign: 'center' }} mt={50} data-testid="releases-empty-message">
+          <Box
+            style={{ width: '100%', textAlign: 'center' }}
+            mt={50}
+            data-testid="releases-empty-message"
+          >
             <Text c="dimmed" fz="lg" fw={500}>
               No releases found
             </Text>
