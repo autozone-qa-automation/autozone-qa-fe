@@ -18,7 +18,7 @@ import { ServicesModalCreate } from './ServicesModalCreate'
 
 export function Services() {
   const [searchQuery, setSearchQuery] = useState('')
-  const { services, loading, refetch } = useGetServices()
+  const { services, loading, error, refetch } = useGetServices()
   const [opened, { open, close }] = useDisclosure(false)
 
   return (
@@ -32,11 +32,9 @@ export function Services() {
             leftSection={<IconPlus size={16} stroke={2.5} />}
             color="orange.6"
             radius="md"
-            size="md"
-            fw={600}
             onClick={open}
           >
-            Add Service
+            New Service
           </Button>
         }
       />
@@ -60,9 +58,9 @@ export function Services() {
           </Group>
 
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
-            <BaseCard onClick={open}>Add Service</BaseCard>
+            <BaseCard onClick={open}>New Service</BaseCard>
 
-            <ServicesList searchQuery={searchQuery} />
+            <ServicesList searchQuery={searchQuery} services={services} loading={loading} error={error} />
           </SimpleGrid>
         </Stack>
       </Container>

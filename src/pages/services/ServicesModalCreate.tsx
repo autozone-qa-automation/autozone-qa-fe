@@ -5,7 +5,7 @@
  * Autozone QA Automation
  */
 
-import { ActionIcon, Button, Group, Stack, Textarea, TextInput } from '@mantine/core'
+import { ActionIcon, Box, Button, Group, Stack, Textarea, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { IconPlus, IconX } from '@tabler/icons-react'
@@ -21,15 +21,30 @@ const labelStyles = {
   },
 }
 
+/**
+ * Interface describing the
+ * props the component waits for
+ */
 interface ServicesModalCreateProps {
   opened: boolean
   onClose: () => void
   onSuccess?: () => Promise<void>
 }
 
+/**
+ * @function ServicesModalCreate - Controlled modal form for creating a new service
+ * @param opened - Whether the modal is visible
+ * @param onClose - Callback to close the modal
+ * @param onSuccess - Called after a successful creation so the parent can refresh its list
+ * @returns
+ */
 export function ServicesModalCreate({ opened, onClose, onSuccess }: ServicesModalCreateProps) {
   const { createService, loading } = useCreateService()
 
+  /**
+   * @function handleClose - Resets the form and closes the modal
+   * @returns
+   */
   const handleClose = () => {
     form.reset()
     onClose()
@@ -48,26 +63,30 @@ export function ServicesModalCreate({ opened, onClose, onSuccess }: ServicesModa
     validateInputOnChange: true,
   })
 
+  /**
+   * @function handleSubmit - Submits the form to create a new service
+   * @param values - Validated form values
+   * @returns
+   */
   const handleSubmit = async (values: CreateServiceRequest) => {
-    const result = await createService({
-      name: values.name.trim(),
-      description: values.description?.trim() || undefined,
-      urls: values.urls,
-    })
-
-    if (result) {
+    try {
+      await createService({
+        name: values.name.trim(),
+        description: values.description?.trim() || undefined,
+        urls: values.urls,
+      })
       notifications.show({
         title: 'Success!',
         message: 'Service created successfully',
-        color: 'teal',
+        color: 'green',
       })
       form.reset()
       onClose()
-      onSuccess?.()
-    } else {
+      await onSuccess?.()
+    } catch (err) {
       notifications.show({
         title: 'Error',
-        message: 'Failed to create service',
+        message: err instanceof Error ? err.message : 'Unexpected error',
         color: 'red',
       })
     }
@@ -75,7 +94,7 @@ export function ServicesModalCreate({ opened, onClose, onSuccess }: ServicesModa
 
   return (
     <ModalTemplate opened={opened} onClose={handleClose} title="New Service">
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+      <form onSubmit={form.onSubmit(handleSubmit)} data-testid="service-create-form">
         <Stack gap="md">
           <TextInput
             label="SERVICE NAME"
@@ -83,6 +102,7 @@ export function ServicesModalCreate({ opened, onClose, onSuccess }: ServicesModa
             withAsterisk
             {...form.getInputProps('name')}
             styles={{ label: labelStyles.label }}
+            data-testid="service-name-input"
           />
 
           <Textarea
@@ -99,34 +119,45 @@ export function ServicesModalCreate({ opened, onClose, onSuccess }: ServicesModa
                 <TextInput
                   label={index === 0 ? "URL'S" : undefined}
                   withAsterisk={index === 0}
-                  placeholder="Name (e.g. Swagger)"
+                  placeholder="e.g. Repository"
                   style={{ flex: 1 }}
                   styles={{ label: labelStyles.label }}
-                  error="Missing name"
                   {...form.getInputProps(`urls.${index}.nombre`)}
+                  data-testid={`url-nombre-${index}`}
                 />
                 <TextInput
                   placeholder="https://..."
                   style={{ flex: 2 }}
                   {...form.getInputProps(`urls.${index}.url`)}
+                  data-testid={`url-url-${index}`}
                 />
-                <ActionIcon
-                  color="gray"
-                  variant="subtle"
-                  style={{ marginBottom: 5 }}
-                  onClick={() => form.removeListItem('urls', index)}
-                  disabled={form.values.urls.length === 1}
-                >
-                  <IconX size={16} />
-                </ActionIcon>
+                {form.values.urls.length > 1 ? (
+                  index === 0 ? (
+                    <Box w={36} />
+                  ) : (
+                    <ActionIcon
+                      color="gray"
+                      variant="subtle"
+                      size={36}
+                      onClick={() => form.removeListItem('urls', index)}
+                      data-testid={`remove-url-${index}`}
+                    >
+                      <IconX size={16} />
+                    </ActionIcon>
+                  )
+                ) : (
+                  <Box w={28} />
+                )}
               </Group>
             ))}
+            
             <Button
               variant="light"
               color="orange"
               size="xs"
               leftSection={<IconPlus size={14} />}
               onClick={() => form.insertListItem('urls', { nombre: '', url: '' })}
+              data-testid="add-url-btn"
             >
               Add URL
             </Button>
@@ -139,10 +170,11 @@ export function ServicesModalCreate({ opened, onClose, onSuccess }: ServicesModa
               radius="md"
               onClick={handleClose}
               disabled={loading}
+              data-testid="service-cancel-btn"
             >
               Cancel
             </Button>
-            <Button type="submit" bg="#f46624" radius="md" loading={loading}>
+            <Button type="submit" bg="#f46624" radius="md" loading={loading} data-testid="service-submit-btn">
               Create Service
             </Button>
           </Group>

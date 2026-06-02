@@ -6,7 +6,6 @@
  */
 import { Box, Card, Stack, Text } from '@mantine/core'
 import { IconCode, IconDatabase, IconDeviceDesktop, IconServer } from '@tabler/icons-react'
-import { useGetServices } from '@/hooks/useGetServices'
 import type { Service } from '@/types/service.types'
 
 interface ServiceCardProps {
@@ -76,11 +75,12 @@ export function ServiceCard({ id, nombre }: ServiceCardProps) {
 
 interface ServicesListProps {
   searchQuery?: string
+  services: Service[]
+  loading: boolean
+  error: string | null
 }
 
-export function ServicesList({ searchQuery = '' }: ServicesListProps) {
-  const { services, loading, error } = useGetServices()
-
+export function ServicesList({ searchQuery = '', services, loading, error }: ServicesListProps) {
   if (loading) return <Text>Cargando servicios...</Text>
   if (error) return <Text c="red">Error: {error}</Text>
 
