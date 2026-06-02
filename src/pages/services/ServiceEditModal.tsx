@@ -19,6 +19,15 @@ interface ServiceEditModalProps {
   onClose?: () => void
 }
 
+const isValidUrl = (url: string): boolean => {
+  try {
+    const urlObj = new URL(url)
+    return urlObj.protocol === 'http:' || urlObj.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 export function ServiceEditModal({
   service,
   onSuccess,
@@ -46,22 +55,41 @@ export function ServiceEditModal({
   })
 
   const handleSubmit = async (values: { name: string; description?: string; urls: UrlItem[] }) => {
-    const emptyUrlIndex = values.urls.findIndex(u => u.url.trim() === '')
-    if (emptyUrlIndex !== -1) {
-      form.setFieldError(`urls.${emptyUrlIndex}.url`, 'URL cannot be empty')
-      notifications.show({
-        title: 'Empty URL',
-        message: 'Please enter a valid URL or remove the empty entry before saving.',
-        color: 'yellow',
-      })
-      return
+    const urls = values.urls || []
+
+    // Validar URLs vacías e inválidas
+    for (let i = 0; i < urls.length; i++) {
+      const urlItem = urls[i]
+      if (!urlItem) continue
+
+      const url = urlItem.url.trim()
+
+      if (url === '') {
+        form.setFieldError(`urls.${i}.url`, 'URL cannot be empty')
+        notifications.show({
+          title: 'Empty URL',
+          message: 'Please enter a valid URL or remove the empty entry before saving.',
+          color: 'yellow',
+        })
+        return
+      }
+
+      if (!isValidUrl(url)) {
+        form.setFieldError(`urls.${i}.url`, 'Invalid URL format. Use http:// or https://')
+        notifications.show({
+          title: 'Invalid URL',
+          message: `URL at row ${i + 1} is invalid. Use http:// or https://`,
+          color: 'yellow',
+        })
+        return
+      }
     }
 
     try {
       const payload: Partial<CreateServiceRequest> = {
         name: values.name,
         description: values.description,
-        urls: values.urls.map(u => ({
+        urls: urls.map(u => ({
           ...(u.idUrl ? { idUrl: u.idUrl } : {}),
           nombre: u.nombre,
           url: u.url,
