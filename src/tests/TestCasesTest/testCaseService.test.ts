@@ -41,7 +41,7 @@ describe('testCaseService', () => {
   })
 
   it('should fetch and parse all test cases correctly', async () => {
-    ; (apiService.get as jest.Mock).mockResolvedValue([mockTestCase])
+    ;(apiService.get as jest.Mock).mockResolvedValue([mockTestCase])
 
     const result = await testCaseService.getAll()
 
@@ -52,7 +52,7 @@ describe('testCaseService', () => {
   })
 
   it('should fail when the API returns invalid data according to Zod', async () => {
-    ; (apiService.get as jest.Mock).mockResolvedValue([{ id: 1 }])
+    ;(apiService.get as jest.Mock).mockResolvedValue([{ id: 1 }])
 
     await expect(testCaseService.getAll()).rejects.toThrow()
   })
@@ -61,7 +61,7 @@ describe('testCaseService', () => {
     const mockedPut = jest.fn()
 
     beforeEach(() => {
-      ; (apiService as unknown as Record<string, jest.Mock>)['put'] = mockedPut
+      ;(apiService as unknown as Record<string, jest.Mock>)['put'] = mockedPut
     })
 
     it('should call PUT with the correct endpoint and payload', async () => {
@@ -99,7 +99,7 @@ describe('testCaseService', () => {
     const mockedPut = jest.fn()
 
     beforeEach(() => {
-      ; (apiService as unknown as Record<string, jest.Mock>)['put'] = mockedPut
+      ;(apiService as unknown as Record<string, jest.Mock>)['put'] = mockedPut
     })
 
     it('should call PUT with the correct deactivate endpoint', async () => {
