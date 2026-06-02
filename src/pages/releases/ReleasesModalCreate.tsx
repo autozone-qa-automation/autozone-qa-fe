@@ -70,10 +70,11 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
     validateInputOnChange: true,
   })
 
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = async (values: FormValues) => {
+    if (loading) return
     try {
       setLoading(true)
-      postRelease(
+      await postRelease(
         new ReleaseCreateVO({
           ...values,
           releaseCreationDate: new Date().toISOString().split('T')[0],
@@ -88,7 +89,11 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
       form.reset()
       handleOnClose()
     } catch (e) {
-      console.error(e)
+      notifications.show({
+        title: 'Error creating release',
+        message: e instanceof Error ? e.message : 'Unexpected error',
+        color: 'red',
+      })
     } finally {
       setLoading(false)
     }
@@ -225,6 +230,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
                 variant="outline"
                 bg="#FFFFFF"
                 color="#8C8C94"
+                disabled={loading}
                 onClick={() => {
                   form.reset()
                   close()
@@ -232,8 +238,14 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               >
                 Cancel
               </Button>
-              <Button type="submit" bg="#F26621" color="#FFFFFF">
-                {loading ? 'Loading' : 'Create Release'}
+              <Button
+                type="submit"
+                bg="#F26621"
+                color="#FFFFFF"
+                loading={loading}
+                disabled={loading}
+              >
+                Create Release
               </Button>
             </Group>
           </Stack>

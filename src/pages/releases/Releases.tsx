@@ -24,6 +24,7 @@ import { ButtonContentModal } from '@/components/layout/ButtonContentModal/Butto
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetAllReleases } from '@/hooks/useGetReleases'
 import { useUpdateReleaseStatus } from '@/hooks/useUpdateReleaseStatus'
+import { ReleaseDeleteModal } from '@/pages/releases/ReleaseDeleteModal'
 import { ReleasesModalStatus } from '@/pages/releases/ReleasesModalStatus'
 import type { ReleaseStatus } from '@/types/Release.types'
 import { ReleasesModalCreate } from './ReleasesModalCreate'
@@ -50,7 +51,10 @@ export function Releases() {
   /** Estado para controlar el modal de cambio de status */
   const [statusModalOpened, setStatusModalOpened] = useState(false)
 
-  /** Release seleccionado para actualizar status */
+  /** Estado para controlar el modal de eliminación */
+  const [deleteModalOpened, setDeleteModalOpened] = useState(false)
+
+  /** Release seleccionado para actualizar status o borrar */
   const [selectedRelease, setSelectedRelease] = useState<ReleaseData | null>(null)
   /**
    * Memoriza la lista de releases procesada.
@@ -86,6 +90,11 @@ export function Releases() {
         return sortBy === 'Newest' ? timeB - timeA : timeA - timeB
       })
   }, [releases, statusFilter, searchQuery, sortBy])
+
+  const releaseSearchOptions = useMemo(
+    () => Array.from(new Set(filteredAndSortedReleases.map(release => release.title))),
+    [filteredAndSortedReleases]
+  )
 
   // --- Renderizado de Estados de Carga ---
   if (loading) {
@@ -147,6 +156,16 @@ export function Releases() {
     setSelectedRelease(null)
   }
 
+  const openDeleteModal = (release: ReleaseData) => {
+    setSelectedRelease(release)
+    setDeleteModalOpened(true)
+  }
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpened(false)
+    setSelectedRelease(null)
+  }
+
   const handleUpdateStatus = async (releaseId: number, status: ReleaseStatus) => {
     try {
       await updateReleaseStatus(releaseId, status)
@@ -204,7 +223,7 @@ export function Releases() {
 
         <Autocomplete
           placeholder="Search releases..."
-          data={filteredAndSortedReleases.map(r => r.title)}
+          data={releaseSearchOptions}
           value={searchQuery}
           onChange={setSearchQuery}
           ml="auto"
@@ -235,6 +254,7 @@ export function Releases() {
             key={item.releaseId}
             data={item}
             onOpenStatusModal={openStatusModal}
+            onDeleteClick={openDeleteModal}
           />
         ))}
 
@@ -255,6 +275,16 @@ export function Releases() {
         loading={updatingStatus}
         onUpdateStatus={handleUpdateStatus}
       />
+
+      {selectedRelease && (
+        <ReleaseDeleteModal
+          isOpen={deleteModalOpened}
+          onClose={closeDeleteModal}
+          releaseId={selectedRelease.releaseId}
+          releaseName={selectedRelease.title}
+          onSuccess={() => void refetch()}
+        />
+      )}
     </div>
   )
 }
