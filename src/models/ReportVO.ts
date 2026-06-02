@@ -23,9 +23,9 @@ export class ReportServiceVO {
 
   constructor(data: ReportService) {
     this.serviceName = data.serviceName
-    this.features = (data.features ?? []).map((feature) => new ReportFeatureVO(feature))
+    this.features = (data.features ?? []).map(feature => new ReportFeatureVO(feature))
   }
-} 
+}
 
 export class ReportVO {
   readonly releaseId: number
@@ -47,7 +47,7 @@ export class ReportVO {
     this.releaseTags = data.releaseTags ?? []
     this.releaseCreationDate = data.releaseCreationDate
     this.releaseLaunchDate = data.releaseLaunchDate
-    this.services = (data.services ?? []).map((service) => new ReportServiceVO(service))
+    this.services = (data.services ?? []).map(service => new ReportServiceVO(service))
   }
 
   getDisplayName(): string {

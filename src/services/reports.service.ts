@@ -50,7 +50,7 @@ export interface ReportsQueryParams {
   endDate?: string
   tagName?: string
 }
- 
+
 export const reportsService = {
   getAll: async (params?: ReportsQueryParams): Promise<Report[]> => {
     const data = await apiService.get<unknown>(BASE_URL, { params })
@@ -62,15 +62,10 @@ export const reportsService = {
     return reports.map(report => new ReportVO(report))
   },
 
-  exportCsv: async (
-    params?: ReportsQueryParams
-  ): Promise<Blob> => {
-    return apiService.get<Blob>(
-      `${BASE_URL}/export`,
-      {
-        params,
-        responseType: 'blob',
-      }
-    )
+  exportCsv: async (params?: ReportsQueryParams): Promise<Blob> => {
+    return apiService.get<Blob>(`${BASE_URL}/export`, {
+      params,
+      responseType: 'blob',
+    })
   },
 }

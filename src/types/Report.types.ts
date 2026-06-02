@@ -8,7 +8,7 @@ export type ReportReleaseStatus = 'Draft' | 'Active' | 'Progress' | 'Closed'
 export interface ReportFeature {
   featureName: string
   testCases: string[]
-} 
+}
 
 export interface ReportService {
   serviceName: string
