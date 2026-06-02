@@ -5,6 +5,7 @@
  * Autozone QA Automation
  */
 
+import './Reports.css'
 import {
   Badge,
   Button,
@@ -13,24 +14,23 @@ import {
   MultiSelect,
   Stack,
   Table,
+  TagsInput,
   Text,
   Title,
-  TagsInput,
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { IconCalendar, IconDownload } from '@tabler/icons-react'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useGetServices } from '@/hooks/useGetServices'
-import { reportsService } from '@/services/reports.service'
-import type { ReportsQueryParams } from '@/services/reports.service'
 import type { ReportVO } from '@/models/ReportVO'
-import './Reports.css'
+import type { ReportsQueryParams } from '@/services/reports.service'
+import { reportsService } from '@/services/reports.service'
 
 export function Reports() {
   const [startDate, setStartDate] = useState<string | null>(null)
   const [endDate, setEndDate] = useState<string | null>(null)
-  
+
   const [selectedService, setSelectedService] = useState('')
   const [selectedServiceId, setSelectedServiceId] = useState<number | undefined>()
 
@@ -43,15 +43,15 @@ export function Reports() {
   const [isShowingFilteredResults, setIsShowingFilteredResults] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  
+
   const { services } = useGetServices()
-  
+
   const startDateInputRef = useRef<HTMLInputElement>(null)
   const endDateInputRef = useRef<HTMLInputElement>(null)
 
   const serviceOptions = services.map(service => service.name)
-  
-  const serviceMap = new Map(services.map(service => [service.name, service.id]));
+
+  const serviceMap = new Map(services.map(service => [service.name, service.id]))
   const tagOptions = allTagOptions
   const selectedTagFilter = selectedTags.length ? selectedTags.join(',') : undefined
 
@@ -63,35 +63,37 @@ export function Reports() {
     []
   )
 
-
   const formatDateForApi = useCallback((value: string | null): string | undefined => {
     if (!value) return undefined
     const formatted = dayjs(value)
     return formatted.isValid() ? formatted.format('YYYY-MM-DD') : value
   }, [])
 
-  const loadReports = useCallback(async (filters?: ReportsQueryParams) => {
-    setLoading(true)
-    setError(null)
+  const loadReports = useCallback(
+    async (filters?: ReportsQueryParams) => {
+      setLoading(true)
+      setError(null)
 
-    try {
-      const data = await reportsService.getAllVO(filters)
-      const hasFilters = Boolean(
-        filters?.serviceId || filters?.startDate || filters?.endDate || filters?.tagName
-      )
+      try {
+        const data = await reportsService.getAllVO(filters)
+        const hasFilters = Boolean(
+          filters?.serviceId || filters?.startDate || filters?.endDate || filters?.tagName
+        )
 
-      setReports(data)
-      setIsShowingFilteredResults(hasFilters)
-      if (!hasFilters) {
-        setAllTagOptions(getTagOptionsFromReports(data))
-        setTotalReportsCount(data.length)
+        setReports(data)
+        setIsShowingFilteredResults(hasFilters)
+        if (!hasFilters) {
+          setAllTagOptions(getTagOptionsFromReports(data))
+          setTotalReportsCount(data.length)
+        }
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch reports')
+      } finally {
+        setLoading(false)
       }
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch reports')
-    } finally {
-      setLoading(false)
-    }
-  }, [getTagOptionsFromReports])
+    },
+    [getTagOptionsFromReports]
+  )
 
   const handleExportCsv = async () => {
     try {
@@ -119,9 +121,7 @@ export function Reports() {
     } catch (err) {
       console.error(err)
 
-      setError(
-        err instanceof Error ? err.message : 'Failed to export CSV'
-      )
+      setError(err instanceof Error ? err.message : 'Failed to export CSV')
     }
   }
 
@@ -133,15 +133,12 @@ export function Reports() {
     report.releaseLaunchDate ?? report.releaseCreationDate
 
   useEffect(() => {
-    setSelectedReportIds(prev =>
-      prev.filter(id => reports.some(report => report.releaseId === id))
-    )
+    setSelectedReportIds(prev => prev.filter(id => reports.some(report => report.releaseId === id)))
   }, [reports])
 
   const visibleReportIds = reports.map(report => report.releaseId)
   const allReportsSelected =
-    visibleReportIds.length > 0
-    && visibleReportIds.every(id => selectedReportIds.includes(id))
+    visibleReportIds.length > 0 && visibleReportIds.every(id => selectedReportIds.includes(id))
   const someReportsSelected = selectedReportIds.length > 0 && !allReportsSelected
 
   const handleToggleAllReports = (checked: boolean) => {
@@ -244,7 +241,7 @@ export function Reports() {
           limit={5}
           w={260}
           value={selectedService ? [selectedService] : []}
-          onChange={(values) => {
+          onChange={values => {
             const value = values[0] ?? ''
             setSelectedService(value)
             setSelectedServiceId(serviceMap.get(value))
@@ -383,8 +380,6 @@ export function Reports() {
 
       <Group justify="space-between" mt="sm">
         <Text c="dimmed">{recordsSummary}</Text>
-
-        
       </Group>
     </div>
   )
