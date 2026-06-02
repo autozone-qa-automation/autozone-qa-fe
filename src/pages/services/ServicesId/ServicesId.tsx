@@ -5,12 +5,12 @@
  * Autozone QA Automation
  */
 import { Anchor, Button, Container, Divider, Group, Loader, Stack, Text } from '@mantine/core'
+import { useState } from 'react'
 import { useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetServiceById } from '@/hooks/useGetServiceById'
-import { ServicesList } from '@/pages/services/ServicesId/ServicesList'
-import { useState } from 'react'
 import ServiceEditModal from '@/pages/services/ServiceEditModal'
+import { ServicesList } from '@/pages/services/ServicesId/ServicesList'
 
 export function ServicesId() {
   const { serviceId } = useParams()
@@ -45,7 +45,6 @@ export function ServicesId() {
     nombre: f.featureName,
   }))
 
-
   return (
     <Container size="xl">
       <Stack gap="xl">
@@ -70,7 +69,12 @@ export function ServicesId() {
         </Group>
 
         <ServiceEditModal
-          service={{ id: service.id, name: service.name, description: service.description, urls: service.urls }}
+          service={{
+            id: service.id,
+            name: service.name,
+            description: service.description,
+            urls: service.urls,
+          }}
           opened={editOpened}
           onClose={() => setEditOpened(false)}
           onSuccess={refetch}
@@ -90,7 +94,12 @@ export function ServicesId() {
           <Stack gap={2}>
             {service.urls && service.urls.length > 0 ? (
               service.urls.map(urlItem => (
-                <Anchor key={urlItem.idUrl ?? urlItem.url} size="sm" href={urlItem.url} target="_blank">
+                <Anchor
+                  key={urlItem.idUrl ?? urlItem.url}
+                  size="sm"
+                  href={urlItem.url}
+                  target="_blank"
+                >
                   {urlItem.nombre || urlItem.url}
                 </Anchor>
               ))

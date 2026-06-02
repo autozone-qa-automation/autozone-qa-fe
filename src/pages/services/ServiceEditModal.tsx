@@ -1,19 +1,30 @@
-import { Button, Group, SimpleGrid, Stack, Textarea, TextInput, ActionIcon } from '@mantine/core'
+import { ActionIcon, Button, Group, Stack, Textarea, TextInput } from '@mantine/core'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
+import { IconPlus, IconTrash } from '@tabler/icons-react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { servicesService } from '@/services/services.service'
-import { IconPlus, IconTrash } from '@tabler/icons-react'
+import type { CreateServiceRequest } from '@/types/service.types'
 
 interface ServiceEditModalProps {
-  service: { id: number; name: string; description?: string; urls?: { idUrl?: number; nombre: string; url: string }[] }
+  service: {
+    id: number
+    name: string
+    description?: string
+    urls?: { idUrl?: number; nombre: string; url: string }[]
+  }
   onSuccess?: () => Promise<void>
   opened?: boolean
   onClose?: () => void
 }
 
-export function ServiceEditModal({ service, onSuccess, opened: controlledOpened, onClose: controlledOnClose }: ServiceEditModalProps) {
+export function ServiceEditModal({
+  service,
+  onSuccess,
+  opened: controlledOpened,
+  onClose: controlledOnClose,
+}: ServiceEditModalProps) {
   const isControlled = controlledOpened !== undefined
   const [internalOpened, { open, close: internalClose }] = useDisclosure(false)
   const opened = isControlled ? controlledOpened : internalOpened
@@ -25,7 +36,9 @@ export function ServiceEditModal({ service, onSuccess, opened: controlledOpened,
     initialValues: {
       name: service.name ?? '',
       description: service.description ?? '',
-      urls: service.urls ? service.urls.map(u => ({ idUrl: u.idUrl, nombre: u.nombre, url: u.url })) : [],
+      urls: service.urls
+        ? service.urls.map(u => ({ idUrl: u.idUrl, nombre: u.nombre, url: u.url }))
+        : [],
     },
     validate: {
       name: isNotEmpty('Name is required'),
@@ -35,7 +48,7 @@ export function ServiceEditModal({ service, onSuccess, opened: controlledOpened,
   const handleSubmit = async (values: { name: string; description?: string; urls: UrlItem[] }) => {
     const emptyUrlIndex = values.urls.findIndex(u => u.url.trim() === '')
     if (emptyUrlIndex !== -1) {
-      form.setFieldError(`urls.${emptyUrlIndex}.url` as any, 'URL cannot be empty')
+      form.setFieldError(`urls.${emptyUrlIndex}.url`, 'URL cannot be empty')
       notifications.show({
         title: 'Empty URL',
         message: 'Please enter a valid URL or remove the empty entry before saving.',
@@ -45,10 +58,14 @@ export function ServiceEditModal({ service, onSuccess, opened: controlledOpened,
     }
 
     try {
-      const payload: any = {
+      const payload: Partial<CreateServiceRequest> = {
         name: values.name,
         description: values.description,
-        urls: values.urls.map(u => ({ ...(u.idUrl ? { idUrl: u.idUrl } : {}), nombre: u.nombre, url: u.url })),
+        urls: values.urls.map(u => ({
+          ...(u.idUrl ? { idUrl: u.idUrl } : {}),
+          nombre: u.nombre,
+          url: u.url,
+        })),
       }
 
       await servicesService.update(service.id, payload)
@@ -56,7 +73,11 @@ export function ServiceEditModal({ service, onSuccess, opened: controlledOpened,
       close()
       await onSuccess?.()
     } catch (err) {
-      notifications.show({ title: 'Error', message: err instanceof Error ? err.message : 'Unexpected error', color: 'red' })
+      notifications.show({
+        title: 'Error',
+        message: err instanceof Error ? err.message : 'Unexpected error',
+        color: 'red',
+      })
     }
   }
 
@@ -76,37 +97,68 @@ export function ServiceEditModal({ service, onSuccess, opened: controlledOpened,
             <Textarea label="DESCRIPTION" minRows={4} {...form.getInputProps('description')} />
 
             <div>
-              <Group position="apart" align="center" mb={6}>
+              <Group justify="space-between" align="center" mb={6}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#8C8C94' }}>URLs</div>
-                <Button size="xs" leftSection={<IconPlus size={14} />} onClick={() => {
-                  const current = form.values.urls.slice()
-                  current.push({ nombre: '', url: '' })
-                  form.setFieldValue('urls', current)
-                }}>
+                <Button
+                  size="xs"
+                  leftSection={<IconPlus size={14} />}
+                  onClick={() => {
+                    const current = form.values.urls.slice()
+                    current.push({ nombre: '', url: '' })
+                    form.setFieldValue('urls', current)
+                  }}
+                >
                   Add URL
                 </Button>
               </Group>
 
-              <Stack spacing="sm">
-                {form.values.urls.map((u, i) => (
-                  <Group key={i} align="flex-start">
-                    <input type="hidden" {...form.getInputProps(`urls.${i}.idUrl` as any)} />
-                    <TextInput placeholder="Nombre (e.g. Producción)" style={{ flex: 1 }} {...form.getInputProps(`urls.${i}.nombre` as any)} />
-                    <TextInput placeholder="https://example.com" style={{ flex: 2 }} {...form.getInputProps(`urls.${i}.url` as any)} />
-                    <ActionIcon color="red" onClick={() => {
-                      const next = form.values.urls.slice()
-                      next.splice(i, 1)
-                      form.setFieldValue('urls', next)
-                    }}>
-                      <IconTrash size={16} />
-                    </ActionIcon>
-                  </Group>
-                ))}
+              <Stack gap="sm">
+                {form.values.urls.map((_u, i) => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const idProps = form.getInputProps(`urls.${i}.idUrl` as any)
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const nombreProps = form.getInputProps(`urls.${i}.nombre` as any)
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const urlProps = form.getInputProps(`urls.${i}.url` as any)
+
+                  return (
+                    <Group key={i} align="flex-start">
+                      <input type="hidden" {...idProps} />
+                      <TextInput
+                        placeholder="Nombre (e.g. Producción)"
+                        style={{ flex: 1 }}
+                        {...nombreProps}
+                      />
+                      <TextInput
+                        placeholder="https://example.com"
+                        style={{ flex: 2 }}
+                        {...urlProps}
+                      />
+                      <ActionIcon
+                        color="red"
+                        onClick={() => {
+                          const next = form.values.urls.slice()
+                          next.splice(i, 1)
+                          form.setFieldValue('urls', next)
+                        }}
+                      >
+                        <IconTrash size={16} />
+                      </ActionIcon>
+                    </Group>
+                  )
+                })}
               </Stack>
             </div>
 
-            <Group position="right" mt="xl">
-              <Button variant="outline" color="gray" onClick={() => { form.reset(); close() }}>
+            <Group justify="flex-end" mt="xl">
+              <Button
+                variant="outline"
+                color="gray"
+                onClick={() => {
+                  form.reset()
+                  close()
+                }}
+              >
                 Cancel
               </Button>
               <Button type="submit" bg="#f26621">
