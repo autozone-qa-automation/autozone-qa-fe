@@ -94,4 +94,26 @@ describe('testCaseService', () => {
       await expect(testCaseService.update(999, mockCreatePayload)).rejects.toThrow('404 Not Found')
     })
   })
+
+  describe('deactivate', () => {
+    const mockedPut = jest.fn()
+
+    beforeEach(() => {
+      ;(apiService as unknown as Record<string, jest.Mock>)['put'] = mockedPut
+    })
+
+    it('should call PUT with the correct deactivate endpoint', async () => {
+      mockedPut.mockResolvedValue(undefined)
+
+      await testCaseService.deactivate(1)
+
+      expect(mockedPut).toHaveBeenCalledWith('/test-cases/1/deactivate')
+    })
+
+    it('should propagate API errors', async () => {
+      mockedPut.mockRejectedValue(new Error('404 Not Found'))
+
+      await expect(testCaseService.deactivate(999)).rejects.toThrow('404 Not Found')
+    })
+  })
 })

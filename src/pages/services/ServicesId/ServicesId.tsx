@@ -18,6 +18,7 @@ import { featureService } from '@/services/features.service'
 
 export function ServicesId() {
   const { serviceId } = useParams()
+  const navigate = useNavigate()
   const id = Number(serviceId)
   const [editOpened, setEditOpened] = useState(false)
 
@@ -89,7 +90,13 @@ export function ServicesId() {
             <Button size="xs" color="orange.6" onClick={() => setEditOpened(true)}>
               Edit
             </Button>
-            <Button size="xs" color="red" variant="outline">
+            <Button
+              size="xs"
+              color="red"
+              variant="outline"
+              leftSection={<IconTrash size={14} stroke={2.5} />}
+              onClick={() => setDeleteModalOpened(true)}
+            >
               Delete
             </Button>
           </Group>
@@ -151,6 +158,18 @@ export function ServicesId() {
 
         <ReleasesList releases={releases} loading={releasesLoading} error={releasesError} />
       </Stack>
+
+      {service && (
+        <ServiceDeleteModal
+          isOpen={deleteModalOpened}
+          onClose={() => setDeleteModalOpened(false)}
+          serviceId={service.id}
+          serviceName={service.getDisplayName()}
+          onSuccess={() => {
+            navigate('/services')
+          }}
+        />
+      )}
     </Container>
   )
 }

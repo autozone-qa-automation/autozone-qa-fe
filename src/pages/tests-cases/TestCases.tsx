@@ -12,11 +12,12 @@ import { useState } from 'react'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useTestCases } from '@/hooks/useGetTestCases'
 import type { TestCaseVO } from '@/models/TestCaseVO'
+import { TestCasesDelete } from './TestCasesDelete'
 import { TestCasesList } from './TestCasesList'
 import { TestCasesModalCreate } from './TestCasesModalCreate'
 
 export function TestCases() {
-  const { testCases: myTestCases, isLoading, error } = useTestCases()
+  const { testCases: myTestCases, isLoading, error, refetch } = useTestCases()
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
@@ -25,6 +26,8 @@ export function TestCases() {
   const [selectedTestCase, setSelectedTestCase] = useState<TestCaseVO | null>(null)
 
   const [selectedFeature, setSelectedFeature] = useState<string | null>('ALL')
+
+  const [deletedTestCaseIds, setDeletedTestCaseIds] = useState<Set<number>>(new Set())
 
   const handleViewClick = (testCase: TestCaseVO) => {
     setSelectedTestCase(testCase)
@@ -36,10 +39,20 @@ export function TestCases() {
     close()
   }
 
+  const handleDeletedTestCase = async (testCase: TestCaseVO) => {
+    setDeletedTestCaseIds(prev => new Set(prev).add(testCase.id))
+    handleClose()
+    await refetch()
+  }
+
+  const visibleTestCases = myTestCases.filter(
+    testCase => testCase.active !== false && !deletedTestCaseIds.has(testCase.id)
+  )
+
   const featureOptions = [
     { value: 'ALL', label: 'All features' },
     ...Array.from(
-      new Set(myTestCases.map(tc => tc.featureName ?? `Feature ${tc.relatedFeature}`))
+      new Set(visibleTestCases.map(tc => tc.featureName ?? `Feature ${tc.relatedFeature}`))
     ).map(feature => ({
       value: feature,
       label: feature,
@@ -48,8 +61,8 @@ export function TestCases() {
 
   const filteredTestCases =
     selectedFeature === 'ALL' || selectedFeature === null
-      ? myTestCases
-      : myTestCases.filter(
+      ? visibleTestCases
+      : visibleTestCases.filter(
           tc => (tc.featureName ?? `Feature ${tc.relatedFeature}`) === selectedFeature
         )
 
@@ -130,9 +143,9 @@ export function TestCases() {
                 {selectedTestCase?.steps}
               </Text>
               <Box h={50} />
-              <Button ml="auto" variant="filled" color="#FF0000" w={125} onClick={() => {}}>
-                Delete
-              </Button>
+              {selectedTestCase && (
+                <TestCasesDelete testCase={selectedTestCase} onDeleted={handleDeletedTestCase} />
+              )}
             </Stack>
           </Modal.Body>
         </Modal.Content>
@@ -140,7 +153,7 @@ export function TestCases() {
 
       <TitleHeader
         title="Test Cases"
-        metaDetails={[`${myTestCases.length} test cases`]}
+        metaDetails={[`${visibleTestCases.length} test cases`]}
         breadcrumbs={[
           { title: 'Releases', href: '/releases' },
           { title: 'Services', href: '/services' },
