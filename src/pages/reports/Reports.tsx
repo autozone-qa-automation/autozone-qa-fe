@@ -6,19 +6,19 @@
  */
 
 import {
-  Autocomplete,
   Badge,
   Button,
   Checkbox,
   Group,
+  MultiSelect,
   Stack,
   Table,
   Text,
-  TextInput,
   Title,
+  TagsInput,
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
-import { IconCalendar, IconDownload, IconSearch } from '@tabler/icons-react'
+import { IconCalendar, IconDownload } from '@tabler/icons-react'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useGetServices } from '@/hooks/useGetServices'
@@ -34,9 +34,13 @@ export function Reports() {
   const [selectedService, setSelectedService] = useState('')
   const [selectedServiceId, setSelectedServiceId] = useState<number | undefined>()
 
-  const [selectedTag, setSelectedTag] = useState('')
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedReportIds, setSelectedReportIds] = useState<number[]>([])
 
   const [reports, setReports] = useState<ReportVO[]>([])
+  const [allTagOptions, setAllTagOptions] = useState<string[]>([])
+  const [totalReportsCount, setTotalReportsCount] = useState(0)
+  const [isShowingFilteredResults, setIsShowingFilteredResults] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
@@ -48,7 +52,16 @@ export function Reports() {
   const serviceOptions = services.map(service => service.name)
   
   const serviceMap = new Map(services.map(service => [service.name, service.id]));
-  const tagOptions = [...new Set(reports.flatMap(report => report.releaseTags))].sort()
+  const tagOptions = allTagOptions
+  const selectedTagFilter = selectedTags.length ? selectedTags.join(',') : undefined
+
+  const normalizeTags = (values: string[]): string[] =>
+    Array.from(new Set(values.map(tag => tag.trim()).filter(Boolean)))
+
+  const getTagOptionsFromReports = useCallback(
+    (data: ReportVO[]): string[] => [...new Set(data.flatMap(report => report.releaseTags))].sort(),
+    []
+  )
 
 
   const formatDateForApi = useCallback((value: string | null): string | undefined => {
@@ -63,14 +76,22 @@ export function Reports() {
 
     try {
       const data = await reportsService.getAllVO(filters)
+      const hasFilters = Boolean(
+        filters?.serviceId || filters?.startDate || filters?.endDate || filters?.tagName
+      )
 
       setReports(data)
+      setIsShowingFilteredResults(hasFilters)
+      if (!hasFilters) {
+        setAllTagOptions(getTagOptionsFromReports(data))
+        setTotalReportsCount(data.length)
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to fetch reports')
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [getTagOptionsFromReports])
 
   const handleExportCsv = async () => {
     try {
@@ -78,7 +99,7 @@ export function Reports() {
         serviceId: selectedServiceId,
         startDate: formatDateForApi(startDate),
         endDate: formatDateForApi(endDate),
-        tagName: selectedTag || undefined,
+        tagName: selectedTagFilter,
       })
 
       const url = window.URL.createObjectURL(blob)
@@ -111,8 +132,36 @@ export function Reports() {
   const renderReleaseDate = (report: ReportVO): string =>
     report.releaseLaunchDate ?? report.releaseCreationDate
 
-  const renderServiceNames = (report: ReportVO): string =>
-    report.services.map(service => service.serviceName).join(', ') || 'No services'
+  useEffect(() => {
+    setSelectedReportIds(prev =>
+      prev.filter(id => reports.some(report => report.releaseId === id))
+    )
+  }, [reports])
+
+  const visibleReportIds = reports.map(report => report.releaseId)
+  const allReportsSelected =
+    visibleReportIds.length > 0
+    && visibleReportIds.every(id => selectedReportIds.includes(id))
+  const someReportsSelected = selectedReportIds.length > 0 && !allReportsSelected
+
+  const handleToggleAllReports = (checked: boolean) => {
+    setSelectedReportIds(checked ? visibleReportIds : [])
+  }
+
+  const handleToggleSingleReport = (reportId: number, checked: boolean) => {
+    setSelectedReportIds(prev => {
+      if (checked) {
+        return prev.includes(reportId) ? prev : [...prev, reportId]
+      }
+      return prev.filter(id => id !== reportId)
+    })
+  }
+
+  const shownReportsCount = reports.length
+  const totalReleasesCount = totalReportsCount || shownReportsCount
+  const recordsSummary = isShowingFilteredResults
+    ? `Showing ${shownReportsCount} of ${totalReleasesCount} releases`
+    : `Showing ${shownReportsCount} of ${shownReportsCount} releases`
 
   return (
     <div className="reports-page">
@@ -132,7 +181,7 @@ export function Reports() {
               serviceId: selectedServiceId,
               startDate: formatDateForApi(startDate),
               endDate: formatDateForApi(endDate),
-              tagName: selectedTag || undefined,
+              tagName: selectedTagFilter,
             })
           }
         >
@@ -185,35 +234,33 @@ export function Reports() {
           />
         </Group>
 
-        <Group>
-          <Autocomplete
-            placeholder="Search Services..."
-            data={serviceOptions}
-            limit={5}
-            w={260}
-            value={selectedService}
-            onChange={(value) => {
-              setSelectedService(value)
-              setSelectedServiceId(serviceMap.get(value))
-            }}
-            leftSection={<IconSearch size={16} />}
-          />
-          <Text>{selectedService || 'Chosen Service'}</Text>
-        </Group>
+        <MultiSelect
+          label="Chosen Service"
+          placeholder="Choose one service..."
+          data={serviceOptions}
+          searchable
+          clearable
+          maxValues={1}
+          limit={5}
+          w={260}
+          value={selectedService ? [selectedService] : []}
+          onChange={(values) => {
+            const value = values[0] ?? ''
+            setSelectedService(value)
+            setSelectedServiceId(serviceMap.get(value))
+          }}
+        />
 
-        <Group>
-          <Autocomplete
-            placeholder="Search Tags..."
-            data={tagOptions}
-            limit={5}
-            w={260}
-            value={selectedTag}
-            onChange={setSelectedTag}
-            leftSection={<IconSearch size={16} />}
-          />
-          <Text>{selectedTag || 'Chosen Tag'}</Text>
-          
-        </Group>
+        <TagsInput
+          label="Chosen Tags"
+          placeholder="Type a tag and press Enter..."
+          data={tagOptions}
+          limit={5}
+          w={260}
+          value={selectedTags}
+          onChange={value => setSelectedTags(normalizeTags(value))}
+          clearable
+        />
       </Stack>
 
       <Group justify="space-between" mt="xl" mb="sm">
@@ -245,7 +292,12 @@ export function Reports() {
         <Table.Thead>
           <Table.Tr>
             <Table.Th>
-              <Checkbox label="All" />
+              <Checkbox
+                label="All"
+                checked={allReportsSelected}
+                indeterminate={someReportsSelected}
+                onChange={event => handleToggleAllReports(event.currentTarget.checked)}
+              />
             </Table.Th>
             <Table.Th>Release</Table.Th>
             <Table.Th>Version</Table.Th>
@@ -262,14 +314,52 @@ export function Reports() {
           {reports.map((item, index) => (
             <Table.Tr key={index}>
               <Table.Td>
-                <Checkbox />
+                <Checkbox
+                  checked={selectedReportIds.includes(item.releaseId)}
+                  onChange={event =>
+                    handleToggleSingleReport(item.releaseId, event.currentTarget.checked)
+                  }
+                />
               </Table.Td>
               <Table.Td fw={600}>{item.releaseName}</Table.Td>
               <Table.Td c="dimmed">{item.releaseVersion}</Table.Td>
               <Table.Td>
-                <Text td="underline" c="dimmed">
-                  {renderServiceNames(item)}
-                </Text>
+                {item.services.length ? (
+                  <Text c="dimmed" span>
+                    {item.services.map((service, serviceIndex) => {
+                      const serviceId = serviceMap.get(service.serviceName)
+                      const isLast = serviceIndex === item.services.length - 1
+                      const separator = isLast ? '' : ', '
+
+                      if (serviceId === undefined) {
+                        return (
+                          <span key={`${item.releaseId}-${service.serviceName}`}>
+                            {service.serviceName}
+                            {separator}
+                          </span>
+                        )
+                      }
+
+                      return (
+                        <span key={`${item.releaseId}-${service.serviceName}`}>
+                          <a
+                            href={`/services/${serviceId}`}
+                            style={{
+                              color: 'inherit',
+                              textDecoration: 'underline',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {service.serviceName}
+                          </a>
+                          {separator}
+                        </span>
+                      )
+                    })}
+                  </Text>
+                ) : (
+                  <Text c="dimmed">No services</Text>
+                )}
               </Table.Td>
               <Table.Td c="dimmed" maw={260}>
                 {item.releaseDescription}
@@ -292,8 +382,7 @@ export function Reports() {
       </Table>
 
       <Group justify="space-between" mt="sm">
-        <Text c="dimmed" //aqui abajo estaba el showing 10 pages hardcodeado
-        >Showing 10 of 24 records</Text>
+        <Text c="dimmed">{recordsSummary}</Text>
 
         
       </Group>
