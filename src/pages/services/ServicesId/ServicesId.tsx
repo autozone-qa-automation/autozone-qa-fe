@@ -6,16 +6,13 @@
  */
 import { Anchor, Button, Container, Divider, Group, Loader, Stack, Text } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
-import { useState } from 'react'
 import { IconTrash } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetLastReleasesByServiceId } from '@/hooks/useGetLastReleasesByServiceId'
-import { useGetLastReleasesByServiceId } from '@/hooks/useGetLastReleasesByServiceId'
 import { useGetServiceById } from '@/hooks/useGetServiceById'
 import ServiceEditModal from '@/pages/services/ServiceEditModal'
-import { ReleasesList } from '@/pages/services/ServicesId/ReleasesList'
 import { ReleasesList } from '@/pages/services/ServicesId/ReleasesList'
 import { ServiceDeleteModal } from '@/pages/services/ServicesId/ServiceDeleteModal'
 import { ServicesList } from '@/pages/services/ServicesId/ServicesList'
@@ -100,7 +97,7 @@ export function ServicesId() {
               color="red"
               variant="outline"
               leftSection={<IconTrash size={14} stroke={2.5} />}
-              onClick={() => setDeleteModalOpened(true)}
+              onClick={() => setEditOpened(true)}
             >
               Delete
             </Button>
@@ -166,8 +163,8 @@ export function ServicesId() {
 
       {service && (
         <ServiceDeleteModal
-          isOpen={deleteModalOpened}
-          onClose={() => setDeleteModalOpened(false)}
+          isOpen={editOpened}
+          onClose={() => setEditOpened(false)}
           serviceId={service.id}
           serviceName={service.getDisplayName()}
           onSuccess={() => {
