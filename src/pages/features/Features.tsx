@@ -16,8 +16,23 @@ import { FeaturesList } from './FeaturesList'
 
 export function Features() {
   const { features, refetch, fetchFeaturesFiltered, error, isLoading } = useFeatures()
+
+  const activeFeatures = features.filter(f => {
+    // 1. Usamos doble cast (as unknown as) para indicarle al compilador que la conversión es intencional.
+    // 2. Definimos una estructura con unión de tipos primitivos. Esto le permite al compilador realizar
+    //    las comparaciones (!== 0, !== false) de forma segura y sin usar 'any'.
+    const record = f as unknown as {
+      active?: string | number | boolean | null
+      isActive?: string | number | boolean | null
+    }
+
+    const isFeatureActive = record.active ?? record.isActive ?? true
+
+    return isFeatureActive !== 0 && isFeatureActive !== false && isFeatureActive !== '0'
+  })
+
   return (
-    <div>
+    <div data-testid="features-page-container">
       <TitleHeader
         title="Features"
         metaDetails={['']}
@@ -31,16 +46,18 @@ export function Features() {
             refetch()
             return
           }
-
           fetchFeaturesFiltered(id)
         }}
       />
 
-      {isLoading && features.length === 0 && <ConnectingDatabasePanel />}
+      {isLoading && activeFeatures.length === 0 && <ConnectingDatabasePanel />}
+
       {error && <ErrorPanel error={error} />}
-      {features.length > 0 && !isLoading && !error && <FeaturesList data={features} />}
-      {!isLoading && features.length === 0 && (
-        <Text ta="center" c="#8C8C94" mt="xl" size="xl">
+
+      {activeFeatures.length > 0 && !isLoading && !error && <FeaturesList data={activeFeatures} />}
+
+      {!isLoading && activeFeatures.length === 0 && (
+        <Text data-testid="features-empty-message" ta="center" c="#8C8C94" mt="xl" size="xl">
           No Features available
         </Text>
       )}
