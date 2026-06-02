@@ -92,13 +92,15 @@ export const featureService = {
   },
 
   /**
-   * Elimina un feature de la base de datos por su ID.
-   * * @param {string} id - El identificador único del feature a eliminar.
-   * @returns {Promise<void>} Una promesa que se resuelve cuando la operación de eliminación se completa con éxito.
+   * Desactiva un feature y sus casos de prueba relacionados en el backend.
+   * @param {string} id - El identificador único del feature a desactivar.
+   * @returns {Promise<void>} Una promesa que se resuelve cuando la operación se completa con éxito.
    */
-  remove: async (id: string): Promise<void> => {
+  deactivate: async (id: string): Promise<void> => {
     try {
-      await apiService.delete(`${BASE_URL}/${id}`)
+      // H: Cambia apiService.delete por apiService.put para coincidir con el @PutMapping del BE
+      // H: Ya luego pasa un objeto vacío {} como cuerpo (payload) si el cliente de apiService lo necesita
+      await apiService.put<unknown>(`${BASE_URL}/${id}/deactivate`, {})
     } catch (error: unknown) {
       return handleServiceError(error)
     }
