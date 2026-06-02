@@ -5,16 +5,46 @@
  * Autozone QA Automation
  */
 import { Anchor, Button, Container, Divider, Group, Loader, Stack, Text } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
+import { useState } from 'react'
 import { useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
+import { useGetLastReleasesByServiceId } from '@/hooks/useGetLastReleasesByServiceId'
 import { useGetServiceById } from '@/hooks/useGetServiceById'
+import ServiceEditModal from '@/pages/services/ServiceEditModal'
+import { ReleasesList } from '@/pages/services/ServicesId/ReleasesList'
 import { ServicesList } from '@/pages/services/ServicesId/ServicesList'
+import { featureService } from '@/services/features.service'
 
 export function ServicesId() {
   const { serviceId } = useParams()
   const id = Number(serviceId)
+  const [editOpened, setEditOpened] = useState(false)
 
-  const { service, features, loading, error } = useGetServiceById(id)
+  const { service, features, loading, error, refetch } = useGetServiceById(id)
+  const {
+    releases,
+    loading: releasesLoading,
+    error: releasesError,
+  } = useGetLastReleasesByServiceId(id)
+
+  const handleUnlinkFeature = async (featureId: number) => {
+    try {
+      const feature = await featureService.getById(String(featureId))
+      await featureService.update(String(featureId), {
+        featureName: feature.featureName,
+        featureDescription: feature.featureDescription,
+      })
+      notifications.show({ title: 'Success', message: 'Feature unlinked', color: 'teal' })
+      await refetch?.()
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: err instanceof Error ? err.message : 'Failed to unlink feature',
+        color: 'red',
+      })
+    }
+  }
 
   if (!id) return <Text p="xl">ID de servicio no válido</Text>
 
@@ -56,7 +86,7 @@ export function ServicesId() {
           />
 
           <Group gap="xs">
-            <Button size="xs" color="orange.6">
+            <Button size="xs" color="orange.6" onClick={() => setEditOpened(true)}>
               Edit
             </Button>
             <Button size="xs" color="red" variant="outline">
@@ -64,6 +94,18 @@ export function ServicesId() {
             </Button>
           </Group>
         </Group>
+
+        <ServiceEditModal
+          service={{
+            id: service.id,
+            name: service.name,
+            description: service.description,
+            urls: service.urls,
+          }}
+          opened={editOpened}
+          onClose={() => setEditOpened(false)}
+          onSuccess={refetch}
+        />
 
         <Stack gap={4}>
           <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
@@ -77,27 +119,37 @@ export function ServicesId() {
             URLs
           </Text>
           <Stack gap={2}>
-            <Anchor size="sm" href="#" target="_blank">
-              Repository
-            </Anchor>
-            <Anchor size="sm" href="#" target="_blank">
-              Documentation
-            </Anchor>
+            {service.urls && service.urls.length > 0 ? (
+              service.urls.map(urlItem => (
+                <Anchor
+                  key={urlItem.idUrl ?? urlItem.url}
+                  size="sm"
+                  href={urlItem.url}
+                  target="_blank"
+                >
+                  {urlItem.nombre || urlItem.url}
+                </Anchor>
+              ))
+            ) : (
+              <Text size="sm" c="dimmed">
+                Sin URLs disponibles.
+              </Text>
+            )}
           </Stack>
         </Stack>
 
         <Divider />
 
-        <ServicesList data={featureItems} onDeleteClick={() => {}} />
+        <ServicesList
+          data={featureItems}
+          onDeleteClick={id => {
+            void handleUnlinkFeature(id)
+          }}
+        />
 
-        <Stack gap="sm" mt="md">
-          <Text fw={600} size="sm" c="dimmed" tt="uppercase">
-            Last Releases
-          </Text>
-          <Text size="sm" c="dimmed" fs="italic">
-            No hay releases recientes para mostrar.
-          </Text>
-        </Stack>
+        <Divider />
+
+        <ReleasesList releases={releases} loading={releasesLoading} error={releasesError} />
       </Stack>
     </Container>
   )

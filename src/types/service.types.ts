@@ -11,6 +11,16 @@ export const serviceSchema = z.object({
   id: z.number(),
   name: z.string(),
   description: z.string().optional().nullable(),
+  urls: z
+    .array(
+      z.object({
+        idUrl: z.number().optional(),
+        nombre: z.string(),
+        url: z.string(),
+      })
+    )
+    .optional()
+    .nullable(),
 })
 
 export type Service = z.infer<typeof serviceSchema>

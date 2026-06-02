@@ -50,6 +50,8 @@ interface ButtonReleaseProps {
   data: ReleaseData
   /** Callback opcional para abrir el modal de actualización de status */
   onOpenStatusModal?: (release: ReleaseData) => void
+  /** Callback opcional para abrir el modal de eliminación */
+  onDeleteClick?: (release: ReleaseData) => void
 }
 
 /**
@@ -57,7 +59,7 @@ interface ButtonReleaseProps {
  * * @param {ButtonReleaseProps} props - Propiedades del componente.
  * @returns {JSX.Element} Fragmento de React con Modal y Card.
  */
-export function ButtonContentModal({ data, onOpenStatusModal }: ButtonReleaseProps) {
+export function ButtonContentModal({ data, onOpenStatusModal, onDeleteClick }: ButtonReleaseProps) {
   /** Hook para controlar el estado de apertura/cierre del modal */
   const [opened, { open, close }] = useDisclosure(false)
 
@@ -173,23 +175,47 @@ export function ButtonContentModal({ data, onOpenStatusModal }: ButtonReleasePro
               </Group>
             </Stack>
 
-            <Box mt={30} display="flex" style={{ justifyContent: 'flex-end', gap: 8 }}>
-              <Button
-                color="orange.6"
-                radius="md"
-                size="xs"
-                disabled={data.status === 'Active'}
-                onClick={() => {
-                  close()
-                  onOpenStatusModal?.(data)
-                }}
-              >
-                Update
-              </Button>
+            <Box
+              mt={30}
+              display="flex"
+              style={{ justifyContent: 'space-between', alignItems: 'center' }}
+            >
+              {/* Solo muestra el botón de eliminar si el estatus es 'Draft' */}
+              <Box>
+                {data.status === 'Draft' && (
+                  <Button
+                    color="red.6"
+                    variant="outline"
+                    radius="md"
+                    size="xs"
+                    onClick={() => {
+                      onDeleteClick?.(data)
+                    }}
+                    data-testid="button-modal-delete-btn"
+                  >
+                    Delete
+                  </Button>
+                )}
+              </Box>
 
-              <Button variant="outline" color="gray" radius="md" size="xs" onClick={close}>
-                Close
-              </Button>
+              <Box display="flex" style={{ gap: 8 }}>
+                <Button
+                  color="orange.6"
+                  radius="md"
+                  size="xs"
+                  disabled={data.status === 'Active'}
+                  onClick={() => {
+                    close()
+                    onOpenStatusModal?.(data)
+                  }}
+                >
+                  Update
+                </Button>
+
+                <Button variant="outline" color="gray" radius="md" size="xs" onClick={close}>
+                  Close
+                </Button>
+              </Box>
             </Box>
           </Modal.Body>
         </Modal.Content>

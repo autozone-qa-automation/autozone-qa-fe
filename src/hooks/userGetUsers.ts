@@ -5,7 +5,7 @@
  * Autozone QA Automation
  */
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { userService } from '../services/user.service'
 import type { User } from '../types/user.types'
 
@@ -18,6 +18,8 @@ interface IUseGetAllUsersResponse {
   loading: boolean
   error: string | null
   refetch: () => Promise<void>
+  addUser: (user: User) => void
+  removeUser: (id: number | string) => void
 }
 
 /**
@@ -30,15 +32,16 @@ export const useGetAllUsers = (): IUseGetAllUsersResponse => {
    * estados de carga y de errores
    */
   const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const initialLoadDone = useRef(false)
 
   /**
    * Funcion para fetchear
    * todos los usuarios onCallback
    */
   const fetchUsers = useCallback(async (): Promise<void> => {
-    setLoading(true)
+    if (!initialLoadDone.current) setLoading(true)
     setError(null)
     try {
       const data = await userService.getAll()
@@ -51,6 +54,7 @@ export const useGetAllUsers = (): IUseGetAllUsersResponse => {
       }
     } finally {
       setLoading(false)
+      initialLoadDone.current = true
     }
   }, [])
 
@@ -62,5 +66,19 @@ export const useGetAllUsers = (): IUseGetAllUsersResponse => {
     void fetchUsers()
   }, [fetchUsers])
 
-  return { users, loading, error, refetch: fetchUsers }
+  const addUser = useCallback((user: User) => {
+    setUsers(prev => {
+      const existingRole = prev.find(u => u.roleId === user.roleId)?.rolePermission
+      const rolePermission = user.rolePermission?.permission
+        ? user.rolePermission
+        : (existingRole ?? user.rolePermission)
+      return [...prev, { ...user, rolePermission }]
+    })
+  }, [])
+
+  const removeUser = useCallback((id: number | string) => {
+    setUsers(prev => prev.filter(u => u.id !== Number(id)))
+  }, [])
+
+  return { users, loading, error, refetch: fetchUsers, addUser, removeUser }
 }
