@@ -5,16 +5,21 @@
  * Autozone QA Automation
  */
 import { Anchor, Button, Container, Divider, Group, Loader, Stack, Text } from '@mantine/core'
-import { useParams } from 'react-router'
+import { IconTrash } from '@tabler/icons-react'
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetLastReleasesByServiceId } from '@/hooks/useGetLastReleasesByServiceId'
 import { useGetServiceById } from '@/hooks/useGetServiceById'
 import { ReleasesList } from '@/pages/services/ServicesId/ReleasesList'
+import { ServiceDeleteModal } from '@/pages/services/ServicesId/ServiceDeleteModal'
 import { ServicesList } from '@/pages/services/ServicesId/ServicesList'
 
 export function ServicesId() {
   const { serviceId } = useParams()
+  const navigate = useNavigate()
   const id = Number(serviceId)
+  const [deleteModalOpened, setDeleteModalOpened] = useState(false)
 
   const { service, features, loading, error } = useGetServiceById(id)
   const {
@@ -66,7 +71,13 @@ export function ServicesId() {
             <Button size="xs" color="orange.6">
               Edit
             </Button>
-            <Button size="xs" color="red" variant="outline">
+            <Button
+              size="xs"
+              color="red"
+              variant="outline"
+              leftSection={<IconTrash size={14} stroke={2.5} />}
+              onClick={() => setDeleteModalOpened(true)}
+            >
               Delete
             </Button>
           </Group>
@@ -101,6 +112,18 @@ export function ServicesId() {
 
         <ReleasesList releases={releases} loading={releasesLoading} error={releasesError} />
       </Stack>
+
+      {service && (
+        <ServiceDeleteModal
+          isOpen={deleteModalOpened}
+          onClose={() => setDeleteModalOpened(false)}
+          serviceId={service.id}
+          serviceName={service.getDisplayName()}
+          onSuccess={() => {
+            navigate('/services')
+          }}
+        />
+      )}
     </Container>
   )
 }
