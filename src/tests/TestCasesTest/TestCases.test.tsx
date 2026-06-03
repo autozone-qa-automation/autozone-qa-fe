@@ -99,19 +99,19 @@ describe('TestCases Component UI', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Delete' }))
 
     expect(
-      await screen.findByText('¿Estás seguro de eliminar el test case Auth Case?')
+      await screen.findByText('Are you sure you want to delete test case Auth Case?')
     ).toBeInTheDocument()
     expect(testCaseService.deactivate).not.toHaveBeenCalled()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Sí' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Yes' }))
 
     await waitFor(() => {
       expect(testCaseService.deactivate).toHaveBeenCalledWith(1)
     })
 
     expect(notifications.show).toHaveBeenCalledWith({
-      title: '¡Éxito!',
-      message: 'Test case eliminado correctamente',
+      title: 'Success!',
+      message: 'Test case deleted successfully',
       color: 'green',
     })
     expect(refetch).toHaveBeenCalledTimes(1)
