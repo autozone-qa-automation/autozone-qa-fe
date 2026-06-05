@@ -84,7 +84,7 @@ describe('TestCases Component UI', () => {
     expect(modalTitle).toBeInTheDocument()
   })
 
-  it('should deactivate the test case and show the success notification', async () => {
+  it('should ask for confirmation before deactivating the test case', async () => {
     const refetch = jest.fn(async () => {})
     jest.mocked(useTestCases).mockReturnValue({
       testCases: mockTestCases,
@@ -98,13 +98,20 @@ describe('TestCases Component UI', () => {
     fireEvent.click(screen.getAllByText('View')[0]!)
     fireEvent.click(await screen.findByRole('button', { name: 'Delete' }))
 
+    expect(
+      await screen.findByText('Are you sure you want to delete test case Auth Case?')
+    ).toBeInTheDocument()
+    expect(testCaseService.deactivate).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Yes' }))
+
     await waitFor(() => {
       expect(testCaseService.deactivate).toHaveBeenCalledWith(1)
     })
 
     expect(notifications.show).toHaveBeenCalledWith({
-      title: '¡Éxito!',
-      message: 'Test case eliminado correctamente',
+      title: 'Success!',
+      message: 'Test case deleted successfully',
       color: 'green',
     })
     expect(refetch).toHaveBeenCalledTimes(1)
