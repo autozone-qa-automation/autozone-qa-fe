@@ -15,7 +15,7 @@ import { featureService } from '@/services/features.service'
 jest.mock('@/services/api.service')
 
 const getSpy = apiService['get'] as jest.Mock
-const putSpy = apiService['put'] as jest.Mock 
+const putSpy = apiService['put'] as jest.Mock
 
 describe('featureService - Tests and Error Handling', () => {
   beforeEach(() => {
@@ -96,7 +96,7 @@ describe('featureService - Tests and Error Handling', () => {
         await featureService.deactivate('55')
       } catch (error) {
         const err = error as { type?: string; status?: number }
-        
+
         expect(err.type).toBe('API_ERROR')
         expect(err.status).toBe(500)
       }
