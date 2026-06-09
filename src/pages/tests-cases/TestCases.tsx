@@ -184,6 +184,7 @@ export function TestCases() {
 
       <TestCasesModalCreate
         opened={isCreateModalOpen}
+        onRefresh={refetch}
         onClose={() => setIsCreateModalOpen(false)} // Cierra el modal de creación
       />
 

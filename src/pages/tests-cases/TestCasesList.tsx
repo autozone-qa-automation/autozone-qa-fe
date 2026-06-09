@@ -11,7 +11,7 @@ import { useState } from 'react'
 import type { TestCaseVO } from '@/models/TestCaseVO'
 import { TestCasesModalEdit } from './TestCasesModalEdit'
 
-export type Type = 'REGRESSION' | 'ON_DEMAND'
+export type Type = 'REGRESSION' | 'ON DEMAND'
 
 interface TestCasesListProps {
   data: TestCaseVO[]

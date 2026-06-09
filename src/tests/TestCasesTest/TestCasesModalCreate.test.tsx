@@ -40,6 +40,7 @@ const mockFeatureService = featureService as jest.Mocked<typeof featureService>
 
 describe('TestCasesModalCreate', () => {
   const createMock = jest.fn().mockResolvedValue(true)
+  const onRefreshMock = jest.fn().mockResolvedValue(undefined)
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -62,7 +63,7 @@ describe('TestCasesModalCreate', () => {
 
     render(
       <MantineProvider>
-        <TestCasesModalCreate opened={true} onClose={jest.fn()} />
+        <TestCasesModalCreate opened={true} onClose={jest.fn()} onRefresh={onRefreshMock} />
       </MantineProvider>
     )
     await user.type(screen.getByLabelText(/NAME/i), 'Prueba de Login')
@@ -80,6 +81,10 @@ describe('TestCasesModalCreate', () => {
 
     await waitFor(() => {
       expect(createMock).toHaveBeenCalled()
+    })
+
+    await waitFor(() => {
+      expect(onRefreshMock).toHaveBeenCalledTimes(1)
     })
 
     await waitFor(() => {
