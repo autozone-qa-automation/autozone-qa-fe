@@ -23,6 +23,7 @@ export function ServicesId() {
   const navigate = useNavigate()
   const id = Number(serviceId)
   const [editOpened, setEditOpened] = useState(false)
+  const [deleteOpened, setDeleteOpened] = useState(false)
 
   const { service, features, loading, error, refetch } = useGetServiceById(id)
   const {
@@ -97,7 +98,7 @@ export function ServicesId() {
               color="red"
               variant="outline"
               leftSection={<IconTrash size={14} stroke={2.5} />}
-              onClick={() => setEditOpened(true)}
+              onClick={() => setDeleteOpened(true)}
             >
               Delete
             </Button>
@@ -163,8 +164,8 @@ export function ServicesId() {
 
       {service && (
         <ServiceDeleteModal
-          isOpen={editOpened}
-          onClose={() => setEditOpened(false)}
+          isOpen={deleteOpened}
+          onClose={() => setDeleteOpened(false)}
           serviceId={service.id}
           serviceName={service.getDisplayName()}
           onSuccess={() => {
