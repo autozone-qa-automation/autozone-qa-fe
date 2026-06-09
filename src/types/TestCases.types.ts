@@ -10,7 +10,7 @@ export const createTestCaseSchema = z.object({
   title: z
     .string()
     .min(1, { message: 'Name is required' })
-    .max(30, { message: 'Maximum 30 characters' }),
+    .max(150, { message: 'Maximum 150 characters' }),
   relatedFeature: z
     .number({ message: 'Feature is required' })
     .min(1, { message: 'Feature is required' }),

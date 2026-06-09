@@ -16,7 +16,7 @@ import { TestCasesList } from './TestCasesList'
 import { TestCasesModalCreate } from './TestCasesModalCreate'
 
 export function TestCases() {
-  const { testCases: myTestCases, isLoading, error } = useTestCases()
+  const { testCases: myTestCases, isLoading, error, refetch } = useTestCases()
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
@@ -183,7 +183,12 @@ export function TestCases() {
           No test cases available
         </Text>
       ) : (
-        <TestCasesList data={filteredTestCases} onViewClick={handleViewClick} />
+        <TestCasesList
+          data={filteredTestCases}
+          onViewClick={handleViewClick}
+          // MODIFICACIÓN: pasamos refetch hacia la tabla
+          onRefresh={refetch}
+        />
       )}
     </div>
   )
