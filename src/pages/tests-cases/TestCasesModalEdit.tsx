@@ -24,12 +24,14 @@ interface Props {
   opened: boolean
   onClose: () => void
   activeTestCase: TestCaseVO | null
+  onRefresh: () => Promise<void>
 }
 
-export function TestCasesModalEdit({ opened, onClose, activeTestCase }: Props) {
+export function TestCasesModalEdit({ opened, onClose, activeTestCase, onRefresh }: Props) {
   const { form, formErrorMessage, handleEditClick, featuresOptions, loading } = useEditTestCase(
     activeTestCase,
-    onClose
+    onClose,
+    onRefresh
   )
   return (
     <div>

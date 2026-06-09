@@ -196,7 +196,12 @@ export function TestCases() {
           No test cases available
         </Text>
       ) : (
-        <TestCasesList data={filteredTestCases} onViewClick={handleViewClick} />
+        <TestCasesList
+          data={filteredTestCases}
+          onViewClick={handleViewClick}
+          // MODIFICACIÓN: pasamos refetch hacia la tabla
+          onRefresh={refetch}
+        />
       )}
     </div>
   )

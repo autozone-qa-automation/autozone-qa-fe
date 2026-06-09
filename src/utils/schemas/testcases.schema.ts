@@ -11,7 +11,7 @@ export const testCaseFormSchema = z.object({
   title: z
     .string()
     .min(3, { message: 'Minimum 3 characters required' })
-    .max(100, { message: 'Maximum 100 characters allowed' }),
+    .max(150, { message: 'Maximum 150 characters allowed' }),
 
   relatedFeature: z
     .number({

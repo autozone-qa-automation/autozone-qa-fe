@@ -11,14 +11,17 @@ import { useState } from 'react'
 import type { TestCaseVO } from '@/models/TestCaseVO'
 import { TestCasesModalEdit } from './TestCasesModalEdit'
 
-export type Type = 'REGRESSION' | 'ON DEMAND'
+export type Type = 'REGRESSION' | 'ON_DEMAND'
 
 interface TestCasesListProps {
   data: TestCaseVO[]
   onViewClick?: (testCase: TestCaseVO) => void
+
+  // MODIFICACIÓN: función para recargar los test cases
+  onRefresh: () => Promise<void>
 }
 
-export function TestCasesList({ data, onViewClick }: TestCasesListProps) {
+export function TestCasesList({ data, onViewClick, onRefresh }: TestCasesListProps) {
   const [opened, { open, close }] = useDisclosure(false)
   const [activeTestCase, setActiveTestCase] = useState<TestCaseVO | null>(null)
   const items = data.map(testCase => (
@@ -78,6 +81,7 @@ export function TestCasesList({ data, onViewClick }: TestCasesListProps) {
       <TestCasesModalEdit
         opened={opened}
         activeTestCase={activeTestCase}
+        onRefresh={onRefresh}
         onClose={() => {
           close()
           setActiveTestCase(null)
