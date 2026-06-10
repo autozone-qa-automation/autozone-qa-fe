@@ -1,10 +1,3 @@
-/**
- * Tecnológico de Monterrey — Campus Chihuahua
- * Desarrollo e Implantación de Sistemas de Software
- * TC3005B GPO500 - 2026
- * Autozone QA Automation
- */
-
 import {
   Alert,
   Autocomplete,
@@ -24,13 +17,14 @@ import { ButtonContentModal } from '@/components/layout/ButtonContentModal/Butto
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetAllReleases } from '@/hooks/useGetReleases'
 import { useUpdateReleaseStatus } from '@/hooks/useUpdateReleaseStatus'
+import { ReleaseDeleteModal } from '@/pages/releases/ReleaseDeleteModal'
 import { ReleasesModalStatus } from '@/pages/releases/ReleasesModalStatus'
 import type { ReleaseStatus } from '@/types/Release.types'
 import { ReleasesModalCreate } from './ReleasesModalCreate'
 
 /**
  * Componente funcional que renderiza la página de gestión de Releases.
- * * @returns {JSX.Element} La vista de releases con controles de filtrado y grid de tarjetas.
+ * @returns {JSX.Element} La vista de releases con controles de filtrado y grid de tarjetas.
  */
 export function Releases() {
   /** Hook personalizado para obtener releases y estados de carga/error del backend */
@@ -50,15 +44,19 @@ export function Releases() {
   /** Estado para controlar el modal de cambio de status */
   const [statusModalOpened, setStatusModalOpened] = useState(false)
 
-  /** Release seleccionado para actualizar status */
+  /** Estado para controlar el modal de eliminación */
+  const [deleteModalOpened, setDeleteModalOpened] = useState(false)
+
+  /** Release seleccionado para actualizar status o borrar */
   const [selectedRelease, setSelectedRelease] = useState<ReleaseData | null>(null)
+
   /**
    * Memoriza la lista de releases procesada.
    * Realiza tres pasos correlativos:
    * 1. Mapeo de VO del Backend a estructura compatible con componentes UI.
    * 2. Filtrado por estatus y búsqueda de texto.
    * 3. Ordenamiento cronológico según la fecha de creación.
-   * * @returns {ReleaseData[]} Lista de releases filtrada y ordenada lista para renderizar.
+   * @returns {ReleaseData[]} Lista de releases filtrada y ordenada lista para renderizar.
    */
   const filteredAndSortedReleases = useMemo(() => {
     const mapped: ReleaseData[] = releases.map(r => ({
@@ -87,10 +85,15 @@ export function Releases() {
       })
   }, [releases, statusFilter, searchQuery, sortBy])
 
+  const releaseSearchOptions = useMemo(
+    () => Array.from(new Set(filteredAndSortedReleases.map(release => release.title))),
+    [filteredAndSortedReleases]
+  )
+
   // --- Renderizado de Estados de Carga ---
   if (loading) {
     return (
-      <Center h={400}>
+      <Center h={400} data-testid="releases-loading-state">
         <Stack align="center" gap="xs">
           <Loader color="orange.6" size="lg" type="dots" />
           <Text size="sm" c="dimmed" fw={500}>
@@ -112,6 +115,7 @@ export function Releases() {
           icon={<IconDatabaseOff size={24} />}
           radius="md"
           w={450}
+          data-testid="releases-error-message"
         >
           <Stack gap="md">
             <Text size="sm">{error}</Text>
@@ -147,6 +151,16 @@ export function Releases() {
     setSelectedRelease(null)
   }
 
+  const openDeleteModal = (release: ReleaseData) => {
+    setSelectedRelease(release)
+    setDeleteModalOpened(true)
+  }
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpened(false)
+    setSelectedRelease(null)
+  }
+
   const handleUpdateStatus = async (releaseId: number, status: ReleaseStatus) => {
     try {
       await updateReleaseStatus(releaseId, status)
@@ -171,7 +185,7 @@ export function Releases() {
 
   // --- Vista Principal ---
   return (
-    <div>
+    <div data-testid="releases-page">
       <TitleHeader
         title="Releases"
         metaDetails={['Manage your automated deployment pipelines']}
@@ -197,6 +211,7 @@ export function Releases() {
             size={s === 'All' ? 'sm' : 'xs'}
             fw={600}
             onClick={() => setStatusFilter(s)}
+            data-testid={`releases-filter-button-${s.toLowerCase()}`}
           >
             {s === 'All' ? 'All Releases' : s}
           </Button>
@@ -204,13 +219,14 @@ export function Releases() {
 
         <Autocomplete
           placeholder="Search releases..."
-          data={filteredAndSortedReleases.map(r => r.title)}
+          data={releaseSearchOptions}
           value={searchQuery}
           onChange={setSearchQuery}
           ml="auto"
           size="xs"
           w="220px"
           leftSection={<IconSearch size={16} stroke={2.5} />}
+          data-testid="releases-search-input"
         />
 
         <Select
@@ -225,22 +241,33 @@ export function Releases() {
             </Text>
           }
           leftSectionWidth={45}
+          data-testid="releases-sort-select"
         />
       </div>
 
       {/* Grid de Contenido: Tarjetas de Release */}
       <div style={{ marginTop: '20px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
         {filteredAndSortedReleases.map(item => (
-          <ButtonContentModal
+          <div
             key={item.releaseId}
-            data={item}
-            onOpenStatusModal={openStatusModal}
-          />
+            data-testid={`release-card-${item.releaseId}`}
+            style={{ display: 'contents' }}
+          >
+            <ButtonContentModal
+              data={item}
+              onOpenStatusModal={openStatusModal}
+              onDeleteClick={openDeleteModal}
+            />
+          </div>
         ))}
 
         {/* Empty State */}
         {filteredAndSortedReleases.length === 0 && (
-          <Box style={{ width: '100%', textAlign: 'center' }} mt={50}>
+          <Box
+            style={{ width: '100%', textAlign: 'center' }}
+            mt={50}
+            data-testid="releases-empty-message"
+          >
             <Text c="dimmed" fz="lg" fw={500}>
               No releases found
             </Text>
@@ -255,6 +282,16 @@ export function Releases() {
         loading={updatingStatus}
         onUpdateStatus={handleUpdateStatus}
       />
+
+      {selectedRelease && (
+        <ReleaseDeleteModal
+          isOpen={deleteModalOpened}
+          onClose={closeDeleteModal}
+          releaseId={selectedRelease.releaseId}
+          releaseName={selectedRelease.title}
+          onSuccess={() => void refetch()}
+        />
+      )}
     </div>
   )
 }

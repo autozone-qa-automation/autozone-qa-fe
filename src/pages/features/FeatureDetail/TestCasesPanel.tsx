@@ -6,13 +6,51 @@
  */
 
 import { Accordion, Button, Card, Group, Stack, Text, UnstyledButton } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
+import { useState } from 'react'
 import { useGetTestCasesByFeature } from '@/hooks/useGetTestCasesByFeature'
+import type { TestCaseVO } from '@/models/TestCaseVO'
+import { testCaseService } from '@/services/testCasesService'
 
 export function TestCasesPanel({ id }: { id: number }) {
-  const { testCases } = useGetTestCasesByFeature(id)
+  const { testCases, refetch } = useGetTestCasesByFeature(id)
+  const [deletingTestCaseId, setDeletingTestCaseId] = useState<number | null>(null)
+  const [deletedTestCaseIds, setDeletedTestCaseIds] = useState<Set<number>>(new Set())
+
+  const handleDeleteTestCase = async (testCase: TestCaseVO) => {
+    setDeletingTestCaseId(testCase.id)
+    setDeletedTestCaseIds(prev => new Set(prev).add(testCase.id))
+
+    try {
+      await testCaseService.deactivate(testCase.id)
+      notifications.show({
+        title: '¡Éxito!',
+        message: 'Test case eliminado correctamente',
+        color: 'green',
+      })
+      await refetch()
+    } catch (err) {
+      notifications.show({
+        title: 'No se pudo eliminar el test case',
+        message: err instanceof Error ? err.message : 'Ocurrió un error inesperado.',
+        color: 'red',
+      })
+      setDeletedTestCaseIds(prev => {
+        const next = new Set(prev)
+        next.delete(testCase.id)
+        return next
+      })
+    } finally {
+      setDeletingTestCaseId(null)
+    }
+  }
+
+  const visibleTestCases = testCases.filter(
+    testCase => testCase.active !== false && !deletedTestCaseIds.has(testCase.id)
+  )
 
   return (
-    <Stack gap="sm">
+    <Stack gap="sm" data-testid="feature-detail-testcases-section">
       <Group justify="space-between">
         <Text fw={600} size="sm" c="dimmed" tt="uppercase">
           Test Cases
@@ -45,22 +83,24 @@ export function TestCasesPanel({ id }: { id: number }) {
                 <Text fw={500} size="sm">
                   Linked test cases
                 </Text>
-                <Text size="xs" opacity={0.8}>
-                  • {testCases.length} test cases
+                <Text data-testid="feature-detail-testcases-count" size="xs" opacity={0.8}>
+                  • {visibleTestCases.length} test cases
                 </Text>
               </Group>
             </Accordion.Control>
 
             <Accordion.Panel>
-              <Stack gap={0}>
-                {testCases.map((testCase, index) => (
+              <Stack data-testid="feature-detail-testcases-list" gap={0}>
+                {visibleTestCases.map((testCase, index) => (
                   <Group
                     key={testCase.id}
+                    data-testid={`linked-tc-item-${testCase.id}`}
                     wrap="nowrap"
                     justify="space-between"
                     gap={0}
                     style={{
-                      borderBottom: index !== testCases.length - 1 ? '1px solid #eee' : 'none',
+                      borderBottom:
+                        index !== visibleTestCases.length - 1 ? '1px solid #eee' : 'none',
                     }}
                   >
                     <UnstyledButton
@@ -77,23 +117,52 @@ export function TestCasesPanel({ id }: { id: number }) {
                       onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
                       <Group gap="sm">
-                        <Text size="xs" c="orange.6" fw={700}>
+                        <Text
+                          data-testid={`linked-tc-id-${testCase.id}`}
+                          size="xs"
+                          c="orange.6"
+                          fw={700}
+                        >
                           F{testCase.id}
                         </Text>
-                        <Text size="sm" fw={400} c="dark">
+                        <Text
+                          data-testid={`linked-tc-name-${testCase.id}`}
+                          size="sm"
+                          fw={400}
+                          c="dark"
+                        >
                           {testCase.title}
                         </Text>
                       </Group>
                     </UnstyledButton>
 
-                    <Button size="xs" color="red" variant="subtle" mr="md">
+                    <Button
+                      type="button"
+                      size="xs"
+                      color="red"
+                      variant="subtle"
+                      mr="md"
+                      loading={deletingTestCaseId === testCase.id}
+                      disabled={deletingTestCaseId !== null}
+                      onClick={event => {
+                        event.preventDefault()
+                        event.stopPropagation()
+                        void handleDeleteTestCase(testCase)
+                      }}
+                    >
                       Eliminar
                     </Button>
                   </Group>
                 ))}
 
-                {testCases.length === 0 && (
-                  <Text size="sm" p="md" c="dimmed" ta="center">
+                {visibleTestCases.length === 0 && (
+                  <Text
+                    data-testid="feature-detail-testcases-empty-state"
+                    size="sm"
+                    p="md"
+                    c="dimmed"
+                    ta="center"
+                  >
                     No hay test cases vinculados para este feature
                   </Text>
                 )}

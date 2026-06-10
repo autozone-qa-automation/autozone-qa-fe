@@ -40,6 +40,7 @@ const mockFeatureService = featureService as jest.Mocked<typeof featureService>
 
 describe('TestCasesModalCreate', () => {
   const createMock = jest.fn().mockResolvedValue(true)
+  const onRefreshMock = jest.fn().mockResolvedValue(undefined)
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -62,24 +63,28 @@ describe('TestCasesModalCreate', () => {
 
     render(
       <MantineProvider>
-        <TestCasesModalCreate opened={true} onClose={jest.fn()} />
+        <TestCasesModalCreate opened={true} onClose={jest.fn()} onRefresh={onRefreshMock} />
       </MantineProvider>
     )
     await user.type(screen.getByLabelText(/NAME/i), 'Prueba de Login')
     await user.type(screen.getByLabelText(/STEPS/i), '1. Abrir navegador')
     await user.type(screen.getByLabelText(/EXPECTED OUTPUT/i), 'Sesión iniciada')
 
-    const select = screen.getByPlaceholderText(/Buscar o seleccionar feature/i)
+    const select = screen.getByPlaceholderText(/Search and select a related feature/i)
     await user.click(select)
 
     const option = await screen.findByText('Login')
     await user.click(option)
 
-    const submitBtn = screen.getByRole('button', { name: /Crear Test Case/i })
+    const submitBtn = screen.getByRole('button', { name: /Create Test Case/i })
     await user.click(submitBtn)
 
     await waitFor(() => {
       expect(createMock).toHaveBeenCalled()
+    })
+
+    await waitFor(() => {
+      expect(onRefreshMock).toHaveBeenCalledTimes(1)
     })
 
     await waitFor(() => {

@@ -16,15 +16,24 @@ export type Type = 'REGRESSION' | 'ON DEMAND'
 interface TestCasesListProps {
   data: TestCaseVO[]
   onViewClick?: (testCase: TestCaseVO) => void
+  onRefresh: () => Promise<void>
 }
 
-export function TestCasesList({ data, onViewClick }: TestCasesListProps) {
+export function TestCasesList({ data, onViewClick, onRefresh }: TestCasesListProps) {
   const [opened, { open, close }] = useDisclosure(false)
   const [activeTestCase, setActiveTestCase] = useState<TestCaseVO | null>(null)
+
   const items = data.map(testCase => (
-    <Table.Tr key={testCase.id}>
-      <Table.Td style={{ textAlign: 'center', color: '#F26621' }}>{testCase.id}</Table.Td>
+    <Table.Tr key={testCase.id} data-testid={`test-case-row-${testCase.id}`}>
       <Table.Td
+        data-testid={`test-case-id-cell-${testCase.id}`}
+        style={{ textAlign: 'center', color: '#F26621' }}
+      >
+        {testCase.id}
+      </Table.Td>
+
+      <Table.Td
+        data-testid="test-case-title-cell"
         style={{
           whiteSpace: 'normal',
           wordWrap: 'break-word',
@@ -34,7 +43,8 @@ export function TestCasesList({ data, onViewClick }: TestCasesListProps) {
       >
         {testCase.title}
       </Table.Td>
-      <Table.Td style={{ textAlign: 'center' }}>
+
+      <Table.Td data-testid={`test-case-type-cell-${testCase.id}`} style={{ textAlign: 'center' }}>
         <Badge
           color={testCase.type === 'REGRESSION' ? '#FFF4ED' : '#E5F7ED'}
           c={testCase.type === 'REGRESSION' ? '#F26621' : '#1F8F4D'}
@@ -44,11 +54,20 @@ export function TestCasesList({ data, onViewClick }: TestCasesListProps) {
           {testCase.type}
         </Badge>
       </Table.Td>
-      <Table.Td style={{ textAlign: 'center', color: '#1A1A1F' }}>
+
+      <Table.Td
+        data-testid={`test-case-feature-cell-${testCase.id}`}
+        style={{ textAlign: 'center', color: '#1A1A1F' }}
+      >
         {testCase.featureName ?? testCase.relatedFeature}
       </Table.Td>
-      <Table.Td style={{ textAlign: 'center' }}>
+
+      <Table.Td
+        data-testid={`test-case-actions-cell-${testCase.id}`}
+        style={{ textAlign: 'center' }}
+      >
         <Button
+          data-testid={`test-case-view-button-${testCase.id}`}
           variant="subtle"
           size="sm"
           color="orange.7"
@@ -58,6 +77,7 @@ export function TestCasesList({ data, onViewClick }: TestCasesListProps) {
           View
         </Button>
         <Button
+          data-testid={`test-case-edit-button-${testCase.id}`}
           variant="subtle"
           size="sm"
           color="gray.6"
@@ -78,12 +98,14 @@ export function TestCasesList({ data, onViewClick }: TestCasesListProps) {
       <TestCasesModalEdit
         opened={opened}
         activeTestCase={activeTestCase}
+        onRefresh={onRefresh}
         onClose={() => {
           close()
           setActiveTestCase(null)
         }}
       />
       <Table
+        data-testid="test-cases-table"
         highlightOnHover
         style={{ tableLayout: 'fixed', width: '100%', backgroundColor: '#ffffff', color: 'black' }}
       >
