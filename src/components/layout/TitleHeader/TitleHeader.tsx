@@ -17,6 +17,7 @@ interface TitleHeaderProps {
   breadcrumbs: BreadcrumbItem[]
   title: string
   metaDetails: string[] // <-- New prop, an array of strings
+  titleTestId?: string
   // ReactNode allows you to pass buttons, menus, icons, or even nothing!
   actionComponent?: React.ReactNode
 }
@@ -25,6 +26,7 @@ export function TitleHeader({
   breadcrumbs,
   title,
   metaDetails, // <-- Using the new prop
+  titleTestId,
   actionComponent,
 }: TitleHeaderProps) {
   const breadcrumbElements = breadcrumbs.map((item, index) => (
@@ -40,7 +42,7 @@ export function TitleHeader({
           {breadcrumbElements}
         </Breadcrumbs>
 
-        <Title order={1} size="h2" fw={900} c="dark.8">
+        <Title data-testid={titleTestId} order={1} size="h2" fw={900} c="dark.8">
           {title}
         </Title>
 

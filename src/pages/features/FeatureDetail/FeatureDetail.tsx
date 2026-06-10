@@ -35,6 +35,7 @@ export function FeatureDetail() {
     <Container data-testid="feature-detail-container" size="md" mt="md">
       <TitleHeader
         title={feature?.featureName || 'Feature Detail'}
+        titleTestId="feature-detail-title"
         metaDetails={['']}
         breadcrumbs={[
           { title: 'Features', href: '/features' },
