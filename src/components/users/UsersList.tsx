@@ -21,7 +21,7 @@ export function UsersList({ data, onEditClick, onDeleteClick }: UsersListProps) 
     const { bg, c } = roleBadgeStyle(user.rolePermission)
 
     return (
-      <Table.Tr key={user.id}>
+      <Table.Tr key={user.id} data-testid="users-table-row">
         <Table.Td style={{ color: '#F97316', fontWeight: 600, paddingLeft: 24 }}>
           {String(user.id).padStart(3, '0')}
         </Table.Td>
@@ -55,6 +55,7 @@ export function UsersList({ data, onEditClick, onDeleteClick }: UsersListProps) 
             fw={400}
             px={8}
             onClick={() => onEditClick?.(user)}
+            data-testid="user-edit-button"
           >
             Edit
           </Button>
@@ -65,6 +66,7 @@ export function UsersList({ data, onEditClick, onDeleteClick }: UsersListProps) 
             fw={400}
             px={8}
             onClick={() => onDeleteClick?.(user)}
+            data-testid="user-delete-button"
           >
             Delete
           </Button>
