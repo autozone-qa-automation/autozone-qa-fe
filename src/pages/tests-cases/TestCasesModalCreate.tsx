@@ -29,14 +29,16 @@ import type { Feature } from '@/types/feature.types'
 import { type CreateTestCaseRequest, createTestCaseSchema } from '@/types/TestCases.types'
 
 type FormValues = CreateTestCaseRequest
+
 const showNotification = (notification: NotificationData): string =>
-  mantineShowNotification(notification)
+  (mantineShowNotification as (payload: NotificationData) => string)(notification)
 
 interface Props {
   opened: boolean
   onClose: () => void
   onRefresh: () => Promise<void>
 }
+
 export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
   const [featureOptions, setFeatureOptions] = useState<{ value: string; label: string }[]>([])
   const { create, loading, error } = useTestCases()
@@ -53,9 +55,10 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
           }))
         )
       } catch (err) {
-        console.error('Error loading features', err)
+        console.error('Error cargando features', err)
       }
     }
+
     void loadFeatures()
   }, [])
 
@@ -73,15 +76,18 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
     },
     validate: values => {
       const result = createTestCaseSchema.safeParse(values)
+
       if (result.success) {
         return {}
       }
 
       return result.error.issues.reduce<Record<string, string>>((acc, issue) => {
         const key = issue.path[0]
+
         if (typeof key === 'string' && !acc[key]) {
           acc[key] = issue.message
         }
+
         return acc
       }, {})
     },
@@ -92,31 +98,36 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
   const handleSubmit = async (values: FormValues) => {
     try {
       setFormErrorMessage(null)
+
       const success = await create(values)
+
       if (success) {
         await onRefresh()
         form.reset()
+
         showNotification({
-          title: 'Test case created',
-          message: 'The test case was created successfully.',
+          title: 'Test case creado',
+          message: 'El test case se creó correctamente.',
           color: 'green',
           position: 'top-right',
         })
         onClose()
       } else {
         showNotification({
-          title: 'Could not create test case',
-          message: error ?? 'An error occurred while creating the test case.',
+          title: 'No se pudo crear',
+          message: error ?? 'Ocurrió un error al crear el test case.',
           color: 'red',
           position: 'top-right',
         })
       }
     } catch (submitError) {
       const message =
-        submitError instanceof Error ? submitError.message : 'Unexpected error occurred.'
+        submitError instanceof Error ? submitError.message : 'Error inesperado al crear.'
+
       setFormErrorMessage(message)
+
       showNotification({
-        title: 'Unexpected error',
+        title: 'Error inesperado',
         message,
         color: 'red',
         position: 'top-right',
@@ -127,27 +138,34 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
   const handleCreateClick = async () => {
     try {
       const validation = form.validate()
+
       if (validation.hasErrors) {
-        const message = 'Please fix the validation errors before submitting the form.'
+        const message = 'Corrige los errores del formulario para continuar.'
+
         setFormErrorMessage(message)
+
         showNotification({
-          title: 'Invalid form',
+          title: 'Formulario invalido',
           message,
           color: 'yellow',
           position: 'top-right',
         })
+
         return
       }
+
       setFormErrorMessage(null)
       await handleSubmit(form.values)
     } catch (validationError) {
       const message =
         validationError instanceof Error
           ? validationError.message
-          : 'Form could not be submitted due to validation errors.'
+          : 'No se pudo validar el formulario.'
+
       setFormErrorMessage(message)
+
       showNotification({
-        title: 'Validation error',
+        title: 'Error de validacion',
         message,
         color: 'red',
         position: 'top-right',
@@ -157,14 +175,16 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
 
   return (
     <div>
-      <ModalTemplate title="Create Test Case" opened={opened} onClose={onClose}>
+      <ModalTemplate title="Crear Test Case" opened={opened} onClose={onClose}>
         <form
+          data-testid="test-case-create-form"
           onSubmit={event => {
             event.preventDefault()
           }}
         >
           <Stack gap="md">
             <TextInput
+              data-testid="test-case-create-title-input"
               label="NAME"
               placeholder="e.g. User Login Validation"
               withAsterisk
@@ -172,13 +192,21 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
               {...form.getInputProps('title')}
             />
 
-            {/*<TextInput label="ID" value="Automatically generated" placeholder="" disabled /> */}
+            <TextInput
+              data-testid="test-case-create-id-input"
+              label="ID"
+              value="Automatically generated"
+              placeholder=""
+              disabled
+            />
 
             <Select
+              data-testid="test-case-create-feature-select"
               label="RELATED FEATURE"
               placeholder="Search and select a related feature"
               data={featureOptions}
               searchable
+              comboboxProps={{ withinPortal: false }}
               nothingFoundMessage="Features not found"
               withAsterisk
               value={form.values.relatedFeature ? String(form.values.relatedFeature) : null}
@@ -190,7 +218,9 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
               <Text size="sm" fw={600} c="black">
                 TYPE
               </Text>
+
               <SegmentedControl
+                data-testid="test-case-create-type-control"
                 fullWidth
                 color="orange"
                 data={[
@@ -206,6 +236,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
             </Stack>
 
             <Textarea
+              data-testid="test-case-create-description-input"
               label="DESCRIPTION"
               placeholder="Describe the test case in detail..."
               error={form.errors.description}
@@ -213,6 +244,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
             />
 
             <Textarea
+              data-testid="test-case-create-preconditions-input"
               label="PRECONDITIONS"
               placeholder="Define the state required before executing the test..."
               error={form.errors.preconditions}
@@ -220,6 +252,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
             />
 
             <Textarea
+              data-testid="test-case-create-inputs-input"
               label="INPUTS"
               placeholder="Inputs required for the test case..."
               error={form.errors.inputs}
@@ -227,6 +260,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
             />
 
             <Textarea
+              data-testid="test-case-create-steps-input"
               label="STEPS"
               placeholder="Describe each step to execute the test case..."
               withAsterisk
@@ -235,6 +269,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
             />
 
             <Textarea
+              data-testid="test-case-create-postconditions-input"
               label="POSTCONDITIONS"
               placeholder="Define the state expected after executing the test..."
               error={form.errors.postconditions}
@@ -242,6 +277,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
             />
 
             <Textarea
+              data-testid="test-case-create-expected-output-input"
               label="EXPECTED OUTPUT"
               placeholder="Output expected after executing the test case..."
               withAsterisk
@@ -249,11 +285,21 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
               {...form.getInputProps('expectedOutput')}
             />
 
-            {formErrorMessage && <Alert color="yellow">{formErrorMessage}</Alert>}
-            {error && <Alert color="red">{error}</Alert>}
+            {formErrorMessage && (
+              <Alert data-testid="test-case-create-validation-alert" color="yellow">
+                {formErrorMessage}
+              </Alert>
+            )}
+
+            {error && (
+              <Alert data-testid="test-case-create-error-alert" color="red">
+                {error}
+              </Alert>
+            )}
 
             <Group justify="flex-end" mt="xl">
               <Button
+                data-testid="test-case-create-submit-button"
                 type="button"
                 bg="#f46624"
                 radius="md"
