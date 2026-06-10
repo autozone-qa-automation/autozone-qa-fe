@@ -49,13 +49,13 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
       try {
         const features = await featureService.getAll()
         setFeatureOptions(
-          features.map((f: Feature) => ({                            
+          features.map((f: Feature) => ({
             value: String(f.id),
             label: f.featureName,
           }))
         )
       } catch (err) {
-        console.error('Error cargando features', err)                
+        console.error('Error cargando features', err)
       }
     }
 
@@ -127,7 +127,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
       setFormErrorMessage(message)
 
       showNotification({
-        title: 'Error inesperado',                                   
+        title: 'Error inesperado',
         message,
         color: 'red',
         position: 'top-right',
@@ -145,7 +145,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
         setFormErrorMessage(message)
 
         showNotification({
-          title: 'Formulario invalido',                              
+          title: 'Formulario invalido',
           message,
           color: 'yellow',
           position: 'top-right',
@@ -162,7 +162,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
           ? validationError.message
           : 'No se pudo validar el formulario.'
 
-      setFormErrorMessage(message)                                   
+      setFormErrorMessage(message)
 
       showNotification({
         title: 'Error de validacion',
@@ -207,7 +207,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
               data={featureOptions}
               searchable
               comboboxProps={{ withinPortal: false }}
-              nothingFoundMessage="Features not found"               
+              nothingFoundMessage="Features not found"
               withAsterisk
               value={form.values.relatedFeature ? String(form.values.relatedFeature) : null}
               onChange={val => form.setFieldValue('relatedFeature', val ? Number(val) : 0)}
@@ -215,7 +215,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
             />
 
             <Stack gap={4}>
-              <Text size="sm" fw={600} c="black">                    
+              <Text size="sm" fw={600} c="black">
                 TYPE
               </Text>
 
@@ -224,12 +224,12 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
                 fullWidth
                 color="orange"
                 data={[
-                  { label: 'Regression', value: 'REGRESSION' },      
+                  { label: 'Regression', value: 'REGRESSION' },
                   { label: 'On demand', value: 'ON_DEMAND' },
                 ]}
                 {...form.getInputProps('type')}
                 styles={{
-                  root: { backgroundColor: '#f8f9fa' },              
+                  root: { backgroundColor: '#f8f9fa' },
                   indicator: { backgroundColor: '#f46624' },
                 }}
               />
@@ -256,7 +256,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
               label="INPUTS"
               placeholder="Inputs required for the test case..."
               error={form.errors.inputs}
-              {...form.getInputProps('inputs')}                      
+              {...form.getInputProps('inputs')}
             />
 
             <Textarea
@@ -281,7 +281,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
               label="EXPECTED OUTPUT"
               placeholder="Output expected after executing the test case..."
               withAsterisk
-              error={form.errors.expectedOutput}                     
+              error={form.errors.expectedOutput}
               {...form.getInputProps('expectedOutput')}
             />
 

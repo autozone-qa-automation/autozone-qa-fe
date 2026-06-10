@@ -119,3 +119,4 @@ export function TestCasesList({ data, onViewClick, onRefresh }: TestCasesListPro
       </Table>
     </div>
   )
+}

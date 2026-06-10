@@ -50,7 +50,7 @@ export function TestCases() {
   )
 
   const featureOptions = [
-    { value: 'ALL', label: 'All features' },                         
+    { value: 'ALL', label: 'All features' },
     ...Array.from(
       new Set(visibleTestCases.map(tc => tc.featureName ?? `Feature ${tc.relatedFeature}`))
     ).map(feature => ({
@@ -60,7 +60,7 @@ export function TestCases() {
   ]
 
   const filteredTestCases =
-    selectedFeature === 'ALL' || selectedFeature === null            
+    selectedFeature === 'ALL' || selectedFeature === null
       ? visibleTestCases
       : visibleTestCases.filter(
           tc => (tc.featureName ?? `Feature ${tc.relatedFeature}`) === selectedFeature
@@ -97,7 +97,7 @@ export function TestCases() {
               <Text size="md" c="#8C8C94">
                 RELATED FEATURE
               </Text>
-              <Text size="sm" c="#1A1A1F" mb="xs">                   
+              <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.featureName ?? selectedTestCase?.relatedFeature}
               </Text>
 
@@ -108,7 +108,7 @@ export function TestCases() {
                 {selectedTestCase?.description}
               </Text>
 
-              <Text size="md" c="#8C8C94">                           
+              <Text size="md" c="#8C8C94">
                 TYPE
               </Text>
               <Badge
@@ -122,28 +122,28 @@ export function TestCases() {
                 {selectedTestCase?.type}
               </Badge>
 
-              <Text size="md" c="#8C8C94">                           
+              <Text size="md" c="#8C8C94">
                 PRECONDITIONS
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.preconditions}
               </Text>
 
-              <Text size="md" c="#8C8C94">                           
+              <Text size="md" c="#8C8C94">
                 POSTCONDITIONS
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.postconditions}
               </Text>
 
-              <Text size="md" c="#8C8C94">                           
+              <Text size="md" c="#8C8C94">
                 INPUT
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.inputs}
               </Text>
 
-              <Text size="md" c="#8C8C94">                           
+              <Text size="md" c="#8C8C94">
                 STEPS
               </Text>
               <Text size="sm" c="#1A1A1F">
@@ -170,7 +170,7 @@ export function TestCases() {
         ]}
         actionComponent={
           <Button
-            data-testid="test-cases-new-button"                      
+            data-testid="test-cases-new-button"
             leftSection={<IconPlus size={16} stroke={2.5} />}
             color="orange.6"
             radius="md"
@@ -184,7 +184,7 @@ export function TestCases() {
       />
 
       <Select
-        data-testid="test-cases-feature-filter"                      
+        data-testid="test-cases-feature-filter"
         style={{ width: 250 }}
         placeholder="All features"
         data={featureOptions}
@@ -207,11 +207,7 @@ export function TestCases() {
           No test cases available
         </Text>
       ) : (
-        <TestCasesList
-          data={filteredTestCases}
-          onViewClick={handleViewClick}
-          onRefresh={refetch}
-        />
+        <TestCasesList data={filteredTestCases} onViewClick={handleViewClick} onRefresh={refetch} />
       )}
     </div>
   )
