@@ -62,7 +62,10 @@ export function TestCasesList({ data, onViewClick, onRefresh }: TestCasesListPro
         {testCase.featureName ?? testCase.relatedFeature}
       </Table.Td>
 
-      <Table.Td data-testid={`test-case-actions-cell-${testCase.id}`} style={{ textAlign: 'center' }}>
+      <Table.Td
+        data-testid={`test-case-actions-cell-${testCase.id}`}
+        style={{ textAlign: 'center' }}
+      >
         <Button
           data-testid={`test-case-view-button-${testCase.id}`}
           variant="subtle"
