@@ -88,7 +88,12 @@ export function ServicesId() {
           />
 
           <Group gap="xs">
-            <Button size="xs" color="orange.6" onClick={() => setEditOpened(true)}>
+            <Button
+              data-testid="service-id-edit-button"
+              size="xs"
+              color="orange.6"
+              onClick={() => setEditOpened(true)}
+            >
               Edit
             </Button>
             <Button
