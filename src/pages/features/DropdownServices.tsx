@@ -25,6 +25,7 @@ export function DropdownServices({ onChange }: DropdownServicesProps) {
 
   return (
     <Select
+      data-testid="features-service-selector"
       mb={'md'}
       searchable
       nothingFoundMessage="No options found"

@@ -26,7 +26,6 @@ export function TitleHeader({
   breadcrumbs,
   title,
   metaDetails, // <-- Using the new prop
-  titleTestId,
   actionComponent,
 }: TitleHeaderProps) {
   const breadcrumbElements = breadcrumbs.map((item, index) => (
@@ -38,16 +37,16 @@ export function TitleHeader({
   return (
     <Flex justify="space-between" align="flex-end" pb="md">
       <Stack gap="xs">
-        <Breadcrumbs separator="›" separatorMargin="xs">
+        <Breadcrumbs data-testid="title-header-breadcrumbs" separator="›" separatorMargin="xs">
           {breadcrumbElements}
         </Breadcrumbs>
 
-        <Title data-testid={titleTestId} order={1} size="h2" fw={900} c="dark.8">
+        <Title data-testid="title-header-title" order={1} size="h2" fw={900} c="dark.8">
           {title}
         </Title>
 
         {/* This line is updated to use the new prop and the dot separator */}
-        <Text c="dimmed" size="sm" fw={500}>
+        <Text data-testid="title-header-meta" c="dimmed" size="sm" fw={500}>
           {metaDetails.join(' · ')}
         </Text>
       </Stack>
