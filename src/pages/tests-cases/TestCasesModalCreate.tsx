@@ -35,8 +35,9 @@ const showNotification = (notification: NotificationData): string =>
 interface Props {
   opened: boolean
   onClose: () => void
+  onRefresh: () => Promise<void>
 }
-export function TestCasesModalCreate({ opened, onClose }: Props) {
+export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
   const [featureOptions, setFeatureOptions] = useState<{ value: string; label: string }[]>([])
   const { create, loading, error } = useTestCases()
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null)
@@ -93,6 +94,7 @@ export function TestCasesModalCreate({ opened, onClose }: Props) {
       setFormErrorMessage(null)
       const success = await create(values)
       if (success) {
+        await onRefresh()
         form.reset()
         showNotification({
           title: 'Test case created',
@@ -100,6 +102,7 @@ export function TestCasesModalCreate({ opened, onClose }: Props) {
           color: 'green',
           position: 'top-right',
         })
+        onClose()
       } else {
         showNotification({
           title: 'Could not create test case',
