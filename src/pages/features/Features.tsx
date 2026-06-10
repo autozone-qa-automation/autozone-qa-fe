@@ -32,7 +32,7 @@ export function Features() {
   })
 
   return (
-    <div data-testid="features-page">
+    <div data-testid="features-page-container">
       <TitleHeader
         title="Features"
         metaDetails={['']}

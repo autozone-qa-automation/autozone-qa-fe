@@ -32,7 +32,7 @@ export function FeatureDetail() {
   }
 
   return (
-    <Container data-testid="feature-detail-page" size="md" mt="md">
+    <Container data-testid="feature-detail-container" size="md" mt="md">
       <TitleHeader
         title={feature?.featureName || 'Feature Detail'}
         titleTestId="feature-detail-title"
@@ -115,7 +115,7 @@ export function FeatureDetail() {
           Description
         </Text>
 
-        <Text data-testid="feature-detail-description-text" size="sm">
+        <Text data-testid="feature-description-text" size="sm">
           {feature?.featureDescription || 'Sin descripción'}
         </Text>
       </Stack>
