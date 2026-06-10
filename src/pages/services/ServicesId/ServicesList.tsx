@@ -17,9 +17,10 @@ export interface FeatureItem {
 interface FeaturesListProps {
   data: FeatureItem[]
   onDeleteClick?: (id: number) => void
+  onAddClick?: () => void
 }
 
-export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
+export function ServicesList({ data, onDeleteClick, onAddClick }: FeaturesListProps) {
   const navigate = useNavigate()
 
   const handleFeatureClick = (id: number) => {
@@ -33,7 +34,7 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
           Features
         </Text>
 
-        <Button size="xs" color="orange.6" radius="md">
+        <Button size="xs" color="orange.6" radius="md" onClick={onAddClick}>
           + Add Feature
         </Button>
       </Group>
@@ -115,7 +116,7 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
                         onDeleteClick?.(feature.idFeature)
                       }}
                     >
-                      Eliminar
+                      Delete
                     </Button>
                   </Group>
                 ))}

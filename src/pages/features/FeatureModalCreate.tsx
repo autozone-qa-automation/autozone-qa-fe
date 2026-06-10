@@ -7,8 +7,9 @@
 
 import { Button, Group, Select, Stack, Textarea, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { useDisclosure } from '@mantine/hooks' // <-- Agregado
+import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
+import { useEffect } from 'react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { useCreateFeature } from '@/hooks/useCreateFeature'
 import { useFeatureFormResources } from '@/hooks/useFeatureFormResources'
@@ -23,9 +24,25 @@ const labelStyles = {
   },
 }
 
-export function FeatureModalCreate({ onSuccess }: { onSuccess?: () => Promise<void> }) {
-  // <-- Movimos el estado del modal aquí
-  const [opened, { open, close }] = useDisclosure(false)
+interface FeatureModalCreateProps {
+  onSuccess?: () => Promise<void>
+  opened?: boolean
+  onClose?: () => void
+  initialServiceId?: number
+  disableServiceSelect?: boolean
+}
+
+export function FeatureModalCreate({
+  onSuccess,
+  opened: externalOpened,
+  onClose: onExternalClose,
+  initialServiceId,
+  disableServiceSelect,
+}: FeatureModalCreateProps) {
+  const [internalOpened, { open, close: internalClose }] = useDisclosure(false)
+
+  const opened = externalOpened ?? internalOpened
+  const close = onExternalClose ?? internalClose
 
   const { createFeature, loading: creating } = useCreateFeature()
   const { servicesOptions, loading: loadingServices } = useFeatureFormResources()
@@ -48,6 +65,12 @@ export function FeatureModalCreate({ onSuccess }: { onSuccess?: () => Promise<vo
     },
     validateInputOnChange: true,
   })
+
+  useEffect(() => {
+    if (initialServiceId) {
+      form.setFieldValue('idServices', String(initialServiceId))
+    }
+  }, [initialServiceId])
 
   const handleSubmit = async (values: FormValues) => {
     const validation = featureSchema.safeParse(values)
@@ -81,15 +104,20 @@ export function FeatureModalCreate({ onSuccess }: { onSuccess?: () => Promise<vo
     }
   }
 
+  const handleClose = () => {
+    form.reset()
+    close()
+  }
+
   return (
     <div>
-      {/* El botón para abrir el modal ahora vive aquí */}
-      <Button color="orange.6" radius="md" onClick={open}>
-        + New Feature
-      </Button>
+      {externalOpened === undefined && (
+        <Button color="orange.6" radius="md" onClick={open}>
+          + New Feature
+        </Button>
+      )}
 
-      {/* Pasamos opened y onClose al Template */}
-      <ModalTemplate opened={opened} onClose={close} title="New Feature">
+      <ModalTemplate opened={opened} onClose={handleClose} title="New Feature">
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="md">
             <TextInput
@@ -105,10 +133,15 @@ export function FeatureModalCreate({ onSuccess }: { onSuccess?: () => Promise<vo
               placeholder="Select a service..."
               data={servicesOptions}
               loading={loadingServices}
-              disabled={loadingServices}
+              disabled={loadingServices || disableServiceSelect}
               withAsterisk
               {...form.getInputProps('idServices')}
-              styles={{ label: labelStyles.label }}
+              styles={{
+                label: labelStyles.label,
+                ...(disableServiceSelect && {
+                  input: { backgroundColor: '#f5f5f5', color: '#999', cursor: 'not-allowed' },
+                }),
+              }}
               nothingFoundMessage="No services found"
               searchable
             />
@@ -126,7 +159,6 @@ export function FeatureModalCreate({ onSuccess }: { onSuccess?: () => Promise<vo
                 variant="outline"
                 color="gray"
                 radius="md"
-                // <-- Agregamos close() al botón de cancelar también
                 onClick={() => {
                   form.reset()
                   close()

@@ -12,6 +12,7 @@ import { useNavigate, useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetLastReleasesByServiceId } from '@/hooks/useGetLastReleasesByServiceId'
 import { useGetServiceById } from '@/hooks/useGetServiceById'
+import { FeatureModalCreate } from '@/pages/features/FeatureModalCreate'
 import ServiceEditModal from '@/pages/services/ServiceEditModal'
 import { ReleasesList } from '@/pages/services/ServicesId/ReleasesList'
 import { ServiceDeleteModal } from '@/pages/services/ServicesId/ServiceDeleteModal'
@@ -24,6 +25,7 @@ export function ServicesId() {
   const id = Number(serviceId)
   const [editOpened, setEditOpened] = useState(false)
   const [deleteOpened, setDeleteOpened] = useState(false)
+  const [addFeatureOpened, setAddFeatureOpened] = useState(false)
 
   const { service, features, loading, error, refetch } = useGetServiceById(id)
   const {
@@ -34,17 +36,13 @@ export function ServicesId() {
 
   const handleUnlinkFeature = async (featureId: number) => {
     try {
-      const feature = await featureService.getById(String(featureId))
-      await featureService.update(String(featureId), {
-        featureName: feature.featureName,
-        featureDescription: feature.featureDescription,
-      })
-      notifications.show({ title: 'Success', message: 'Feature unlinked', color: 'teal' })
+      await featureService.deactivate(String(featureId))
+      notifications.show({ title: 'Success', message: 'Feature deleted', color: 'teal' })
       await refetch?.()
     } catch (err) {
       notifications.show({
         title: 'Error',
-        message: err instanceof Error ? err.message : 'Failed to unlink feature',
+        message: err instanceof Error ? err.message : 'Failed to delete feature',
         color: 'red',
       })
     }
@@ -155,6 +153,15 @@ export function ServicesId() {
           onDeleteClick={id => {
             void handleUnlinkFeature(id)
           }}
+          onAddClick={() => setAddFeatureOpened(true)}
+        />
+
+        <FeatureModalCreate
+          opened={addFeatureOpened}
+          onClose={() => setAddFeatureOpened(false)}
+          initialServiceId={id}
+          disableServiceSelect
+          onSuccess={refetch}
         />
 
         <Divider />
