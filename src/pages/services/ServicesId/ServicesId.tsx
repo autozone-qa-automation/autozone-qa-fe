@@ -99,6 +99,7 @@ export function ServicesId() {
               variant="outline"
               leftSection={<IconTrash size={14} stroke={2.5} />}
               onClick={() => setDeleteOpened(true)}
+              data-testid="service-id-delete-button"
             >
               Delete
             </Button>
