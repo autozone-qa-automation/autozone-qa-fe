@@ -112,17 +112,32 @@ export function ServiceEditModal({
   return (
     <div>
       {!isControlled && (
-        <Button color="orange.6" radius="md" onClick={open}>
+        <Button data-testid="edit-service-btn" color="orange.6" radius="md" onClick={open}>
           Edit Service
         </Button>
       )}
 
-      <ModalTemplate opened={opened} onClose={close} title={`Edit Service`}>
+      <ModalTemplate
+        opened={opened}
+        onClose={close}
+        title={`Edit Service`}
+        testId="service-edit-modal"
+      >
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="md">
-            <TextInput label="NAME" withAsterisk {...form.getInputProps('name')} />
+            <TextInput
+              data-testid="service-name-input"
+              label="NAME"
+              withAsterisk
+              {...form.getInputProps('name')}
+            />
 
-            <Textarea label="DESCRIPTION" minRows={4} {...form.getInputProps('description')} />
+            <Textarea
+              data-testid="service-description-input"
+              label="DESCRIPTION"
+              minRows={4}
+              {...form.getInputProps('description')}
+            />
 
             <div>
               <Group mb={6}>
@@ -142,17 +157,20 @@ export function ServiceEditModal({
                     <Group key={i} align="flex-start">
                       <input type="hidden" {...idProps} />
                       <TextInput
+                        data-testid={`service-url-nombre-input-${i}`}
                         placeholder="Nombre (e.g. Producción)"
                         style={{ flex: 1 }}
                         {...nombreProps}
                       />
                       <TextInput
+                        data-testid={`service-url-input-${i}`}
                         placeholder="https://example.com"
                         style={{ flex: 2 }}
                         {...urlProps}
                       />
                       {!form.values.urls[i]?.idUrl && (
                         <ActionIcon
+                          data-testid={`service-url-delete-btn-${i}`}
                           type="button"
                           color="red"
                           onClick={() => {
@@ -172,6 +190,7 @@ export function ServiceEditModal({
 
             <Group justify="flex-end" mt="xl">
               <Button
+                data-testid="service-edit-cancel-btn"
                 type="button"
                 variant="outline"
                 color="gray"
@@ -182,7 +201,7 @@ export function ServiceEditModal({
               >
                 Cancel
               </Button>
-              <Button type="submit" bg="#f26621">
+              <Button data-testid="service-edit-save-btn" type="submit" bg="#f26621">
                 Save Changes
               </Button>
             </Group>
