@@ -52,6 +52,10 @@ const axiosInstance = axios.create({
  */
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    const token = localStorage.getItem('authToken')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
   (error: AxiosError) => Promise.reject(error)
@@ -59,24 +63,21 @@ axiosInstance.interceptors.request.use(
 
 /**
  * Interceptor de respuestas
- * Maneja las respuestas exitosas
+ * Maneja las respuestas exitosas y transforma errores del backend en errores más legibles.
  */
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
-  (error: AxiosError) => Promise.reject(error)
-)
-
-/**
- * Interceptor de respuestas para manejo de errores
- * Transforma errores del backend en errores más legibles
- */
-axiosInstance.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  (error: AxiosError<ErrorResponse>) => {
+  (error: AxiosError<ErrorResponse | string>) => {
     const backendError = error.response?.data
+
+    if (typeof backendError === 'string') {
+      return Promise.reject(new Error(backendError))
+    }
+
     if (backendError?.message) {
       return Promise.reject(new Error(backendError.message))
     }
+
     return Promise.reject(new Error(error.message))
   }
 )

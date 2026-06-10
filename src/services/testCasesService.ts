@@ -33,12 +33,12 @@ export const testCaseService = {
     return testCaseSchema.parse(data)
   },
 
-  update: async (id: number, payload: Partial<CreateTestCaseRequest>): Promise<TestCase> => {
+  update: async (id: number, payload: CreateTestCaseRequest): Promise<TestCase> => {
     const data = await apiService.put<unknown>(`${BASE_URL}/${id}`, payload)
     return testCaseSchema.parse(data)
   },
 
-  remove: async (id: number): Promise<void> => {
-    await apiService.delete(`${BASE_URL}/${id}`)
+  deactivate: async (id: number): Promise<void> => {
+    await apiService.put<void>(`${BASE_URL}/${id}/deactivate`)
   },
 }

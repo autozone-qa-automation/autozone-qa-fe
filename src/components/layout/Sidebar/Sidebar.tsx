@@ -31,8 +31,8 @@ import {
   IconUsers,
 } from '@tabler/icons-react'
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router'
-import { useGetUserById } from '@/hooks/userGetUserById'
+import { Link, useLocation, useNavigate } from 'react-router'
+import { logout } from '@/utils/logout'
 import classes from './Sidebar.module.css'
 
 /**
@@ -57,16 +57,18 @@ const navData = [
  */
 export function Sidebar() {
   const location = useLocation()
+  const navigate = useNavigate()
 
   const [active, setActive] = useState(location.pathname)
   const [popoverOpened, setPopoverOpened] = useState(false)
 
-  // ID=1 placeholder — replace with auth context user ID when auth is implemented
-  const { user } = useGetUserById(1)
+  const name = localStorage.getItem('name') || '""'
+  const sureName = localStorage.getItem('sureName') || '""'
+  const role = localStorage.getItem('role') || '""'
 
-  const fullName = user ? `${user.name} ${user.lastname}` : '...'
-  const initials = user ? `${user.name[0]}${user.lastname[0]}`.toUpperCase() : '?'
-  const roleLabel = user?.role?.permisionlevel ?? '—'
+  const fullName = `${name} ${sureName}`
+  const initials = `${name[0]}${sureName[0]}`.toUpperCase()
+  const roleLabel = role
 
   /**
    * Mapeo de navData para transformar objetos de configuración en componentes NavLink de Mantine.
@@ -168,7 +170,11 @@ export function Sidebar() {
             <NavLink
               label="Log Out"
               leftSection={<IconLogout size="1rem" />}
-              onClick={() => setPopoverOpened(false)}
+              onClick={() => {
+                setPopoverOpened(false)
+                logout()
+                navigate('/login')
+              }}
               color="red"
             />
           </Popover.Dropdown>

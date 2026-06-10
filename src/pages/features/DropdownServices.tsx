@@ -26,13 +26,13 @@ export function DropdownServices({ onChange }: DropdownServicesProps) {
   return (
     <Select
       mb={'md'}
-      placeholder="Order Management"
       searchable
       nothingFoundMessage="No options found"
       leftSection={<IconChevronDown size={14} stroke={2} />}
       rightSection={null}
       radius="md"
       data={options}
+      defaultValue="all"
       onChange={onChange}
       styles={{
         input: {

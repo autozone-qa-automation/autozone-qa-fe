@@ -12,9 +12,10 @@ interface ModalProps {
   opened: boolean
   onClose: () => void
   children?: React.ReactNode
+  testId?: string
 }
 
-export function ModalTemplate({ title, opened, onClose, children }: ModalProps) {
+export function ModalTemplate({ title, opened, onClose, children, testId }: ModalProps) {
   return (
     <Modal
       opened={opened}
@@ -23,6 +24,7 @@ export function ModalTemplate({ title, opened, onClose, children }: ModalProps) 
       radius={16}
       size={'40%'}
       padding="xl"
+      data-testid={testId}
       styles={{
         title: {
           fontWeight: 700,

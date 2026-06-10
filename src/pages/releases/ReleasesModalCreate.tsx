@@ -20,6 +20,7 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
 import { useState } from 'react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { useCreateReleases } from '@/hooks/useCreateReleases'
@@ -48,7 +49,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
       releaseDescription: '',
       releaseVersion: '',
       releaseStatus: 'Draft',
-      releaseServiceId: null,
+      releaseServiceId: 0,
       releaseFeatureIds: [],
       releaseTags: [],
     },
@@ -69,20 +70,30 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
     validateInputOnChange: true,
   })
 
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = async (values: FormValues) => {
+    if (loading) return
     try {
       setLoading(true)
-      postRelease(
+      await postRelease(
         new ReleaseCreateVO({
           ...values,
           releaseCreationDate: new Date().toISOString().split('T')[0],
         })
       )
+      notifications.show({
+        title: 'Success!',
+        message: 'Release created successfully',
+        color: 'teal',
+      })
       close()
       form.reset()
       handleOnClose()
     } catch (e) {
-      console.error(e)
+      notifications.show({
+        title: 'Error creating release',
+        message: e instanceof Error ? e.message : 'Unexpected error',
+        color: 'red',
+      })
     } finally {
       setLoading(false)
     }
@@ -112,11 +123,18 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
 
   return (
     <div>
-      <Button color="orange.6" radius="md" onClick={open}>
+      <Button color="orange.6" radius="md" onClick={open} data-testid="release-create-open-btn">
         + New Release
       </Button>
-      <ModalTemplate opened={opened} onClose={close} title="Create Release">
-        <form onSubmit={form.onSubmit(handleSubmit)}>
+      <ModalTemplate
+        opened={opened}
+        onClose={() => {
+          form.reset()
+          close()
+        }}
+        title="Create Release"
+      >
+        <form onSubmit={form.onSubmit(handleSubmit)} data-testid="release-create-form">
           <Stack gap="md">
             <TextInput
               label="RELEASE NAME"
@@ -125,6 +143,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               placeholder="e.g. Q4 Performance Patch"
               {...form.getInputProps('releaseName')}
               error={form.errors.releaseName}
+              data-testid="release-name-input"
             />
 
             <Textarea
@@ -144,6 +163,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
                 {...form.getInputProps('releaseVersion')}
                 error={form.errors.releaseVersion}
                 styles={inputStyles}
+                data-testid="release-version-input"
               />
 
               <Input.Wrapper
@@ -172,11 +192,12 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               withAsterisk
               value={form.values.releaseServiceId ? String(form.values.releaseServiceId) : null}
               onChange={value => {
-                form.setFieldValue('releaseServiceId', value ? Number(value) : null)
-                form.setFieldValue('releaseFeaturesIds', [])
+                form.setFieldValue('releaseServiceId', value ? Number(value) : 0)
+                form.setFieldValue('releaseFeatureIds', [])
               }}
-              error={form.errors.releaseService}
+              error={form.errors.releaseServiceId}
               styles={inputStyles}
+              data-testid="release-service-select"
             />
 
             <MultiSelect
@@ -193,8 +214,9 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               disabled={!form.values.releaseServiceId}
               value={form.values.releaseFeatureIds.map(String)}
               onChange={values => form.setFieldValue('releaseFeatureIds', values.map(Number))}
-              error={form.errors.releaseFeaturesIds}
+              error={form.errors.releaseFeatureIds}
               styles={inputStyles}
+              data-testid="release-features-select"
             />
 
             <TagsInput
@@ -205,14 +227,31 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               {...form.getInputProps('releaseTags')}
               error={form.errors.releaseTags}
               styles={inputStyles}
+              data-testid="release-tags-input"
             />
 
             <Group justify="flex-end" mt="xl">
-              <Button variant="outline" bg="#FFFFFF" color="#8C8C94" onClick={() => close()}>
+              <Button
+                variant="outline"
+                bg="#FFFFFF"
+                color="#8C8C94"
+                disabled={loading}
+                onClick={() => {
+                  form.reset()
+                  close()
+                }}
+              >
                 Cancel
               </Button>
-              <Button type="submit" bg="#F26621" color="#FFFFFF">
-                {loading ? 'Cargando' : 'Create Release'}
+              <Button
+                type="submit"
+                bg="#F26621"
+                color="#FFFFFF"
+                loading={loading}
+                disabled={loading}
+                data-testid="release-create-submit-btn"
+              >
+                Create Release
               </Button>
             </Group>
           </Stack>

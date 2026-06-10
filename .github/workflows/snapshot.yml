@@ -56,9 +56,9 @@ jobs:
 
           docker build \
             --build-arg VITE_ENV=$ENVIRONMENT \
-            --build-arg VITE_API_URL_LOCAL=http://localhost:8080/api \
-            --build-arg VITE_API_URL_DEV=https://autozone-qa-be-dev-460642913845.us-central1.run.app/api \
-            --build-arg VITE_API_URL_UAT=https://autozone-qa-be-uat-460642913845.us-central1.run.app/api \
+            --build-arg VITE_API_URL_LOCAL=http://localhost:8080/api/v1 \
+            --build-arg VITE_API_URL_DEV=https://autozone-qa-be-dev-460642913845.us-central1.run.app/api/v1 \
+            --build-arg VITE_API_URL_UAT=https://autozone-qa-be-uat-460642913845.us-central1.run.app/api/v1 \
             -t $IMAGE_BASE:$ENVIRONMENT-$VERSION \
             -t $IMAGE_BASE:$ENVIRONMENT-latest \
             .

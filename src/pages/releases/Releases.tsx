@@ -1,10 +1,8 @@
 /**
- * @file Releases.tsx
- * @description Componente principal de la vista de Releases.
- * Gestiona la visualización, filtrado por estado, búsqueda y ordenamiento de lanzamientos.
- * Conecta con el backend de Autozone QA para obtener datos en tiempo real.
- * * @author Tecnológico de Monterrey — Campus Chihuahua
- * @version 1.0.0 (2026)
+ * Tecnológico de Monterrey — Campus Chihuahua
+ * Desarrollo e Implantación de Sistemas de Software
+ * TC3005B GPO500 - 2026
+ * Autozone QA Automation
  */
 
 import {
@@ -18,15 +16,17 @@ import {
   Stack,
   Text,
 } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 import { IconDatabaseOff, IconRefresh, IconSearch } from '@tabler/icons-react'
 import { useMemo, useState } from 'react'
-import type {
-  ReleaseData,
-  ReleaseStatus,
-} from '@/components/layout/ButtonContentModal/ButtonContentModal'
+import type { ReleaseData } from '@/components/layout/ButtonContentModal/ButtonContentModal'
 import { ButtonContentModal } from '@/components/layout/ButtonContentModal/ButtonContentModal'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
 import { useGetAllReleases } from '@/hooks/useGetReleases'
+import { useUpdateReleaseStatus } from '@/hooks/useUpdateReleaseStatus'
+import { ReleaseDeleteModal } from '@/pages/releases/ReleaseDeleteModal'
+import { ReleasesModalStatus } from '@/pages/releases/ReleasesModalStatus'
+import type { ReleaseStatus } from '@/types/Release.types'
 import { ReleasesModalCreate } from './ReleasesModalCreate'
 
 /**
@@ -37,6 +37,8 @@ export function Releases() {
   /** Hook personalizado para obtener releases y estados de carga/error del backend */
   const { releases, loading, error, refetch } = useGetAllReleases()
 
+  const { updateReleaseStatus, loading: updatingStatus } = useUpdateReleaseStatus()
+
   /** @type {'All' | ReleaseStatus} Estado seleccionado para filtrar la lista */
   const [statusFilter, setStatusFilter] = useState<'All' | ReleaseStatus>('All')
 
@@ -46,6 +48,14 @@ export function Releases() {
   /** @type {string | null} Criterio de ordenamiento ('Newest' | 'Oldest') */
   const [sortBy, setSortBy] = useState<string | null>('Newest')
 
+  /** Estado para controlar el modal de cambio de status */
+  const [statusModalOpened, setStatusModalOpened] = useState(false)
+
+  /** Estado para controlar el modal de eliminación */
+  const [deleteModalOpened, setDeleteModalOpened] = useState(false)
+
+  /** Release seleccionado para actualizar status o borrar */
+  const [selectedRelease, setSelectedRelease] = useState<ReleaseData | null>(null)
   /**
    * Memoriza la lista de releases procesada.
    * Realiza tres pasos correlativos:
@@ -56,6 +66,7 @@ export function Releases() {
    */
   const filteredAndSortedReleases = useMemo(() => {
     const mapped: ReleaseData[] = releases.map(r => ({
+      releaseId: r.releaseId,
       title: r.releaseName,
       objective: r.releaseDescription,
       version: r.releaseVersion,
@@ -64,7 +75,7 @@ export function Releases() {
       releaseDate: r.releaseLaunchDate ?? '',
       status: r.releaseStatus,
       service: r.releaseServices?.[0] || 'Global',
-      serviceId: r.releaseServiceId || null,
+      serviceId: r.releaseServiceId ?? null,
     }))
 
     return mapped
@@ -80,6 +91,11 @@ export function Releases() {
       })
   }, [releases, statusFilter, searchQuery, sortBy])
 
+  const releaseSearchOptions = useMemo(
+    () => Array.from(new Set(filteredAndSortedReleases.map(release => release.title))),
+    [filteredAndSortedReleases]
+  )
+
   // --- Renderizado de Estados de Carga ---
   if (loading) {
     return (
@@ -87,7 +103,7 @@ export function Releases() {
         <Stack align="center" gap="xs">
           <Loader color="orange.6" size="lg" type="dots" />
           <Text size="sm" c="dimmed" fw={500}>
-            Connecting to database...
+            Loading Releases...
           </Text>
         </Stack>
       </Center>
@@ -126,8 +142,50 @@ export function Releases() {
 
   const handleOnClose = () => {
     setTimeout(() => {
-      refetch()
+      void refetch()
     }, 200)
+  }
+
+  const openStatusModal = (release: ReleaseData) => {
+    setSelectedRelease(release)
+    setStatusModalOpened(true)
+  }
+
+  const closeStatusModal = () => {
+    setStatusModalOpened(false)
+    setSelectedRelease(null)
+  }
+
+  const openDeleteModal = (release: ReleaseData) => {
+    setSelectedRelease(release)
+    setDeleteModalOpened(true)
+  }
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpened(false)
+    setSelectedRelease(null)
+  }
+
+  const handleUpdateStatus = async (releaseId: number, status: ReleaseStatus) => {
+    try {
+      await updateReleaseStatus(releaseId, status)
+
+      notifications.show({
+        title: 'Success!',
+        message: 'Release status updated successfully',
+        color: 'teal',
+      })
+
+      await refetch()
+    } catch (e) {
+      notifications.show({
+        title: 'Error updating release status',
+        message: e instanceof Error ? e.message : 'Unexpected error',
+        color: 'red',
+      })
+
+      throw e
+    }
   }
 
   // --- Vista Principal ---
@@ -165,7 +223,7 @@ export function Releases() {
 
         <Autocomplete
           placeholder="Search releases..."
-          data={filteredAndSortedReleases.map(r => r.title)}
+          data={releaseSearchOptions}
           value={searchQuery}
           onChange={setSearchQuery}
           ml="auto"
@@ -191,13 +249,12 @@ export function Releases() {
 
       {/* Grid de Contenido: Tarjetas de Release */}
       <div style={{ marginTop: '20px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-        {filteredAndSortedReleases.map((item, index) => (
+        {filteredAndSortedReleases.map(item => (
           <ButtonContentModal
-            key={`${item.title}-${index}`}
+            key={item.releaseId}
             data={item}
-            onStatusChange={() => {
-              /** @todo Implementar actualización de estatus vía API */
-            }}
+            onOpenStatusModal={openStatusModal}
+            onDeleteClick={openDeleteModal}
           />
         ))}
 
@@ -210,6 +267,24 @@ export function Releases() {
           </Box>
         )}
       </div>
+
+      <ReleasesModalStatus
+        opened={statusModalOpened}
+        onClose={closeStatusModal}
+        release={selectedRelease}
+        loading={updatingStatus}
+        onUpdateStatus={handleUpdateStatus}
+      />
+
+      {selectedRelease && (
+        <ReleaseDeleteModal
+          isOpen={deleteModalOpened}
+          onClose={closeDeleteModal}
+          releaseId={selectedRelease.releaseId}
+          releaseName={selectedRelease.title}
+          onSuccess={() => void refetch()}
+        />
+      )}
     </div>
   )
 }
