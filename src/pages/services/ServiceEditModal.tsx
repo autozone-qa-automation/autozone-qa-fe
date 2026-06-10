@@ -2,7 +2,7 @@ import { ActionIcon, Button, Group, Stack, Textarea, TextInput } from '@mantine/
 import { isNotEmpty, useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
-import { IconPlus, IconTrash } from '@tabler/icons-react'
+import { IconTrash } from '@tabler/icons-react'
 import { ModalTemplate } from '@/components/ui/ModalTemplate/ModalTemplate'
 import { servicesService } from '@/services/services.service'
 import type { CreateServiceRequest } from '@/types/service.types'
@@ -125,19 +125,8 @@ export function ServiceEditModal({
             <Textarea label="DESCRIPTION" minRows={4} {...form.getInputProps('description')} />
 
             <div>
-              <Group justify="space-between" align="center" mb={6}>
+              <Group mb={6}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#8C8C94' }}>URLs</div>
-                <Button
-                  size="xs"
-                  leftSection={<IconPlus size={14} />}
-                  onClick={() => {
-                    const current = form.values.urls.slice()
-                    current.push({ nombre: '', url: '' })
-                    form.setFieldValue('urls', current)
-                  }}
-                >
-                  Add URL
-                </Button>
               </Group>
 
               <Stack gap="sm">
@@ -164,6 +153,7 @@ export function ServiceEditModal({
                       />
                       {!form.values.urls[i]?.idUrl && (
                         <ActionIcon
+                          type="button"
                           color="red"
                           onClick={() => {
                             const next = form.values.urls.slice()
@@ -182,6 +172,7 @@ export function ServiceEditModal({
 
             <Group justify="flex-end" mt="xl">
               <Button
+                type="button"
                 variant="outline"
                 color="gray"
                 onClick={() => {
