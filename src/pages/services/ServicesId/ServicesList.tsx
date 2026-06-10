@@ -123,7 +123,13 @@ export function ServicesList({ data, onDeleteClick, onAddClick }: FeaturesListPr
                 ))}
 
                 {data.length === 0 && (
-                  <Text data-testid="service-id-features-empty-message" size="sm" p="md" c="dimmed" ta="center">
+                  <Text
+                    data-testid="service-id-features-empty-message"
+                    size="sm"
+                    p="md"
+                    c="dimmed"
+                    ta="center"
+                  >
                     No hay features vinculadas para este servicio
                   </Text>
                 )}
