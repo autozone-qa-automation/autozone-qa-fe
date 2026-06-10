@@ -33,6 +33,7 @@ export function ServiceCard({ id, nombre }: ServiceCardProps) {
 
   return (
     <Card
+      data-testid={`service-card-${id}`}
       shadow="sm"
       radius="md"
       p="lg"

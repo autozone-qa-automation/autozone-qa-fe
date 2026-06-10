@@ -111,6 +111,7 @@ export function ServicesModalCreate({ opened, onClose, onSuccess }: ServicesModa
             minRows={3}
             {...form.getInputProps('description')}
             styles={{ label: labelStyles.label }}
+            data-testid="service-description-input"
           />
 
           <Stack gap="xs">
