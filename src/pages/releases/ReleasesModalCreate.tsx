@@ -123,12 +123,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
 
   return (
     <div>
-      <Button
-        color="orange.6"
-        radius="md"
-        onClick={open}
-        data-testid="release-create-open-btn"
-      >
+      <Button color="orange.6" radius="md" onClick={open} data-testid="release-create-open-btn">
         + New Release
       </Button>
       <ModalTemplate
