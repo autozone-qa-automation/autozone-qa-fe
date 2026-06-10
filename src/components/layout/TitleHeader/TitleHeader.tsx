@@ -26,6 +26,7 @@ export function TitleHeader({
   breadcrumbs,
   title,
   metaDetails, // <-- Using the new prop
+  titleTestId,
   actionComponent,
 }: TitleHeaderProps) {
   const breadcrumbElements = breadcrumbs.map((item, index) => (
@@ -41,7 +42,7 @@ export function TitleHeader({
           {breadcrumbElements}
         </Breadcrumbs>
 
-        <Title data-testid="title-header-title" order={1} size="h2" fw={900} c="dark.8">
+        <Title data-testid={titleTestId} order={1} size="h2" fw={900} c="dark.8">
           {title}
         </Title>
 
