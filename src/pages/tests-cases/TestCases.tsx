@@ -80,18 +80,21 @@ export function TestCases() {
               <Text size="sm" c="#F26621" mb="xs">
                 {selectedTestCase?.id}
               </Text>
+
               <Text size="md" c="#8C8C94">
                 RELATED FEATURE
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.featureName ?? selectedTestCase?.relatedFeature}
               </Text>
+
               <Text size="md" c="#8C8C94">
                 DESCRIPTION
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.description}
               </Text>
+
               <Text size="md" c="#8C8C94">
                 TYPE
               </Text>
@@ -105,32 +108,45 @@ export function TestCases() {
               >
                 {selectedTestCase?.type}
               </Badge>
+
               <Text size="md" c="#8C8C94">
                 PRECONDITIONS
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.preconditions}
               </Text>
+
               <Text size="md" c="#8C8C94">
                 POSTCONDITIONS
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.postconditions}
               </Text>
+
               <Text size="md" c="#8C8C94">
                 INPUT
               </Text>
               <Text size="sm" c="#1A1A1F" mb="xs">
                 {selectedTestCase?.inputs}
               </Text>
+
               <Text size="md" c="#8C8C94">
                 STEPS
               </Text>
               <Text size="sm" c="#1A1A1F">
                 {selectedTestCase?.steps}
               </Text>
+
               <Box h={50} />
-              <Button ml="auto" variant="filled" color="#FF0000" w={125} onClick={() => {}}>
+
+              <Button
+                data-testid="test-case-delete-button"
+                ml="auto"
+                variant="filled"
+                color="#FF0000"
+                w={125}
+                onClick={() => {}}
+              >
                 Delete
               </Button>
             </Stack>
@@ -149,6 +165,7 @@ export function TestCases() {
         ]}
         actionComponent={
           <Button
+            data-testid="test-cases-new-button"
             leftSection={<IconPlus size={16} stroke={2.5} />}
             color="orange.6"
             radius="md"
@@ -162,6 +179,7 @@ export function TestCases() {
       />
 
       <Select
+        data-testid="test-cases-feature-filter"
         style={{ width: 250 }}
         placeholder="All features"
         data={featureOptions}
@@ -171,7 +189,7 @@ export function TestCases() {
 
       <TestCasesModalCreate
         opened={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)} // Cierra el modal de creación
+        onClose={() => setIsCreateModalOpen(false)}
       />
 
       {isLoading ? (
@@ -183,7 +201,11 @@ export function TestCases() {
           No test cases available
         </Text>
       ) : (
-        <TestCasesList data={filteredTestCases} onViewClick={handleViewClick} />
+        <TestCasesList
+          data={filteredTestCases}
+          onViewClick={handleViewClick}
+          onEditClick={() => {}}
+        />
       )}
     </div>
   )
