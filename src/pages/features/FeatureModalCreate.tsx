@@ -66,12 +66,12 @@ export function FeatureModalCreate({
     validateInputOnChange: true,
   })
 
-  const { setFieldValue } = form
   useEffect(() => {
     if (initialServiceId) {
-      setFieldValue('idServices', String(initialServiceId))
+      form.setFieldValue('idServices', String(initialServiceId))
     }
-  }, [initialServiceId, setFieldValue])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialServiceId])
 
   const handleSubmit = async (values: FormValues) => {
     const validation = featureSchema.safeParse(values)
