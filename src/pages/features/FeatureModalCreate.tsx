@@ -66,11 +66,12 @@ export function FeatureModalCreate({
     validateInputOnChange: true,
   })
 
+  const { setFieldValue } = form
   useEffect(() => {
     if (initialServiceId) {
-      form.setFieldValue('idServices', String(initialServiceId))
+      setFieldValue('idServices', String(initialServiceId))
     }
-  }, [initialServiceId])
+  }, [initialServiceId, setFieldValue])
 
   const handleSubmit = async (values: FormValues) => {
     const validation = featureSchema.safeParse(values)
