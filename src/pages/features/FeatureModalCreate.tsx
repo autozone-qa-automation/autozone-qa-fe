@@ -170,9 +170,6 @@ export function FeatureModalCreate({
               <Button type="submit" bg="#f46624" radius="md" loading={creating}>
                 Create Feature
               </Button>
-              <Button type="button" bg="#f46624" radius="md" loading={loadingServices}>
-                Update Feature
-              </Button>
             </Group>
           </Stack>
         </form>
