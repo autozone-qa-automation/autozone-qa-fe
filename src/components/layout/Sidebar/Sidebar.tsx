@@ -5,7 +5,6 @@
  * Autozone QA Automation
  */
 import {
-  ActionIcon,
   Avatar,
   Badge,
   Box,
@@ -21,12 +20,9 @@ import {
   IconBox,
   IconBug,
   IconChevronRight,
-  IconChevronsLeft,
   IconFileDescription,
-  IconHome,
   IconLogout,
   IconPlugConnected,
-  IconSubtitlesAi,
   IconTestPipe,
   IconUsers,
 } from '@tabler/icons-react'
@@ -40,21 +36,13 @@ import classes from './Sidebar.module.css'
  * Cada objeto define la ruta, el nombre visible y el icono correspondiente.
  */
 const navData = [
-  { link: '/', label: 'Home', icon: IconHome },
   { link: '/releases', label: 'Releases', icon: IconBox },
   { link: '/services', label: 'Services', icon: IconPlugConnected },
   { link: '/features', label: 'Features', icon: IconBug },
   { link: '/test-cases', label: 'Test Cases', icon: IconTestPipe },
-  { link: '/generate', label: 'Generate', icon: IconSubtitlesAi },
   { link: '/reports', label: 'Reports', icon: IconFileDescription },
 ]
 
-/**
- * Componente Sidebar.
- * Proporciona la navegación lateral de la aplicación, gestión de estado de rutas activas
- * y una sección de perfil de usuario en la parte inferior.
- * * @returns {JSX.Element} Una barra lateral vertical estructurada.
- */
 export function Sidebar() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -92,21 +80,15 @@ export function Sidebar() {
   return (
     <Stack h="100%" justify="space-between" p="md">
       <Box>
-        {/* Sección de Encabezado: Logo y botón de colapsar */}
-        <Group justify="space-between" mb="xl">
-          <Group>
-            <Avatar color="orange" radius="md">
-              <Text fw={700} size="xl">
-                T
-              </Text>
-            </Avatar>
-            <Text size="xl" fw={700} c="dark.7">
-              TestFlow
+        <Group mb="xl">
+          <Avatar color="orange" radius="md">
+            <Text fw={700} size="xl">
+              T
             </Text>
-          </Group>
-          <ActionIcon variant="subtle" color="gray">
-            <IconChevronsLeft size="1.2rem" stroke={1.5} />
-          </ActionIcon>
+          </Avatar>
+          <Text size="xl" fw={700} c="dark.7">
+            TestFlow
+          </Text>
         </Group>
 
         {/* Enlaces de navegación principales */}
