@@ -203,7 +203,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
             <Select
               data-testid="test-case-create-feature-select"
               label="RELATED FEATURE"
-              placeholder="Buscar o seleccionar feature"
+              placeholder="Search and select a related feature"
               data={featureOptions}
               searchable
               comboboxProps={{ withinPortal: false }}
@@ -308,7 +308,7 @@ export function TestCasesModalCreate({ opened, onClose, onRefresh }: Props) {
                   void handleCreateClick()
                 }}
               >
-                Crear Test Case
+                Create Test Case
               </Button>
             </Group>
           </Stack>
