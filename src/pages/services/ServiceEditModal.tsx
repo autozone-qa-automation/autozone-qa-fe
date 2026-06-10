@@ -117,12 +117,27 @@ export function ServiceEditModal({
         </Button>
       )}
 
-      <ModalTemplate opened={opened} onClose={close} title={`Edit Service`} testId="service-edit-modal">
+      <ModalTemplate
+        opened={opened}
+        onClose={close}
+        title={`Edit Service`}
+        testId="service-edit-modal"
+      >
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="md">
-            <TextInput data-testid="service-name-input" label="NAME" withAsterisk {...form.getInputProps('name')} />
+            <TextInput
+              data-testid="service-name-input"
+              label="NAME"
+              withAsterisk
+              {...form.getInputProps('name')}
+            />
 
-            <Textarea data-testid="service-description-input" label="DESCRIPTION" minRows={4} {...form.getInputProps('description')} />
+            <Textarea
+              data-testid="service-description-input"
+              label="DESCRIPTION"
+              minRows={4}
+              {...form.getInputProps('description')}
+            />
 
             <div>
               <Group mb={6}>
