@@ -232,6 +232,7 @@ export function ButtonContentModal({ data, onOpenStatusModal, onDeleteClick }: B
           padding: '16px',
           cursor: 'pointer',
         }}
+        data-testid="release-card"
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text size="sm" fw={600} c="#1A1A1F">
