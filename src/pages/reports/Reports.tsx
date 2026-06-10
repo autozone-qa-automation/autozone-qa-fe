@@ -66,7 +66,12 @@ export function Reports() {
           </Text>
         </div>
 
-        <Button data-testid="generate-report-btn" color="orange.6" radius="md" onClick={() => void handleGenerateReport()}>
+        <Button
+          data-testid="generate-report-btn"
+          color="orange.6"
+          radius="md"
+          onClick={() => void handleGenerateReport()}
+        >
           ⚙️ Generate Report
         </Button>
       </Group>
@@ -267,7 +272,9 @@ export function Reports() {
       </Table>
 
       <Group justify="space-between" mt="sm">
-        <Text data-testid="reports-records-summary" c="dimmed">{recordsSummary}</Text>
+        <Text data-testid="reports-records-summary" c="dimmed">
+          {recordsSummary}
+        </Text>
       </Group>
     </div>
   )
