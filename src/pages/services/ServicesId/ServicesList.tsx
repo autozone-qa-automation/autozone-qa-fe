@@ -90,6 +90,7 @@ export function ServicesList({ data, onDeleteClick, onAddClick }: FeaturesListPr
                   >
                     <UnstyledButton
                       p="sm"
+                      data-testid={`service-id-feature-open-button-${feature.idFeature}`}
                       style={{
                         flex: 1,
                         display: 'flex',
@@ -122,7 +123,7 @@ export function ServicesList({ data, onDeleteClick, onAddClick }: FeaturesListPr
                 ))}
 
                 {data.length === 0 && (
-                  <Text size="sm" p="md" c="dimmed" ta="center">
+                  <Text data-testid="service-id-features-empty-message" size="sm" p="md" c="dimmed" ta="center">
                     No hay features vinculadas para este servicio
                   </Text>
                 )}
