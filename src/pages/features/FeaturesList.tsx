@@ -16,10 +16,11 @@ interface FeaturesListProps {
 export function FeaturesList({ data }: FeaturesListProps) {
   const navigate = useNavigate()
   return (
-    <Stack gap="md">
+    <Stack gap="md" data-testid="features-list">
       {data.map(feature => (
         <Paper
           key={feature.id}
+          data-testid={`feature-item-${feature.id}`}
           withBorder
           radius="md"
           p="md"
@@ -28,14 +29,14 @@ export function FeaturesList({ data }: FeaturesListProps) {
           <Flex justify="space-between" align="center" wrap="wrap" gap="md">
             <Stack gap={6}>
               <Group gap="xs" align="baseline">
-                <Text c="#F26621" fw={700} size="lg">
+                <Text data-testid={`feature-number-${feature.id}`} c="#F26621" fw={700} size="lg">
                   {feature.id}
                 </Text>
-                <Text c="dark.8" fw={700} size="lg">
+                <Text data-testid={`feature-name-${feature.id}`} c="dark.8" fw={700} size="lg">
                   {feature.featureName}
                 </Text>
               </Group>
-              <Text c="dimmed" size="sm" mb={4}>
+              <Text data-testid={`feature-description-${feature.id}`} c="dimmed" size="sm" mb={4}>
                 {feature.featureDescription}
               </Text>
             </Stack>
@@ -43,6 +44,7 @@ export function FeaturesList({ data }: FeaturesListProps) {
             <Group gap="xl" wrap="nowrap" align="center">
               <Group gap={0} wrap="nowrap">
                 <Button
+                  data-testid={`feature-view-button-${feature.id}`}
                   variant="subtle"
                   size="sm"
                   color="orange.7"

@@ -13,9 +13,9 @@ jest.mock('../services/api.service')
 const getSpy = apiService['get'] as jest.Mock
 
 const mockServicesFromDB = [
-  { id: 1, name: 'Backend', description: 'Creacion de base de datos' },
-  { id: 2, name: 'Frontend', description: 'Desarrollo de interfaces de usuario' },
-  { id: 16, name: 'AI', description: 'Entrenamiento de modelos de lenguaje' },
+  { id: 1, name: 'Backend', description: 'Creacion de base de datos', urls: [] },
+  { id: 2, name: 'Frontend', description: 'Desarrollo de interfaces de usuario', urls: [] },
+  { id: 16, name: 'AI', description: 'Entrenamiento de modelos de lenguaje', urls: [] },
 ]
 
 describe('servicesService - Integración con SQL Data', () => {

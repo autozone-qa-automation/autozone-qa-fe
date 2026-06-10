@@ -5,16 +5,48 @@
  * Autozone QA Automation
  */
 import { Anchor, Button, Container, Divider, Group, Loader, Stack, Text } from '@mantine/core'
-import { useParams } from 'react-router'
+import { notifications } from '@mantine/notifications'
+import { IconTrash } from '@tabler/icons-react'
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
+import { useGetLastReleasesByServiceId } from '@/hooks/useGetLastReleasesByServiceId'
 import { useGetServiceById } from '@/hooks/useGetServiceById'
+import { FeatureModalCreate } from '@/pages/features/FeatureModalCreate'
+import ServiceEditModal from '@/pages/services/ServiceEditModal'
+import { ReleasesList } from '@/pages/services/ServicesId/ReleasesList'
+import { ServiceDeleteModal } from '@/pages/services/ServicesId/ServiceDeleteModal'
 import { ServicesList } from '@/pages/services/ServicesId/ServicesList'
+import { featureService } from '@/services/features.service'
 
 export function ServicesId() {
   const { serviceId } = useParams()
+  const navigate = useNavigate()
   const id = Number(serviceId)
+  const [editOpened, setEditOpened] = useState(false)
+  const [deleteOpened, setDeleteOpened] = useState(false)
+  const [addFeatureOpened, setAddFeatureOpened] = useState(false)
 
-  const { service, features, loading, error } = useGetServiceById(id)
+  const { service, features, loading, error, refetch } = useGetServiceById(id)
+  const {
+    releases,
+    loading: releasesLoading,
+    error: releasesError,
+  } = useGetLastReleasesByServiceId(id)
+
+  const handleUnlinkFeature = async (featureId: number) => {
+    try {
+      await featureService.deactivate(String(featureId))
+      notifications.show({ title: 'Success', message: 'Feature deleted', color: 'teal' })
+      await refetch?.()
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: err instanceof Error ? err.message : 'Failed to delete feature',
+        color: 'red',
+      })
+    }
+  }
 
   if (!id) return <Text p="xl">ID de servicio no válido</Text>
 
@@ -56,14 +88,38 @@ export function ServicesId() {
           />
 
           <Group gap="xs">
-            <Button size="xs" color="orange.6">
+            <Button
+              data-testid="service-id-edit-button"
+              size="xs"
+              color="orange.6"
+              onClick={() => setEditOpened(true)}
+            >
               Edit
             </Button>
-            <Button size="xs" color="red" variant="outline">
+            <Button
+              size="xs"
+              color="red"
+              variant="outline"
+              leftSection={<IconTrash size={14} stroke={2.5} />}
+              onClick={() => setDeleteOpened(true)}
+              data-testid="service-id-delete-button"
+            >
               Delete
             </Button>
           </Group>
         </Group>
+
+        <ServiceEditModal
+          service={{
+            id: service.id,
+            name: service.name,
+            description: service.description,
+            urls: service.urls,
+          }}
+          opened={editOpened}
+          onClose={() => setEditOpened(false)}
+          onSuccess={refetch}
+        />
 
         <Stack gap={4}>
           <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
@@ -77,28 +133,59 @@ export function ServicesId() {
             URLs
           </Text>
           <Stack gap={2}>
-            <Anchor size="sm" href="#" target="_blank">
-              Repository
-            </Anchor>
-            <Anchor size="sm" href="#" target="_blank">
-              Documentation
-            </Anchor>
+            {service.urls && service.urls.length > 0 ? (
+              service.urls.map(urlItem => (
+                <Anchor
+                  key={urlItem.idUrl ?? urlItem.url}
+                  size="sm"
+                  href={urlItem.url}
+                  target="_blank"
+                >
+                  {urlItem.nombre || urlItem.url}
+                </Anchor>
+              ))
+            ) : (
+              <Text size="sm" c="dimmed">
+                Sin URLs disponibles.
+              </Text>
+            )}
           </Stack>
         </Stack>
 
         <Divider />
 
-        <ServicesList data={featureItems} onDeleteClick={() => {}} />
+        <ServicesList
+          data={featureItems}
+          onDeleteClick={id => {
+            void handleUnlinkFeature(id)
+          }}
+          onAddClick={() => setAddFeatureOpened(true)}
+        />
 
-        <Stack gap="sm" mt="md">
-          <Text fw={600} size="sm" c="dimmed" tt="uppercase">
-            Last Releases
-          </Text>
-          <Text size="sm" c="dimmed" fs="italic">
-            No hay releases recientes para mostrar.
-          </Text>
-        </Stack>
+        <FeatureModalCreate
+          opened={addFeatureOpened}
+          onClose={() => setAddFeatureOpened(false)}
+          initialServiceId={id}
+          disableServiceSelect
+          onSuccess={refetch}
+        />
+
+        <Divider />
+
+        <ReleasesList releases={releases} loading={releasesLoading} error={releasesError} />
       </Stack>
+
+      {service && (
+        <ServiceDeleteModal
+          isOpen={deleteOpened}
+          onClose={() => setDeleteOpened(false)}
+          serviceId={service.id}
+          serviceName={service.getDisplayName()}
+          onSuccess={() => {
+            navigate('/services')
+          }}
+        />
+      )}
     </Container>
   )
 }

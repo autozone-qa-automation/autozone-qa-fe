@@ -37,8 +37,8 @@ describe('createTestCaseSchema', () => {
   })
 
   describe('validaciones de campos', () => {
-    it('falla si title supera 30 caracteres', () => {
-      const result = createTestCaseSchema.safeParse({ ...getValidBase(), title: 'a'.repeat(31) })
+    it('falla si title supera 150 caracteres', () => {
+      const result = createTestCaseSchema.safeParse({ ...getValidBase(), title: 'a'.repeat(151) })
       expect(result.success).toBe(false)
     })
 

@@ -6,6 +6,7 @@
  */
 
 import { Autocomplete, Button, Container, Group, SimpleGrid, Stack } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { IconPlus, IconSearch } from '@tabler/icons-react'
 import { useState } from 'react'
 import { TitleHeader } from '@/components/layout/TitleHeader/TitleHeader'
@@ -13,12 +14,12 @@ import { useGetServices } from '@/hooks/useGetServices'
 import type { Service } from '@/types/service.types'
 import { BaseCard } from './ServicesAdd'
 import { ServicesList } from './ServicesCards'
+import { ServicesModalCreate } from './ServicesModalCreate'
 
 export function Services() {
   const [searchQuery, setSearchQuery] = useState('')
-  const { services, loading } = useGetServices()
-
-  const handleAddService = () => {}
+  const { services, loading, error, refetch } = useGetServices()
+  const [opened, { open, close }] = useDisclosure(false)
 
   return (
     <div>
@@ -31,14 +32,14 @@ export function Services() {
             leftSection={<IconPlus size={16} stroke={2.5} />}
             color="orange.6"
             radius="md"
-            size="md"
-            fw={600}
-            onClick={handleAddService}
+            onClick={open}
           >
-            Add Service
+            New Service
           </Button>
         }
       />
+
+      <ServicesModalCreate opened={opened} onClose={close} onSuccess={refetch} />
 
       <Container fluid px="md" mt="md">
         <Stack gap="md">
@@ -57,9 +58,14 @@ export function Services() {
           </Group>
 
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
-            <BaseCard onClick={handleAddService}>Add Service</BaseCard>
+            <BaseCard onClick={open}>New Service</BaseCard>
 
-            <ServicesList searchQuery={searchQuery} />
+            <ServicesList
+              searchQuery={searchQuery}
+              services={services}
+              loading={loading}
+              error={error}
+            />
           </SimpleGrid>
         </Stack>
       </Container>

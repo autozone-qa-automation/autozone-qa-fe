@@ -5,17 +5,19 @@
  * Autozone QA Automation
  */
 
-import type { Service } from '../types/service.types'
+import type { Service, ServiceUrl } from '../types/service.types'
 
 export class ServiceVO {
   readonly id: number
   readonly name: string
   readonly description: string
+  readonly urls: ServiceUrl[]
 
   constructor(data: Service) {
     this.id = data.id
     this.name = data.name
     this.description = data.description ?? ''
+    this.urls = data.urls ?? []
   }
 
   getDisplayName(): string {

@@ -15,6 +15,7 @@ interface BaseCardProps {
 export function BaseCard({ children, onClick }: BaseCardProps) {
   return (
     <Card
+      data-testid="add-service-card"
       shadow="sm"
       radius="md"
       p="lg"

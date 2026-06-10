@@ -32,7 +32,11 @@ const resolveFeatureId = (testCase: TestCaseVO | null): number => {
   return testCase.relatedFeature ?? 0
 }
 
-export const useEditTestCase = (activeTestCase: TestCaseVO | null, onClose: () => void) => {
+export const useEditTestCase = (
+  activeTestCase: TestCaseVO | null,
+  onClose: () => void,
+  onRefresh: () => Promise<void>
+) => {
   const [state] = useState<UseEditTestCaseState>({
     isLoading: false,
     error: null,
@@ -86,6 +90,8 @@ export const useEditTestCase = (activeTestCase: TestCaseVO | null, onClose: () =
       setFormErrorMessage(null)
 
       await testCaseService.update(activeTestCase.id, values)
+
+      await onRefresh()
 
       showNotification({
         title: 'Test case updated',

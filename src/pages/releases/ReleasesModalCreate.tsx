@@ -70,10 +70,11 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
     validateInputOnChange: true,
   })
 
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = async (values: FormValues) => {
+    if (loading) return
     try {
       setLoading(true)
-      postRelease(
+      await postRelease(
         new ReleaseCreateVO({
           ...values,
           releaseCreationDate: new Date().toISOString().split('T')[0],
@@ -88,7 +89,11 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
       form.reset()
       handleOnClose()
     } catch (e) {
-      console.error(e)
+      notifications.show({
+        title: 'Error creating release',
+        message: e instanceof Error ? e.message : 'Unexpected error',
+        color: 'red',
+      })
     } finally {
       setLoading(false)
     }
@@ -118,7 +123,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
 
   return (
     <div>
-      <Button color="orange.6" radius="md" onClick={open}>
+      <Button color="orange.6" radius="md" onClick={open} data-testid="release-create-open-btn">
         + New Release
       </Button>
       <ModalTemplate
@@ -129,7 +134,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
         }}
         title="Create Release"
       >
-        <form onSubmit={form.onSubmit(handleSubmit)}>
+        <form onSubmit={form.onSubmit(handleSubmit)} data-testid="release-create-form">
           <Stack gap="md">
             <TextInput
               label="RELEASE NAME"
@@ -138,6 +143,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               placeholder="e.g. Q4 Performance Patch"
               {...form.getInputProps('releaseName')}
               error={form.errors.releaseName}
+              data-testid="release-name-input"
             />
 
             <Textarea
@@ -157,6 +163,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
                 {...form.getInputProps('releaseVersion')}
                 error={form.errors.releaseVersion}
                 styles={inputStyles}
+                data-testid="release-version-input"
               />
 
               <Input.Wrapper
@@ -190,6 +197,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               }}
               error={form.errors.releaseServiceId}
               styles={inputStyles}
+              data-testid="release-service-select"
             />
 
             <MultiSelect
@@ -208,6 +216,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               onChange={values => form.setFieldValue('releaseFeatureIds', values.map(Number))}
               error={form.errors.releaseFeatureIds}
               styles={inputStyles}
+              data-testid="release-features-select"
             />
 
             <TagsInput
@@ -218,6 +227,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               {...form.getInputProps('releaseTags')}
               error={form.errors.releaseTags}
               styles={inputStyles}
+              data-testid="release-tags-input"
             />
 
             <Group justify="flex-end" mt="xl">
@@ -225,6 +235,7 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
                 variant="outline"
                 bg="#FFFFFF"
                 color="#8C8C94"
+                disabled={loading}
                 onClick={() => {
                   form.reset()
                   close()
@@ -232,8 +243,15 @@ export function ReleasesModalCreate({ handleOnClose }: ReleaseCreateModalInterfa
               >
                 Cancel
               </Button>
-              <Button type="submit" bg="#F26621" color="#FFFFFF">
-                {loading ? 'Loading' : 'Create Release'}
+              <Button
+                type="submit"
+                bg="#F26621"
+                color="#FFFFFF"
+                loading={loading}
+                disabled={loading}
+                data-testid="release-create-submit-btn"
+              >
+                Create Release
               </Button>
             </Group>
           </Stack>

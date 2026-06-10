@@ -38,7 +38,7 @@ export const testCaseService = {
     return testCaseSchema.parse(data)
   },
 
-  remove: async (id: number): Promise<void> => {
-    await apiService.delete(`${BASE_URL}/${id}`)
+  deactivate: async (id: number): Promise<void> => {
+    await apiService.put<void>(`${BASE_URL}/${id}/deactivate`)
   },
 }

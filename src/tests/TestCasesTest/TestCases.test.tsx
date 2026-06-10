@@ -6,12 +6,25 @@
  */
 
 import { MantineProvider } from '@mantine/core'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { notifications } from '@mantine/notifications'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { useTestCases } from '@/hooks/useGetTestCases'
 import { TestCaseVO } from '@/models/TestCaseVO'
+import { testCaseService } from '@/services/testCasesService'
 import { TestCases } from '../../pages/tests-cases/TestCases'
 
 jest.mock('@/hooks/useGetTestCases')
+jest.mock('@/services/testCasesService', () => ({
+  testCaseService: {
+    deactivate: jest.fn(),
+  },
+}))
+jest.mock('@mantine/notifications', () => ({
+  notifications: {
+    show: jest.fn(),
+  },
+  showNotification: jest.fn(),
+}))
 
 const mockTestCases = [
   new TestCaseVO({
@@ -39,6 +52,7 @@ const renderComponent = () =>
 describe('TestCases Component UI', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.mocked(testCaseService.deactivate).mockResolvedValue(undefined)
   })
 
   it('should render the list of test cases correctly', () => {
@@ -68,5 +82,39 @@ describe('TestCases Component UI', () => {
 
     const modalTitle = await screen.findByText('Auth Case')
     expect(modalTitle).toBeInTheDocument()
+  })
+
+  it('should ask for confirmation before deactivating the test case', async () => {
+    const refetch = jest.fn(async () => {})
+    jest.mocked(useTestCases).mockReturnValue({
+      testCases: mockTestCases,
+      isLoading: false,
+      error: null,
+      refetch,
+    })
+
+    renderComponent()
+
+    fireEvent.click(screen.getAllByText('View')[0]!)
+    fireEvent.click(await screen.findByRole('button', { name: 'Delete' }))
+
+    expect(
+      await screen.findByText('Are you sure you want to delete test case Auth Case?')
+    ).toBeInTheDocument()
+    expect(testCaseService.deactivate).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Yes' }))
+
+    await waitFor(() => {
+      expect(testCaseService.deactivate).toHaveBeenCalledWith(1)
+    })
+
+    expect(notifications.show).toHaveBeenCalledWith({
+      title: 'Success!',
+      message: 'Test case deleted successfully',
+      color: 'green',
+    })
+    expect(refetch).toHaveBeenCalledTimes(1)
+    expect(screen.getByText('No test cases available')).toBeInTheDocument()
   })
 })

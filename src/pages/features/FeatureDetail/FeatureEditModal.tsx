@@ -50,7 +50,12 @@ export function FeatureEditModal({ opened, onClose, feature, onUpdated }: Featur
   }
 
   return (
-    <ModalTemplate title="Edit Feature" opened={opened} onClose={onClose}>
+    <ModalTemplate
+      title="Edit Feature"
+      opened={opened}
+      onClose={onClose}
+      testId="feature-edit-modal"
+    >
       <Stack gap="lg">
         <Box>
           <Text size="xs" fw={700} c="dimmed" tt="uppercase" mb={6}>
@@ -58,6 +63,7 @@ export function FeatureEditModal({ opened, onClose, feature, onUpdated }: Featur
           </Text>
 
           <TextInput
+            data-testid="feature-edit-name-input"
             value={name}
             onChange={event => setName(event.currentTarget.value)}
             radius="md"
@@ -77,6 +83,7 @@ export function FeatureEditModal({ opened, onClose, feature, onUpdated }: Featur
           </Text>
 
           <Textarea
+            data-testid="feature-edit-description-input"
             value={description}
             onChange={event => setDescription(event.currentTarget.value)}
             minRows={4}
@@ -91,11 +98,18 @@ export function FeatureEditModal({ opened, onClose, feature, onUpdated }: Featur
         </Box>
 
         <Group justify="flex-end" mt="md">
-          <Button variant="outline" color="gray" radius="md" onClick={onClose}>
+          <Button
+            data-testid="feature-edit-cancel-button"
+            variant="outline"
+            color="gray"
+            radius="md"
+            onClick={onClose}
+          >
             Cancel
           </Button>
 
           <Button
+            data-testid="feature-edit-save-button"
             color="orange.6"
             radius="md"
             loading={loading}

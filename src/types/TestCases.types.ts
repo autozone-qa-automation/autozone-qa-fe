@@ -10,7 +10,7 @@ export const createTestCaseSchema = z.object({
   title: z
     .string()
     .min(1, { message: 'Name is required' })
-    .max(30, { message: 'Maximum 30 characters' }),
+    .max(150, { message: 'Maximum 150 characters' }),
   relatedFeature: z
     .number({ message: 'Feature is required' })
     .min(1, { message: 'Feature is required' }),
@@ -26,7 +26,7 @@ export const createTestCaseSchema = z.object({
     .string()
     .min(1, { message: 'Expected output is required' })
     .max(300, { message: 'Maximum 300 characters' }),
-  type: z.enum(['REGRESSION', 'ON_DEMAND']),
+  type: z.enum(['REGRESSION', 'ON DEMAND']),
 })
 
 export type CreateTestCaseRequest = z.infer<typeof createTestCaseSchema>

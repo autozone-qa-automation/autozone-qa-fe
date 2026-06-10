@@ -6,17 +6,23 @@
  */
 
 import { Badge, Button, Table } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
+import { useState } from 'react'
 import type { TestCaseVO } from '@/models/TestCaseVO'
+import { TestCasesModalEdit } from './TestCasesModalEdit'
 
 export type Type = 'REGRESSION' | 'ON DEMAND'
 
 interface TestCasesListProps {
   data: TestCaseVO[]
   onViewClick?: (testCase: TestCaseVO) => void
-  onEditClick?: (id: number) => void
+  onRefresh: () => Promise<void>
 }
 
-export function TestCasesList({ data, onViewClick, onEditClick }: TestCasesListProps) {
+export function TestCasesList({ data, onViewClick, onRefresh }: TestCasesListProps) {
+  const [opened, { open, close }] = useDisclosure(false)
+  const [activeTestCase, setActiveTestCase] = useState<TestCaseVO | null>(null)
+
   const items = data.map(testCase => (
     <Table.Tr key={testCase.id} data-testid={`test-case-row-${testCase.id}`}>
       <Table.Td
@@ -67,14 +73,16 @@ export function TestCasesList({ data, onViewClick, onEditClick }: TestCasesListP
         >
           View
         </Button>
-
         <Button
           data-testid={`test-case-edit-button-${testCase.id}`}
           variant="subtle"
           size="sm"
           color="gray.6"
           fw={600}
-          onClick={() => onEditClick?.(testCase.id)}
+          onClick={() => {
+            open()
+            setActiveTestCase(testCase)
+          }}
         >
           Edit
         </Button>
@@ -83,22 +91,31 @@ export function TestCasesList({ data, onViewClick, onEditClick }: TestCasesListP
   ))
 
   return (
-    <Table
-      data-testid="test-cases-table"
-      highlightOnHover
-      style={{ tableLayout: 'fixed', width: '100%', backgroundColor: '#ffffff', color: 'black' }}
-    >
-      <Table.Thead>
-        <Table.Tr style={{ backgroundColor: '#F7F6F4', color: '#8C8C94' }}>
-          <Table.Th style={{ width: '50px', textAlign: 'center' }}>ID</Table.Th>
-          <Table.Th style={{ width: '300px' }}>Test Case Name</Table.Th>
-          <Table.Th style={{ width: '100px', textAlign: 'center' }}>Type</Table.Th>
-          <Table.Th style={{ width: '300px', textAlign: 'center' }}>Related feature</Table.Th>
-          <Table.Th style={{ width: '150px', textAlign: 'center' }}>Actions</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-
-      <Table.Tbody>{items}</Table.Tbody>
-    </Table>
+    <div>
+      <TestCasesModalEdit
+        opened={opened}
+        activeTestCase={activeTestCase}
+        onRefresh={onRefresh}
+        onClose={() => {
+          close()
+          setActiveTestCase(null)
+        }}
+      />
+      <Table
+        data-testid="test-cases-table"
+        highlightOnHover
+        style={{ tableLayout: 'fixed', width: '100%', backgroundColor: '#ffffff', color: 'black' }}
+      >
+        <Table.Thead>
+          <Table.Tr style={{ backgroundColor: '#F7F6F4', color: '#8C8C94' }}>
+            <Table.Th style={{ width: '50px', textAlign: 'center' }}>ID</Table.Th>
+            <Table.Th style={{ width: '300px' }}>Test Case Name</Table.Th>
+            <Table.Th style={{ width: '100px', textAlign: 'center' }}>Type</Table.Th>
+            <Table.Th style={{ width: '300px', textAlign: 'center' }}>Related feature</Table.Th>
+            <Table.Th style={{ width: '150px', textAlign: 'center' }}>Actions</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>{items}</Table.Tbody>
+      </Table>
+    </div>
   )
-}
