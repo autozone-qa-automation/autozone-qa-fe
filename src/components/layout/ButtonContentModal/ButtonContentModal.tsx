@@ -106,7 +106,11 @@ export function ButtonContentModal({ data, onOpenStatusModal, onDeleteClick }: B
     <>
       {/* SECCIÓN: MODAL DETALLADO */}
       <Modal.Root opened={opened} onClose={close} size={580} centered>
-        <Modal.Overlay backgroundOpacity={0.55} blur={3} data-testid="release-detail-modal-overlay" />
+        <Modal.Overlay
+          backgroundOpacity={0.55}
+          blur={3}
+          data-testid="release-detail-modal-overlay"
+        />
         <Modal.Content radius={16}>
           <Modal.Header px={32} pt={25} pb={15}>
             <Modal.Title

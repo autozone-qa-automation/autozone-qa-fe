@@ -87,7 +87,12 @@ export function ReleasesModalStatus({
 
   return (
     <>
-      <ModalTemplate opened={opened} onClose={onClose} title="Status of release" testId="release-status-modal">
+      <ModalTemplate
+        opened={opened}
+        onClose={onClose}
+        title="Status of release"
+        testId="release-status-modal"
+      >
         <Stack gap="md">
           <Group>
             <Text c="#8C8C94" fz={11} fw={600} w={120}>
