@@ -8,8 +8,6 @@ import { createBrowserRouter, Navigate, Outlet } from 'react-router'
 import { MainLayout } from './components/layout/MainLayout/MainLayout'
 import { FeatureDetail } from './pages/features/FeatureDetail/FeatureDetail'
 import { Features } from './pages/features/Features'
-import { Generate } from './pages/generate/Generate'
-import { Home } from './pages/home/Home'
 import { Login } from './pages/login/Login'
 import { Releases } from './pages/releases/Releases'
 import { Reports } from './pages/reports/Reports'
@@ -40,7 +38,7 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Home />,
+            element: <Navigate to="/releases" replace />,
           },
           {
             path: 'releases',
@@ -53,10 +51,6 @@ export const router = createBrowserRouter([
           {
             path: 'features/:featureId',
             element: <FeatureDetail />,
-          },
-          {
-            path: 'generate',
-            element: <Generate />,
           },
           {
             path: 'reports',
