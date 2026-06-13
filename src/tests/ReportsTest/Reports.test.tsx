@@ -176,7 +176,7 @@ describe('Reports page', () => {
 
     const checkboxes = screen.getAllByRole('checkbox')
 
-    fireEvent.click(checkboxes[1])
+    fireEvent.click(checkboxes[1]!)
 
     expect(handleToggleSingleReport).toHaveBeenCalled()
   })

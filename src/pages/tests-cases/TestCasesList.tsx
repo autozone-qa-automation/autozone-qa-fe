@@ -67,11 +67,7 @@ export function TestCasesList({ data, onViewClick, onRefresh }: TestCasesListPro
         style={{ textAlign: 'center' }}
       >
         <Button
-<<<<<<< HEAD
-          data-testid="view-button" //Diego agrego esto, pal selenium
-=======
           data-testid={`test-case-view-button-${testCase.id}`}
->>>>>>> 73d54eebeaa725779169484d15411452b6097b29
           variant="subtle"
           size="sm"
           color="orange.7"

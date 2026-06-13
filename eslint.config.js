@@ -13,7 +13,7 @@ const require = createRequire(import.meta.url)
 const headerRule = require('./eslint-rules/header-comment.cjs')
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'eslint.config.js', '**/*.cjs', '__mocks__/**'] },
+  { ignores: ['dist', 'node_modules', 'coverage', 'eslint.config.js', '**/*.cjs', '__mocks__/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {

@@ -59,7 +59,7 @@ describe('TestCasesModalCreate', () => {
   })
 
   it('llama a la función create con los datos correctos y limpia el formulario', async () => {
-    const user = userEvent.setup()
+    const user = userEvent.setup({ delay: null })
 
     render(
       <MantineProvider>
