@@ -5,7 +5,12 @@
  * Autozone QA Automation
  */
 
+/// <reference types="node" />
+
 import '@testing-library/jest-dom'
+import { TextDecoder, TextEncoder } from 'util'
+
+Object.assign(global, { TextEncoder, TextDecoder })
 
 jest.mock('@/lib/axios', () => {
   return {
