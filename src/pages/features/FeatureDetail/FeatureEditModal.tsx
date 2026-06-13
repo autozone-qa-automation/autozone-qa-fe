@@ -17,6 +17,7 @@ export function FeatureEditModal({ opened, onClose, feature, onUpdated }: Featur
   const [description, setDescription] = useState('')
 
   const { updateFeature, loading } = useUpdateFeature()
+  const isFeatureLoaded = Boolean(feature?.id && feature?.idService)
 
   useEffect(() => {
     if (feature) {
@@ -26,7 +27,9 @@ export function FeatureEditModal({ opened, onClose, feature, onUpdated }: Featur
   }, [feature])
 
   const handleSave = async () => {
-    if (!feature) return
+    if (!isFeatureLoaded || !feature) {
+      return
+    }
 
     try {
       const updatedFeature = await updateFeature(String(feature.id), {
@@ -41,11 +44,18 @@ export function FeatureEditModal({ opened, onClose, feature, onUpdated }: Featur
         title: 'Success!',
         message: 'Feature updated successfully',
         color: 'teal',
+        'data-testid': 'feature-edit-success-notification',
       })
 
       onClose()
     } catch (error) {
       console.error(error)
+      notifications.show({
+        title: 'Error',
+        message: error instanceof Error ? error.message : 'Failed to update feature',
+        color: 'red',
+        'data-testid': 'feature-edit-error-notification',
+      })
     }
   }
 
@@ -112,6 +122,7 @@ export function FeatureEditModal({ opened, onClose, feature, onUpdated }: Featur
             data-testid="feature-edit-save-button"
             color="orange.6"
             radius="md"
+            disabled={!isFeatureLoaded}
             loading={loading}
             onClick={() => {
               void handleSave()

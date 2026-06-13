@@ -33,6 +33,7 @@ export function Services() {
             color="orange.6"
             radius="md"
             onClick={open}
+            data-testid="add-service-button"
           >
             New Service
           </Button>
@@ -54,6 +55,7 @@ export function Services() {
               value={searchQuery}
               onChange={setSearchQuery}
               leftSection={<IconSearch size={16} stroke={2.5} />}
+              data-testid="service-search-input"
             />
           </Group>
 
