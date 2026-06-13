@@ -87,4 +87,20 @@ describe('ReleaseService', () => {
     expect(apiService['post']).toHaveBeenCalledWith('releases', newRelease)
     expect(result.releaseName).toBe('New Feature Release')
   })
+
+  it('should delete a release correctly', async () => {
+    ;(apiService.delete as jest.Mock).mockResolvedValue(undefined)
+
+    await expect(releaseService.delete(1)).resolves.toBeUndefined()
+
+    expect(apiService['delete']).toHaveBeenCalledWith('releases/1')
+  })
+
+  it('should propagate the error when deleting a release fails', async () => {
+    const deleteError = new Error('Unable to delete release')
+    ;(apiService.delete as jest.Mock).mockRejectedValue(deleteError)
+
+    await expect(releaseService.delete(99)).rejects.toThrow('Unable to delete release')
+    expect(apiService['delete']).toHaveBeenCalledWith('releases/99')
+  })
 })
