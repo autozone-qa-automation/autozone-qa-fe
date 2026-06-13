@@ -50,7 +50,7 @@ export function TestCasesPanel({ id }: { id: number }) {
   )
 
   return (
-    <Stack gap="sm">
+    <Stack gap="sm" data-testid="feature-detail-testcases-section">
       <Group justify="space-between">
         <Text fw={600} size="sm" c="dimmed" tt="uppercase">
           Test Cases
@@ -83,17 +83,18 @@ export function TestCasesPanel({ id }: { id: number }) {
                 <Text fw={500} size="sm">
                   Linked test cases
                 </Text>
-                <Text size="xs" opacity={0.8}>
+                <Text data-testid="feature-detail-testcases-count" size="xs" opacity={0.8}>
                   • {visibleTestCases.length} test cases
                 </Text>
               </Group>
             </Accordion.Control>
 
             <Accordion.Panel>
-              <Stack gap={0}>
+              <Stack data-testid="feature-detail-testcases-list" gap={0}>
                 {visibleTestCases.map((testCase, index) => (
                   <Group
                     key={testCase.id}
+                    data-testid={`linked-tc-item-${testCase.id}`}
                     wrap="nowrap"
                     justify="space-between"
                     gap={0}
@@ -116,10 +117,20 @@ export function TestCasesPanel({ id }: { id: number }) {
                       onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
                       <Group gap="sm">
-                        <Text size="xs" c="orange.6" fw={700}>
+                        <Text
+                          data-testid={`linked-tc-id-${testCase.id}`}
+                          size="xs"
+                          c="orange.6"
+                          fw={700}
+                        >
                           F{testCase.id}
                         </Text>
-                        <Text size="sm" fw={400} c="dark">
+                        <Text
+                          data-testid={`linked-tc-name-${testCase.id}`}
+                          size="sm"
+                          fw={400}
+                          c="dark"
+                        >
                           {testCase.title}
                         </Text>
                       </Group>
@@ -145,7 +156,13 @@ export function TestCasesPanel({ id }: { id: number }) {
                 ))}
 
                 {visibleTestCases.length === 0 && (
-                  <Text size="sm" p="md" c="dimmed" ta="center">
+                  <Text
+                    data-testid="feature-detail-testcases-empty-state"
+                    size="sm"
+                    p="md"
+                    c="dimmed"
+                    ta="center"
+                  >
                     No hay test cases vinculados para este feature
                   </Text>
                 )}

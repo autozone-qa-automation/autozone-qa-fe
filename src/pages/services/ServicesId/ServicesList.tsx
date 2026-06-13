@@ -17,9 +17,10 @@ export interface FeatureItem {
 interface FeaturesListProps {
   data: FeatureItem[]
   onDeleteClick?: (id: number) => void
+  onAddClick?: () => void
 }
 
-export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
+export function ServicesList({ data, onDeleteClick, onAddClick }: FeaturesListProps) {
   const navigate = useNavigate()
 
   const handleFeatureClick = (id: number) => {
@@ -33,7 +34,7 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
           Features
         </Text>
 
-        <Button size="xs" color="orange.6" radius="md">
+        <Button size="xs" color="orange.6" radius="md" onClick={onAddClick}>
           + Add Feature
         </Button>
       </Group>
@@ -89,6 +90,7 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
                   >
                     <UnstyledButton
                       p="sm"
+                      data-testid={`service-id-feature-open-button-${feature.idFeature}`}
                       style={{
                         flex: 1,
                         display: 'flex',
@@ -115,13 +117,19 @@ export function ServicesList({ data, onDeleteClick }: FeaturesListProps) {
                         onDeleteClick?.(feature.idFeature)
                       }}
                     >
-                      Eliminar
+                      Delete
                     </Button>
                   </Group>
                 ))}
 
                 {data.length === 0 && (
-                  <Text size="sm" p="md" c="dimmed" ta="center">
+                  <Text
+                    data-testid="service-id-features-empty-message"
+                    size="sm"
+                    p="md"
+                    c="dimmed"
+                    ta="center"
+                  >
                     No hay features vinculadas para este servicio
                   </Text>
                 )}

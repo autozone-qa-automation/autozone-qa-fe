@@ -38,7 +38,7 @@ export function TitleHeader({
   return (
     <Flex justify="space-between" align="flex-end" pb="md">
       <Stack gap="xs">
-        <Breadcrumbs separator="›" separatorMargin="xs">
+        <Breadcrumbs data-testid="title-header-breadcrumbs" separator="›" separatorMargin="xs">
           {breadcrumbElements}
         </Breadcrumbs>
 
@@ -47,7 +47,7 @@ export function TitleHeader({
         </Title>
 
         {/* This line is updated to use the new prop and the dot separator */}
-        <Text c="dimmed" size="sm" fw={500}>
+        <Text data-testid="title-header-meta" c="dimmed" size="sm" fw={500}>
           {metaDetails.join(' · ')}
         </Text>
       </Stack>

@@ -57,7 +57,7 @@ export function Reports() {
     report.releaseLaunchDate ?? report.releaseCreationDate
 
   return (
-    <div className="reports-page">
+    <div data-testid="reports-page-container" className="reports-page">
       <Group justify="space-between" align="flex-start">
         <div>
           <Title order={1}>Reports</Title>
@@ -66,7 +66,12 @@ export function Reports() {
           </Text>
         </div>
 
-        <Button color="orange.6" radius="md" onClick={() => void handleGenerateReport()}>
+        <Button
+          data-testid="generate-report-btn"
+          color="orange.6"
+          radius="md"
+          onClick={() => void handleGenerateReport()}
+        >
           ⚙️ Generate Report
         </Button>
       </Group>
@@ -76,6 +81,7 @@ export function Reports() {
           <Text c="dimmed">From</Text>
 
           <DateInput
+            data-testid="reports-start-date-input"
             clearable
             ref={startDateInputRef}
             label="Start Date"
@@ -97,6 +103,7 @@ export function Reports() {
           <Text c="dimmed">To</Text>
 
           <DateInput
+            data-testid="reports-end-date-input"
             clearable
             ref={endDateInputRef}
             label="End Date"
@@ -117,6 +124,7 @@ export function Reports() {
         </Group>
 
         <MultiSelect
+          data-testid="reports-service-select"
           label="Chosen Service"
           placeholder="Choose one service..."
           data={serviceOptions}
@@ -130,6 +138,7 @@ export function Reports() {
         />
 
         <TagsInput
+          data-testid="reports-tags-input"
           label="Chosen Tags"
           placeholder="Type a tag and press Enter..."
           data={tagOptions}
@@ -145,6 +154,7 @@ export function Reports() {
         <Title order={3}>Releases Found</Title>
 
         <Button
+          data-testid="export-csv-btn"
           variant="default"
           radius="md"
           leftSection={<IconDownload size={16} />}
@@ -155,22 +165,23 @@ export function Reports() {
       </Group>
 
       {error ? (
-        <Text c="red" mb="sm">
+        <Text data-testid="reports-error-message" c="red" mb="sm">
           {error}
         </Text>
       ) : null}
 
       {loading ? (
-        <Text c="dimmed" mb="sm">
+        <Text data-testid="reports-loading-message" c="dimmed" mb="sm">
           Loading reports...
         </Text>
       ) : null}
 
-      <Table verticalSpacing="md" highlightOnHover>
+      <Table data-testid="reports-table" verticalSpacing="md" highlightOnHover>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>
               <Checkbox
+                data-testid="reports-select-all-checkbox"
                 label="All"
                 checked={allReportsSelected}
                 indeterminate={someReportsSelected}
@@ -190,9 +201,10 @@ export function Reports() {
 
         <Table.Tbody>
           {reports.map((item, index) => (
-            <Table.Tr key={index}>
+            <Table.Tr data-testid={`report-row-${index}`} key={index}>
               <Table.Td>
                 <Checkbox
+                  data-testid={`report-row-checkbox-${index}`}
                   checked={selectedReportIds.includes(item.releaseId)}
                   onChange={event =>
                     handleToggleSingleReport(item.releaseId, event.currentTarget.checked)
@@ -260,23 +272,10 @@ export function Reports() {
       </Table>
 
       <Group justify="space-between" mt="sm">
-        <Text c="dimmed">{recordsSummary}</Text>
+        <Text data-testid="reports-records-summary" c="dimmed">
+          {recordsSummary}
+        </Text>
       </Group>
     </div>
   )
 }
-
-/*
-<Group justify="space-between" mt="sm">
-        <Text c="dimmed">Showing 10 of 24 records</Text>
-
-        <Group gap="xs">
-          <Button variant="default" size="xs">
-            ‹ Prev
-          </Button>
-          <Button variant="default" size="xs">
-            Next ›
-          </Button>
-        </Group>
-      </Group>
-*/

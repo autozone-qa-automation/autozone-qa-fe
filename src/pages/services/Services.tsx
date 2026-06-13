@@ -25,7 +25,7 @@ export function Services() {
     <div>
       <TitleHeader
         title="Services"
-        metaDetails={[loading ? 'Loading...' : `${services.length} services`, '0 test cases']}
+        metaDetails={[loading ? 'Loading...' : `${services.length} services`]}
         breadcrumbs={[{ title: 'Services', href: '/services' }]}
         actionComponent={
           <Button
