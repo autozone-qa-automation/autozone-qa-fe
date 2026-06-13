@@ -87,15 +87,18 @@ export function ServicesList({ searchQuery = '', services, loading, error }: Ser
 
   const filteredServices = services.filter((service: Service) => {
     const query = searchQuery.toLowerCase()
-    return (
-      service.name.toLowerCase().includes(query) ||
-      (service.description?.toLowerCase().includes(query) ?? false)
-    )
+    return service.name.toLowerCase().includes(query)
   })
 
   if (filteredServices.length === 0) {
     return (
-      <Card withBorder p="xl" radius="md" style={{ gridColumn: '1 / -1' }}>
+      <Card
+        withBorder
+        p="xl"
+        radius="md"
+        style={{ gridColumn: '1 / -1' }}
+        data-testid="services-empty-search-message"
+      >
         <Text ta="center" c="dimmed">
           No services found matching your criteria.
         </Text>

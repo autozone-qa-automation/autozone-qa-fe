@@ -111,7 +111,7 @@ export function ButtonContentModal({ data, onOpenStatusModal, onDeleteClick }: B
           blur={3}
           data-testid="release-detail-modal-overlay"
         />
-        <Modal.Content radius={16}>
+        <Modal.Content radius={16} data-testid="release-id-page">
           <Modal.Header px={32} pt={25} pb={15}>
             <Modal.Title
               style={{ color: '#1A1A1F', fontSize: 20, fontFamily: 'Inter', fontWeight: '700' }}
@@ -169,6 +169,7 @@ export function ButtonContentModal({ data, onOpenStatusModal, onDeleteClick }: B
                   <Text
                     component="a"
                     href={`/services/${data.serviceId}`}
+                    data-testid="release-id-associated-service"
                     style={{ ...valueStyle, color: '#F26621', textDecoration: 'underline' }}
                   >
                     {data.service}

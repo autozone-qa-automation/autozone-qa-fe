@@ -20,6 +20,7 @@ export function useDeleteRelease() {
       notifications.show({
         title: 'Release deleted',
         message: 'Release has been deleted successfully.',
+        'data-testid': 'release-delete-success-notification',
       })
     } catch (error) {
       notifications.show({

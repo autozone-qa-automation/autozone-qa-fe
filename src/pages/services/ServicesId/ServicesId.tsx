@@ -67,7 +67,12 @@ export function ServicesId() {
       </Text>
     )
 
-  if (!service) return <Text p="xl">El servicio no existe</Text>
+  if (!service)
+    return (
+      <Text p="xl" data-testid="service-id-not-found-message">
+        El servicio no existe
+      </Text>
+    )
 
   const featureItems = features.map(f => ({
     idFeature: f.id,
@@ -154,13 +159,15 @@ export function ServicesId() {
 
         <Divider />
 
-        <ServicesList
-          data={featureItems}
-          onDeleteClick={id => {
-            void handleUnlinkFeature(id)
-          }}
-          onAddClick={() => setAddFeatureOpened(true)}
-        />
+        <div data-testid="service-features-section">
+          <ServicesList
+            data={featureItems}
+            onDeleteClick={id => {
+              void handleUnlinkFeature(id)
+            }}
+            onAddClick={() => setAddFeatureOpened(true)}
+          />
+        </div>
 
         <FeatureModalCreate
           opened={addFeatureOpened}
@@ -172,7 +179,9 @@ export function ServicesId() {
 
         <Divider />
 
-        <ReleasesList releases={releases} loading={releasesLoading} error={releasesError} />
+        <div data-testid="service-release-section">
+          <ReleasesList releases={releases} loading={releasesLoading} error={releasesError} />
+        </div>
       </Stack>
 
       {service && (

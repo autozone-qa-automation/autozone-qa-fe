@@ -34,7 +34,13 @@ export function ServicesList({ data, onDeleteClick, onAddClick }: FeaturesListPr
           Features
         </Text>
 
-        <Button size="xs" color="orange.6" radius="md" onClick={onAddClick}>
+        <Button
+          size="xs"
+          color="orange.6"
+          radius="md"
+          onClick={onAddClick}
+          data-testid="service-id-add-feature-button"
+        >
           + Add Feature
         </Button>
       </Group>

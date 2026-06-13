@@ -17,7 +17,7 @@ import { featureService } from '../services/features.service'
  * @property {string | null} error - Error message if the fetch fails, otherwise null.
  */
 interface UseFeatureState {
-  feature: FeatureVO
+  feature: FeatureVO | null
   isLoading: boolean
   error: string | null
 }
@@ -41,7 +41,7 @@ interface UseFeatureReturn extends UseFeatureState {
  */
 export const useFeature = (id: string): UseFeatureReturn => {
   const [state, setState] = useState<UseFeatureState>({
-    feature: {} as FeatureVO,
+    feature: null,
     isLoading: false,
     error: null,
   })

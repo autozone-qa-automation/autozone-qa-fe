@@ -27,6 +27,11 @@ import { ReleasesModalCreate } from './ReleasesModalCreate'
  * @returns {JSX.Element} La vista de releases con controles de filtrado y grid de tarjetas.
  */
 export function Releases() {
+  const sortOptions = [
+    { value: 'Newest', label: 'Newest' },
+    { value: 'Oldest', label: 'Oldest' },
+  ]
+
   /** Hook personalizado para obtener releases y estados de carga/error del backend */
   const { releases, loading, error, refetch } = useGetAllReleases()
 
@@ -231,9 +236,14 @@ export function Releases() {
 
         <Select
           placeholder="Sort by"
-          data={['Newest', 'Oldest']}
+          data={sortOptions}
           value={sortBy}
           onChange={setSortBy}
+          renderOption={({ option }) => (
+            <div data-testid={`releases-sort-option-${option.value.toLowerCase()}`}>
+              {option.label}
+            </div>
+          )}
           size="xs"
           leftSection={
             <Text size="xs" fw={500} c="dimmed" ml={5}>
