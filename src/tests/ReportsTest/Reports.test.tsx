@@ -1,7 +1,7 @@
 import { MantineProvider } from '@mantine/core'
 import { fireEvent, render, screen } from '@testing-library/react'
-import { Reports } from '@/pages/reports/Reports'
 import { useReports } from '@/hooks/useReports'
+import { Reports } from '@/pages/reports/Reports'
 
 jest.mock('@/hooks/useReports')
 

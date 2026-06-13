@@ -1,8 +1,8 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { useReports } from '@/hooks/useReports'
-import { reportsService } from '@/services/reports.service'
 import { useGetServices } from '@/hooks/useGetServices'
+import { useReports } from '@/hooks/useReports'
 import { ReportVO } from '@/models/ReportVO'
+import { reportsService } from '@/services/reports.service'
 
 jest.mock('@/services/reports.service', () => ({
   reportsService: {
@@ -90,7 +90,7 @@ describe('useReports - handleExportCsv', () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false))
 
-    await act(async () => {
+    act(() => {
       result.current.handleToggleSingleReport(10, true)
     })
 
@@ -109,7 +109,7 @@ describe('useReports - handleExportCsv', () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false))
 
-    await act(async () => {
+    act(() => {
       result.current.handleToggleSingleReport(10, true)
       result.current.handleToggleSingleReport(20, true)
     })
@@ -134,7 +134,7 @@ describe('useReports - handleExportCsv', () => {
 
     expect(result.current.error).toBe('Select at least one release to export')
 
-    await act(async () => {
+    act(() => {
       result.current.handleToggleSingleReport(10, true)
     })
 
@@ -154,7 +154,7 @@ describe('useReports - handleExportCsv', () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false))
 
-    await act(async () => {
+    act(() => {
       result.current.handleToggleSingleReport(10, true)
     })
 
@@ -176,7 +176,7 @@ describe('useReports - handleExportCsv', () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false))
 
-    await act(async () => {
+    act(() => {
       result.current.handleToggleSingleReport(10, true)
     })
 
