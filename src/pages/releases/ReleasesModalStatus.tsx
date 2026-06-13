@@ -87,7 +87,12 @@ export function ReleasesModalStatus({
 
   return (
     <>
-      <ModalTemplate opened={opened} onClose={onClose} title="Status of release">
+      <ModalTemplate
+        opened={opened}
+        onClose={onClose}
+        title="Status of release"
+        testId="release-status-modal"
+      >
         <Stack gap="md">
           <Group>
             <Text c="#8C8C94" fz={11} fw={600} w={120}>
@@ -114,6 +119,7 @@ export function ReleasesModalStatus({
               allowDeselect={false}
               onChange={value => value && setSelectedStatus(value)}
               styles={inputStyles}
+              data-testid="release-status-select"
             />
           </Input.Wrapper>
 
@@ -124,6 +130,7 @@ export function ReleasesModalStatus({
               disabled={!canUpdate}
               loading={loading}
               onClick={confirmModal.open}
+              data-testid="release-status-update-btn"
             >
               Update
             </Button>
@@ -135,6 +142,7 @@ export function ReleasesModalStatus({
         opened={confirmOpened}
         onClose={confirmModal.close}
         title="Confirm status update"
+        testId="release-status-confirm-modal"
       >
         <Stack gap="md">
           <Text ta="center" fw={700} c="#1A1A1F">
@@ -148,6 +156,7 @@ export function ReleasesModalStatus({
               color="#FFFFFF"
               loading={loading}
               onClick={() => void handleConfirmUpdate()}
+              data-testid="release-status-confirm-btn"
             >
               Sí
             </Button>
@@ -158,6 +167,7 @@ export function ReleasesModalStatus({
               color="#8C8C94"
               disabled={loading}
               onClick={confirmModal.close}
+              data-testid="release-status-cancel-btn"
             >
               No
             </Button>
