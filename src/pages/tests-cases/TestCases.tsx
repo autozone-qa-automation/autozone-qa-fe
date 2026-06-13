@@ -78,7 +78,7 @@ export function TestCases() {
     <div>
       <Modal.Root opened={opened} onClose={handleClose}>
         <Modal.Overlay />
-        <Modal.Content>
+        <Modal.Content data-testid="testcase-modal">
           <Modal.Header>
             <Modal.Title fw={700} mb="lg" c="#1A1A1F">
               {selectedTestCase?.title}
@@ -203,7 +203,7 @@ export function TestCases() {
           Loading...
         </Text>
       ) : filteredTestCases.length === 0 ? (
-        <Text ta="center" c="#8C8C94" mt="xl" size="xl">
+        <Text ta="center" c="#8C8C94" mt="xl" size="xl" data-testid="empty-testcases-message">
           No test cases available
         </Text>
       ) : (
