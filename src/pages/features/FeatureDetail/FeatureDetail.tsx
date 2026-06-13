@@ -68,7 +68,7 @@ export function FeatureDetail() {
       <FeatureEditModal
         opened={isEditOpen}
         onClose={() => setIsEditOpen(false)}
-        feature={feature}
+        feature={feature ?? undefined}
         onUpdated={() => {
           void refetch()
           setIsEditOpen(false)
